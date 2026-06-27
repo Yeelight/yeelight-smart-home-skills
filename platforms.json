@@ -70,7 +70,7 @@
       },
       "packagePath": "skills/yeelight-smart-home",
       "submissionPath": "submissions/lobehub/README.md",
-      "status": "request-form-ready-cloudflare-human-verification-required",
+      "status": "request-form-url-entered-cloudflare-reverification-required",
       "requestForm": "https://lobehub.com/zh/skills -> 请求收录 -> GitHub 仓库地址",
       "repository": "https://github.com/Yeelight/yeelight-smart-home-skills"
     },

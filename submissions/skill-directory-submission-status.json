@@ -61,7 +61,7 @@
     },
     {
       "id": "lobehub",
-      "status": "request-form-ready-cloudflare-human-verification-required",
+      "status": "request-form-url-entered-cloudflare-reverification-required",
       "url": "https://lobehub.com/zh/skills",
       "packagePath": "skills/yeelight-smart-home",
       "publishCommand": "Open https://lobehub.com/zh/skills, click 请求收录, submit https://github.com/Yeelight/yeelight-smart-home-skills",
@@ -72,9 +72,11 @@
         "@lobehub/market-cli 0.0.38 is available from npm and exposes skill list, skill publish, skill claim, skills view, and skills install commands",
         "CLI implementation requires SKILL.md at package root and uses --identifier or SKILL.md frontmatter identifier for version publishing after ownership exists",
         "unauthenticated lhm skill list returned Not logged in. Run `lhm login` first",
-        "temporary headless browser was blocked by Vercel Security Checkpoint Code 21, so form submission must use a real browser session"
+        "temporary headless browser was blocked by Vercel Security Checkpoint Code 21, so form submission must use a real browser session",
+        "real Chrome entered https://github.com/Yeelight/yeelight-smart-home-skills and clicked submit; LobeHub then triggered Cloudflare Turnstile re-verification and disabled submit again"
       ],
       "remaining": [
+        "complete the second Cloudflare Turnstile verification after clicking submit, then click submit again",
         "complete Cloudflare Turnstile human verification in the real Chrome request form",
         "submit https://github.com/Yeelight/yeelight-smart-home-skills in the GitHub 仓库地址 field",
         "wait for LobeHub brief review and automated collection workflow",
