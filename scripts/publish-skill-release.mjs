@@ -4,11 +4,13 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const templatesRoot = path.join(root, "templates");
 const args = process.argv.slice(2);
 const skill = flag("--skill") || "yeelight-smart-home";
 const version = flag("--version") || "0.1.0";
 const source = flag("--source");
 const releaseTag = flag("--tag") || `yeelight-skill-${skill}-v${version}`;
+const skillhubSlug = flag("--skillhub-slug") || (skill === "yeelight-smart-home" ? "yeelight-smart-home-official" : skill);
 const dryRun = args.includes("--dry-run");
 
 if (!source) fail("missing --source <release-output-root>");
@@ -31,7 +33,7 @@ copyDir(pluginSource, path.join(root, "plugins", skill));
 clean(path.join(root, "skills", skill));
 copyDir(stageSource, path.join(root, "skills", skill));
 writeMarketplaceFiles({ skill, version });
-writeReadme({ skill, version, releaseTag });
+writeReadme({ skill, version, releaseTag, skillhubSlug });
 writeStatusFiles({ skill, version, releaseTag });
 run("python3", ["-m", "json.tool", ".github/plugin/marketplace.json"], { stdout: "ignore" });
 run("python3", ["-m", "json.tool", ".claude-plugin/marketplace.json"], { stdout: "ignore" });
@@ -83,129 +85,41 @@ function writeMarketplaceFiles({ skill, version }) {
   });
 }
 
-function writeReadme({ skill, version, releaseTag }) {
-  fs.writeFileSync(path.join(root, "README.md"), `# Yeelight Smart Home Skills
+function writeReadme({ skill, version, releaseTag, skillhubSlug }) {
+  const repositoryUrl = "https://github.com/Yeelight/yeelight-smart-home-skills";
+  const repositoryInstallUrl = "https://github.com/yeelight/yeelight-smart-home-skills";
+  const releaseUrl = `${repositoryUrl}/releases/tag/${releaseTag}`;
+  const values = {
+    repositoryInstallUrl,
+    repositoryUrl,
+    releasePath: `releases/${skill}/v${version}`,
+    releaseTag,
+    releaseUrl,
+    skill,
+    skillTitle: titleFromSlug(skill),
+    skillhubSlug,
+    version,
+  };
+  fs.writeFileSync(path.join(root, "README.md"), renderTemplate("README.md.tpl", values), "utf8");
+  fs.writeFileSync(path.join(root, "README.zh-CN.md"), renderTemplate("README.zh-CN.md.tpl", values), "utf8");
+}
 
-Public release repository for Yeelight Smart Home agent skills.
+function renderTemplate(name, values) {
+  let text = fs.readFileSync(path.join(templatesRoot, name), "utf8");
+  for (const [key, value] of Object.entries(values)) {
+    text = text.replaceAll(`{{${key}}}`, String(value));
+  }
+  const missing = text.match(/\{\{[A-Za-z0-9_-]+\}\}/g);
+  if (missing) fail(`unresolved README template variables in ${name}: ${[...new Set(missing)].join(", ")}`);
+  return text;
+}
 
-## Published Skills
-
-| Skill | Version | Runtime | Packages |
-| --- | --- | --- | --- |
-| \`${skill}\` | \`${version}\` | \`yeelight-home >= 0.1.7\` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
-
-## Release
-
-- Repository: https://github.com/Yeelight/yeelight-smart-home-skills
-- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/${releaseTag}
-- Release evidence: \`releases/${skill}/v${version}/\`
-
-## Install
-
-### ClawHub / OpenClaw
-
-The skill is published under the Yeelight publisher namespace:
-
-\`\`\`sh
-openclaw skills install @yeelight/${skill}
-\`\`\`
-
-- ClawHub page: https://clawhub.ai/yeelight/skills/${skill}
-- Status: published and installable. The ClawHub publisher namespace is \`@yeelight\`; platform trust/official review is still pending.
-
-### skills.sh
-
-The repository is indexed by skills.sh:
-
-\`\`\`sh
-npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill ${skill}
-\`\`\`
-
-- skills.sh page: https://www.skills.sh/yeelight/yeelight-smart-home-skills/${skill}
-- Status: indexed and installable, with visible security audit pass badges.
-
-### Codex / Agent Plugin
-
-Install from this repository marketplace metadata or download \`releases/${skill}/v${version}/${skill}-codex-plugin-v${version}.zip\`.
-
-### Claude Skill ZIP
-
-Download and upload \`releases/${skill}/v${version}/${skill}-claude-skill-v${version}.zip\`.
-
-### GitHub Copilot Agent Skill
-
-Use \`releases/${skill}/v${version}/${skill}-copilot-skill-v${version}.zip\`.
-
-### Open Agent Skills
-
-Use \`releases/${skill}/v${version}/${skill}-agent-skill-v${version}.zip\`.
-
-### LobeHub Skills
-
-First listing uses the web request form:
-
-\`\`\`text
-https://lobehub.com/zh/skills
-\`\`\`
-
-Click \`请求收录\` and submit:
-
-\`\`\`text
-https://github.com/Yeelight/yeelight-smart-home-skills
-\`\`\`
-
-After LobeHub collects the repository, use \`@lobehub/market-cli\` to claim ownership and publish later versions.
-
-## Runtime Dependency
-
-This skill depends on the separately installed \`yeelight-home\` runtime and invokes it through:
-
-\`\`\`sh
-yeelight-home invoke --stdin
-\`\`\`
-
-The runtime is not bundled in this repository.
-
-## Bridge Adapter
-
-Platforms that cannot install Skill ZIPs directly should use:
-
-\`\`\`text
-adapters/yeelight-skill-bridge/
-\`\`\`
-
-The bridge exposes \`GET /health\`, \`GET /openapi.json\`, \`POST /invoke\` and \`POST /mcp\`.
-It calls only \`yeelight-home invoke --stdin\`; the runtime remains responsible for auth, policy and confirmation gates.
-
-## Platform Status
-
-See \`platforms.json\` and \`submissions/\` for platform-specific distribution status and submission kits.
-
-## Verify
-
-\`\`\`sh
-cd releases/${skill}/v${version}
-shasum -a 256 -c checksums.txt
-\`\`\`
-
-Full publication asset check:
-
-\`\`\`sh
-node scripts/verify-publication-assets.mjs --skill ${skill} --version ${version}
-\`\`\`
-
-Third-party directory submission status and evidence are tracked in \`platforms.json\` and \`submissions/skill-directory-submission-status.json\`.
-
-## Reusable Release Flow
-
-For later Yeelight skills or new versions:
-
-1. Build and verify from the source repository's generic Skill release pipeline.
-2. Refresh this public distribution repository with \`scripts/publish-skill-release.mjs\`.
-3. Run \`node scripts/verify-publication-assets.mjs --skill <skill-id> --version <x.y.z>\`.
-4. Publish native Skill directories through platform CLI/form flows.
-5. Publish API/MCP-only platforms through the bridge adapter and verify installed-copy or deployed-endpoint smoke.
-`, "utf8");
+function titleFromSlug(value) {
+  return String(value)
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function writeStatusFiles({ skill, version, releaseTag }) {

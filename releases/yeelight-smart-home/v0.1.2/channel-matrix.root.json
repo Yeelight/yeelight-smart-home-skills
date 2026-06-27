@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-06-27T13:27:09.322Z",
+  "skillId": "yeelight-smart-home",
+  "version": "0.1.2",
+  "firstReleasePosture": "github-release-and-internal-curated-marketplace-first",
+  "channels": [
+    {
+      "id": "agent-skills-open",
+      "status": "release-blocking-artifact",
+      "publishMode": "artifact",
+      "firstReleaseBlocking": false
+    },
+    {
+      "id": "codex-plugin",
+      "status": "release-blocking-artifact",
+      "publishMode": "artifact",
+      "firstReleaseBlocking": false
+    },
+    {
+      "id": "github-release",
+      "status": "first-release-blocker",
+      "publishMode": "confirmation-gated",
+      "firstReleaseBlocking": true
+    },
+    {
+      "id": "copilot-gh-skill",
+      "status": "release-blocking-artifact",
+      "publishMode": "artifact",
+      "firstReleaseBlocking": false
+    },
+    {
+      "id": "claude-skill-zip",
+      "status": "release-blocking-artifact",
+      "publishMode": "artifact",
+      "firstReleaseBlocking": false
+    },
+    {
+      "id": "internal-curated-marketplace",
+      "status": "first-release-blocker",
+      "publishMode": "artifact",
+      "firstReleaseBlocking": true
+    }
+  ],
+  "skipped": [
+    {
+      "name": "external_public_marketplace_submission",
+      "reason": "third-party public submission is a manual-review follow-up after Yeelight-controlled release evidence is stable"
+    },
+    {
+      "name": "git_tag_push",
+      "reason": "requires explicit maintainer approval"
+    },
+    {
+      "name": "github_release_upload",
+      "reason": "dry-run generates GitHub Release-ready files but does not upload"
+    },
+    {
+      "name": "global_install",
+      "reason": "global package installation changes host state"
+    },
+    {
+      "name": "live_production_smoke",
+      "reason": "live cloud calls require explicit credentials and approval"
+    },
+    {
+      "name": "guarded_write_cycle",
+      "reason": "write cycle requires explicit --allow-live and --allow-write outside generic dry-run"
+    }
+  ]
+}

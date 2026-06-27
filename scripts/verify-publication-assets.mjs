@@ -25,6 +25,7 @@ async function main() {
   checkJSON("github_marketplace_json", path.join(root, ".github", "plugin", "marketplace.json"));
   checkJSON("claude_marketplace_json", path.join(root, ".claude-plugin", "marketplace.json"));
   const openApi = checkJSON("bridge_openapi_json", path.join(bridgeDir, "openapi.json"));
+  checkBilingualReadme();
   checkJSON("skill_request_schema", path.join(root, "skills", skill, "assets", "schemas", "skill-request.schema.json"));
   checkJSON("skill_response_schema", path.join(root, "skills", skill, "assets", "schemas", "skill-response.schema.json"));
   checkFile("bridge_server", path.join(bridgeDir, "server.mjs"));
@@ -52,6 +53,32 @@ function checkJSON(name, file) {
 
 function checkFile(name, file) {
   checks.push(check(name, fs.existsSync(file), { file: rel(file) }));
+}
+
+function checkBilingualReadme() {
+  const readme = path.join(root, "README.md");
+  const readmeZh = path.join(root, "README.zh-CN.md");
+  const releaseUrl = `https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-${skill}-v${version}`;
+  const releasePath = `releases/${skill}/v${version}`;
+  checkFile("readme_en", readme);
+  checkFile("readme_zh_cn", readmeZh);
+  const en = readIfExists(readme);
+  const zh = readIfExists(readmeZh);
+  checks.push(check("readme_en_links_zh_cn", en.includes("[简体中文](README.zh-CN.md)"), { file: rel(readme) }));
+  checks.push(check("readme_zh_cn_links_en", zh.includes("[English](README.md)"), { file: rel(readmeZh) }));
+  checks.push(check("readme_en_mentions_version", en.includes(`\`${version}\``) && en.includes(releaseUrl) && en.includes(releasePath), {
+    file: rel(readme),
+    releaseUrl,
+    releasePath,
+  }));
+  checks.push(check("readme_zh_cn_mentions_version", zh.includes(`\`${version}\``) && zh.includes(releaseUrl) && zh.includes(releasePath), {
+    file: rel(readmeZh),
+    releaseUrl,
+    releasePath,
+  }));
+  checks.push(check("readme_en_default_language", en.startsWith("# Yeelight Smart Home Skills\n\nEnglish | [简体中文]"), {
+    file: rel(readme),
+  }));
 }
 
 function checkOpenApi(openApi) {
@@ -320,6 +347,10 @@ function rel(file) {
 
 function tail(text) {
   return String(text || "").split(/\r?\n/).slice(-20).join("\n");
+}
+
+function readIfExists(file) {
+  return fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
 }
 
 function flag(name) {
