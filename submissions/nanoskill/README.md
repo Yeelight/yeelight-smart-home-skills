@@ -1,6 +1,6 @@
 # NanoSkill Submission Record
 
-Status: email submission required.
+Status: official email submitted; awaiting review response.
 
 Public site:
 
@@ -22,10 +22,15 @@ Draft submission payload:
 
 Next action:
 
-- Send an email submission from an approved Yeelight sender address.
+- Wait for NanoSkill review response, package upload instructions, or required publisher onboarding steps.
 
 Prepared draft:
 
 ```text
 email-draft.md
 ```
+
+Submission evidence:
+
+- Sent from an approved Yeelight sender address to `team@nanoskill.ai`.
+- The message used `email-draft.md` and included the GitHub release, ClawHub page and skills.sh page.

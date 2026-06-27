@@ -32,20 +32,22 @@
       "evidence": [
         "public skill page renders from yeelight/yeelight-smart-home-skills",
         "install command is visible on page",
-        "Gen Agent Trust Hub, Socket and Snyk badges show Pass"
+        "Gen Agent Trust Hub, Socket and Snyk badges show Pass",
+        "real install smoke passed with npx --yes skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home; SKILL.md installed under .agents/skills/yeelight-smart-home"
       ]
     },
     {
       "id": "nanoskill",
-      "status": "contact-required-email-submission",
+      "status": "email-submitted-awaiting-review",
       "url": "https://nanoskill.ai",
       "contact": "team@nanoskill.ai",
       "evidence": [
         "no public submit API or form found",
-        "public flow points to email/Gmail compose"
+        "public flow points to email/Gmail compose",
+        "official Yeelight sender submitted the prepared email draft to team@nanoskill.ai"
       ],
       "remaining": [
-        "send email-draft.md from an approved Yeelight sender address"
+        "wait for NanoSkill review response or package upload instructions"
       ]
     },
     {
@@ -59,47 +61,67 @@
     },
     {
       "id": "tencent-skillhub",
-      "status": "blocked-login-realname-or-enterprise-required",
+      "status": "published-approved-installable",
       "url": "https://skillhub.cn",
       "legacyUrl": "https://skillhub.tencent.com",
       "apiBase": "https://api.skillhub.cn",
+      "cliTutorial": "https://skillhub.cn/tutorials#publish-via-cli",
+      "publishedSlug": "yeelight-smart-home-official",
+      "skillId": 91967,
+      "version": "0.1.1",
+      "versionId": 121718,
+      "installCommand": "skillhub install yeelight-smart-home-official",
       "evidence": [
-        "GET /api/v1/auth/me returned HTTP 401 {\"error\":\"unauthorized\"}",
-        "GET /api/v1/community/skills/check-slug?slug=yeelight-smart-home returned HTTP 401 {\"error\":\"unauthorized\"}",
-        "frontend contains POST /api/v1/community/skills/publish and icon upload APIs"
+        "SkillHub tutorial documents CLI publishing via skillhub login --key skh_xxx --host https://api.skillhub.cn and skillhub publish <skill-dir>",
+        "skillhub CLI 2026.6.27 installed in a temporary HOME and did not modify the real user home",
+        "skillhub login with a skh_ community token succeeded and auth whoami returned handle user_9efe3688",
+        "temporary SkillHub package dry-run passed for yeelight-smart-home@0.1.0",
+        "formal skillhub publish returned {\"error\":\"发布失败: skill exists and is owned by another user\"}",
+        "current account dashboard search returned no existing Yeelight skill before publishing the alternate slug",
+        "alternate slug yeelight-smart-home-official was available and then published successfully as skillId 91967",
+        "0.1.0 under yeelight-smart-home-official was rejected with reviewRejectReason content_audit_failed and reviewNote 审核未通过：未通过内容合规审查",
+        "0.1.1 minimal SkillHub package was resubmitted successfully with versionId 121718 and reviewStatus pending",
+        "Keen security report for 0.1.1 returned benign / 安全，无风险",
+        "Sanbu security report for 0.1.1 returned benign / 安全，无风险",
+        "0.1.1 dashboard reviewStatus became approved with auto-approved review note",
+        "real install smoke passed with skillhub install yeelight-smart-home-official; installed version 0.1.1 under /tmp/skillhub-yeelight-official-install-smoke-approved/skills/yeelight-smart-home-official"
       ],
       "remaining": [
-        "SkillHub login",
-        "phone binding / real-name / enterprise authentication as required by platform"
+        "request SkillHub operator transfer or release of slug yeelight-smart-home to the official Yeelight publisher",
+        "decide whether to keep yeelight-smart-home-official or republish under yeelight-smart-home after slug transfer"
       ]
     },
     {
       "id": "cocoloop-molili",
-      "status": "blocked-no-public-submit-endpoint-found",
+      "status": "email-submitted-awaiting-operator-response",
       "url": "https://hub.cocoloop.cn",
       "legacyUrl": "https://skill.molili.com.cn",
       "evidence": [
         "skill.molili.com.cn redirects to hub.cocoloop.cn",
         "/submit, /publish and /contact return 404",
-        "public crawl found browsing/search/listed Skill data but no public submit endpoint"
+        "public crawl found browsing/search/listed Skill data but no public submit endpoint",
+        "official Yeelight sender submitted the prepared operator contact draft to the known Molili/CocoLoop contacts"
       ],
       "remaining": [
-        "publisher/admin account or platform operator contact; operator-contact-draft.md is prepared"
+        "wait for publisher/admin account, upload API, or review instructions from the operator"
       ]
     },
     {
       "id": "dify-marketplace",
-      "status": "difypkg-ready-marketplace-pr-required",
+      "status": "marketplace-pr-open-precheck-passed",
       "url": "https://github.com/langgenius/dify-plugins",
+      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2614",
       "packagePath": "submissions/dify/yeelight-smart-home-0.1.0.difypkg",
       "evidence": [
         "Dify CLI is available locally",
         "Dify Marketplace requires a .difypkg PR to langgenius/dify-plugins",
-        "plugin source and PR body are prepared under submissions/dify"
+        "plugin source and PR body are prepared under submissions/dify",
+        "PR #2614 opened from axdlee:yeelight-smart-home-0.1.0 with only yeelight/yeelight-smart-home/yeelight-smart-home-0.1.0.difypkg",
+        "GitHub Actions pre-check-plugin completed successfully"
       ],
       "remaining": [
         "deploy a public HTTPS bridge",
-        "submit Marketplace PR from an official Yeelight GitHub identity or after explicit approval to use current GitHub account"
+        "wait for Dify Marketplace maintainer review and merge"
       ]
     }
   ]

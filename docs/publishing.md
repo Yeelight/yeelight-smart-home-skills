@@ -51,5 +51,5 @@ Additional public skill directories are tracked in `submissions/skill-directory-
 
 - NanoSkill: no public API/form found; email submission is required.
 - Marketing Skills: domain-specific marketing directory; no third-party smart-home skill submission flow found.
-- Tencent SkillHub: publish API exists, but login/real-name or enterprise authentication is required before automated submission.
+- Tencent SkillHub: CLI submission is approved and installable under `yeelight-smart-home-official` v0.1.1; both security scans passed. The canonical `yeelight-smart-home` slug is owned by another user or reserved outside the current account.
 - Molili / CocoLoop Skill: no public submit API or `/submit`, `/publish`, `/contact` route found from the public site crawl.

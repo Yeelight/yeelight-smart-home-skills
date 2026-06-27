@@ -1,6 +1,6 @@
 # Molili / CocoLoop Skill Review Record
 
-状态：未发现公开自动提交入口。
+状态：未发现公开自动提交入口；已用 Yeelight 官方邮箱联系平台运营方，等待回复。
 
 入口：
 
@@ -17,5 +17,10 @@ Findings:
 
 Next action:
 
-- Use a platform owner/admin channel if Yeelight has one.
-- Otherwise contact CocoLoop/Molili operators and request a publisher account or submission process.
+- Wait for the operator response with a publisher/admin account, upload API, or manual review route.
+- Use a platform owner/admin channel directly if Yeelight already has one.
+
+Submission evidence:
+
+- Sent the prepared `operator-contact-draft.md` from an approved Yeelight sender address to known Molili/CocoLoop contacts.
+- The message requested official publisher access, review requirements, an upload API, or an operator contact for the Yeelight Smart Home skill.

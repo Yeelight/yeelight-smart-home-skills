@@ -42,7 +42,7 @@
       "automation": "email-only",
       "url": "https://nanoskill.ai",
       "submissionPath": "submissions/nanoskill/README.md",
-      "status": "contact-required-email-submission"
+      "status": "email-submitted-awaiting-review"
     },
     {
       "id": "marketing-skills",
@@ -57,10 +57,16 @@
       "id": "tencent-skillhub",
       "title": "Tencent SkillHub",
       "region": "china",
-      "automation": "login-gated-api",
+      "automation": "skillhub-cli",
       "url": "https://skillhub.cn",
+      "publishedSlug": "yeelight-smart-home-official",
+      "skillId": 91967,
+      "version": "0.1.1",
+      "versionId": 121718,
+      "cliTutorial": "https://skillhub.cn/tutorials#publish-via-cli",
+      "installCommand": "skillhub install yeelight-smart-home-official",
       "submissionPath": "submissions/tencent-skillhub/README.md",
-      "status": "blocked-login-realname-or-enterprise-required"
+      "status": "published-approved-installable"
     },
     {
       "id": "cocoloop-molili",
@@ -70,7 +76,7 @@
       "url": "https://hub.cocoloop.cn",
       "legacyUrl": "https://skill.molili.com.cn",
       "submissionPath": "submissions/cocoloop-molili/README.md",
-      "status": "blocked-no-public-submit-endpoint-found"
+      "status": "email-submitted-awaiting-operator-response"
     },
     {
       "id": "github-copilot-cli-plugin-marketplace",
@@ -104,7 +110,8 @@
       "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/dify/README.md",
       "packagePath": "submissions/dify/yeelight-smart-home-0.1.0.difypkg",
-      "status": "difypkg-ready-marketplace-pr-required"
+      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2614",
+      "status": "marketplace-pr-open-precheck-passed"
     },
     {
       "id": "openai-gpt-store-apps-sdk",

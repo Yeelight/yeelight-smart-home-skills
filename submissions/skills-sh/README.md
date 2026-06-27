@@ -19,6 +19,13 @@ Verification performed:
 - Public page renders the `yeelight-smart-home` Skill from `yeelight/yeelight-smart-home-skills`.
 - The page exposes the install command above.
 - The page shows security audit badges for Gen Agent Trust Hub, Socket and Snyk as `Pass`.
+- Real install smoke passed in a clean temporary directory:
+
+  ```sh
+  HOME=/tmp/skills-sh-yeelight-smoke npx --yes skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
+  ```
+
+  The installed `SKILL.md` was present under `.agents/skills/yeelight-smart-home`.
 
 Publishing model:
 

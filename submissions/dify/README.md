@@ -1,6 +1,19 @@
 # Dify Marketplace Submission Kit
 
-Status: `.difypkg` package ready, Dify Marketplace PR still requires an official Yeelight GitHub identity or explicit approval to submit from the current GitHub account.
+Status: `.difypkg` package ready; Marketplace PR is open and the Dify pre-check has passed.
+
+Marketplace PR:
+
+```text
+https://github.com/langgenius/dify-plugins/pull/2614
+```
+
+PR state:
+
+- Open.
+- Submitted from `axdlee:yeelight-smart-home-0.1.0` after explicit approval.
+- File list contains only `yeelight/yeelight-smart-home/yeelight-smart-home-0.1.0.difypkg`.
+- GitHub Actions `pre-check-plugin` completed successfully.
 
 Current release assets:
 
@@ -14,7 +27,7 @@ plugin/
 yeelight-smart-home-0.1.0.difypkg
 ```
 
-Recommended submission path:
+Recommended runtime deployment path:
 
 1. Deploy `../../adapters/yeelight-skill-bridge/` on a public HTTPS endpoint.
 2. In Dify, configure provider credentials:
@@ -27,13 +40,9 @@ Recommended submission path:
    dify plugin checksum submissions/dify/yeelight-smart-home-0.1.0.difypkg
    ```
 
-4. Fork `langgenius/dify-plugins`.
-5. Add only this package file under `yeelight/yeelight-smart-home/`.
-6. Submit the PR with `pull-request.md`.
+4. Wait for Dify Marketplace maintainer review and merge of PR #2614.
 
 Required credentials/material:
 
-- Dify plugin developer identity.
 - Public HTTPS bridge URL.
 - Runtime installation instructions for `yeelight-home`.
-- Official Yeelight GitHub identity for Marketplace PR submission, or explicit approval to submit from the currently authenticated GitHub account.

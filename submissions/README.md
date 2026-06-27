@@ -17,12 +17,12 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 | Platform | Ready Artifact | Real Submission Status |
 | --- | --- | --- |
 | ClawHub | Native Skill directory | Published under `@yeelight/yeelight-smart-home`; install smoke passed; publisher trust review still pending |
-| skills.sh | GitHub repository Skill | Indexed and installable from GitHub; public page shows security audit pass badges |
-| NanoSkill | GitHub repository + email template | No public API/form found; email submission required |
+| skills.sh | GitHub repository Skill | Indexed and installable from GitHub; public page shows security audit pass badges; real `npx skills add` smoke passed |
+| NanoSkill | GitHub repository + email template | Official Yeelight email submitted; awaiting platform review response |
 | Marketing Skills | GitHub repository | Not a fit for Yeelight smart-home Skill; no third-party submit route found |
-| Tencent SkillHub | Skill ZIP / folder payload | Publish API exists; unauthenticated requests return 401, login/real-name/enterprise flow required |
-| Molili / CocoLoop Skill | GitHub repository / Skill folder | No public submit endpoint found from public crawl |
-| Dify Marketplace | `.difypkg` + PR body | Package built and verified; Marketplace PR requires developer identity and review |
+| Tencent SkillHub | Skill folder payload | Original `yeelight-smart-home` slug is owned by another user; alternate slug `yeelight-smart-home-official` v0.1.1 is approved, both security scans passed, and real `skillhub install` smoke passed |
+| Molili / CocoLoop Skill | GitHub repository / Skill folder | Official Yeelight email submitted to known operator contacts; awaiting publisher route |
+| Dify Marketplace | `.difypkg` + PR body | PR [langgenius/dify-plugins#2614](https://github.com/langgenius/dify-plugins/pull/2614) is open; `pre-check-plugin` passed; awaiting review |
 | OpenAI GPT Store / Apps SDK | MCP endpoint + OpenAPI schema | Requires public HTTPS deployment and dashboard review |
 | Coze / 扣子 | OpenAPI schema | Requires console import, auth config, validation and publish |
 | 阿里云百炼 | OpenAPI/MCP bridge | Requires workspace setup, plugin/MCP test and app publish |
