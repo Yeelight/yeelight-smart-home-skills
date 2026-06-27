@@ -32,9 +32,11 @@ clean(path.join(root, "skills", skill));
 copyDir(stageSource, path.join(root, "skills", skill));
 writeMarketplaceFiles({ skill, version });
 writeReadme({ skill, version, releaseTag });
+writeStatusFiles({ skill, version, releaseTag });
 run("python3", ["-m", "json.tool", ".github/plugin/marketplace.json"], { stdout: "ignore" });
 run("python3", ["-m", "json.tool", ".claude-plugin/marketplace.json"], { stdout: "ignore" });
 run("python3", ["-m", "json.tool", "platforms.json"], { stdout: "ignore" });
+run("python3", ["-m", "json.tool", "submissions/skill-directory-submission-status.json"], { stdout: "ignore" });
 run("shasum", ["-a", "256", "-c", "checksums.txt"], { cwd: versionDir });
 if (!dryRun) {
   run("git", ["add", "."]);
@@ -138,6 +140,22 @@ Use \`releases/${skill}/v${version}/${skill}-copilot-skill-v${version}.zip\`.
 
 Use \`releases/${skill}/v${version}/${skill}-agent-skill-v${version}.zip\`.
 
+### LobeHub Skills
+
+First listing uses the web request form:
+
+\`\`\`text
+https://lobehub.com/zh/skills
+\`\`\`
+
+Click \`请求收录\` and submit:
+
+\`\`\`text
+https://github.com/Yeelight/yeelight-smart-home-skills
+\`\`\`
+
+After LobeHub collects the repository, use \`@lobehub/market-cli\` to claim ownership and publish later versions.
+
 ## Runtime Dependency
 
 This skill depends on the separately installed \`yeelight-home\` runtime and invokes it through:
@@ -173,11 +191,56 @@ shasum -a 256 -c checksums.txt
 Full publication asset check:
 
 \`\`\`sh
-node scripts/verify-publication-assets.mjs
+node scripts/verify-publication-assets.mjs --skill ${skill} --version ${version}
 \`\`\`
 
 Third-party directory submission status and evidence are tracked in \`platforms.json\` and \`submissions/skill-directory-submission-status.json\`.
+
+## Reusable Release Flow
+
+For later Yeelight skills or new versions:
+
+1. Build and verify from the source repository's generic Skill release pipeline.
+2. Refresh this public distribution repository with \`scripts/publish-skill-release.mjs\`.
+3. Run \`node scripts/verify-publication-assets.mjs --skill <skill-id> --version <x.y.z>\`.
+4. Publish native Skill directories through platform CLI/form flows.
+5. Publish API/MCP-only platforms through the bridge adapter and verify installed-copy or deployed-endpoint smoke.
 `, "utf8");
+}
+
+function writeStatusFiles({ skill, version, releaseTag }) {
+  const releaseUrl = `https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/${releaseTag}`;
+  updateJSON(path.join(root, "platforms.json"), (value) => {
+    for (const platform of value.platforms || []) {
+      if (platform.id === "github-release") {
+        platform.version = version;
+        platform.releaseTag = releaseTag;
+        platform.releaseUrl = releaseUrl;
+        platform.status = "published";
+      }
+      if (platform.id === "claude-skill-zip") {
+        platform.version = version;
+        platform.assetPath = `releases/${skill}/v${version}/${skill}-claude-skill-v${version}.zip`;
+      }
+      if (platform.id === "github-copilot-cli-plugin-marketplace") {
+        platform.version = version;
+      }
+      if (platform.id === "claude-code-plugin-marketplace") {
+        platform.version = version;
+      }
+    }
+    return value;
+  });
+  updateJSON(path.join(root, "submissions", "skill-directory-submission-status.json"), (value) => {
+    value.skill = {
+      ...(value.skill || {}),
+      id: skill,
+      version,
+      repository: "https://github.com/Yeelight/yeelight-smart-home-skills",
+      release: releaseUrl,
+    };
+    return value;
+  });
 }
 
 function flag(name) {
@@ -201,6 +264,10 @@ function copyFile(source, target) {
 function writeJSON(file, value) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+function updateJSON(file, updater) {
+  if (!fs.existsSync(file)) return;
+  writeJSON(file, updater(JSON.parse(fs.readFileSync(file, "utf8"))));
 }
 function run(command, commandArgs, options = {}) {
   const result = spawnSync(command, commandArgs, {

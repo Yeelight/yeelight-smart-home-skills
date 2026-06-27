@@ -33,5 +33,6 @@ Use this reference for local memory, preferences, and personalization.
 - `memory.pause` and `memory.resume` affect local learning only; they do not change cloud devices or home configuration.
 - Persistent home changes suggested by memory still require Runtime planning and confirmation.
 - Implicit candidates must not directly create room, group, scene, automation, device, gateway, or favorite configuration.
-- Low-risk personalization may adjust wording or suggested defaults only when Runtime returns enough evidence; still explain that it is a preference-based suggestion, not an applied change.
+- Low-risk personalization may adjust wording or suggested defaults only when Runtime returns enough evidence; still explain that it is a preference-based local suggestion, not an applied cloud change.
+- After Runtime confirms `memory.remember`, the local Runtime may create or refresh a preference-based pending recommendation. If the user asks for suggestions, call `recommendation.list` rather than inventing a recommendation from the remembered text.
 - Recommendation feedback such as reject, cooldown, or permanent suppression must be respected.

@@ -13,7 +13,8 @@ Use this reference for proactive suggestions and feedback.
 - Present at most one non-essential recommendation in a conversation, and only the item returned by Runtime.
 - Do not surface recommendations during troubleshooting, auth recovery, safety confirmation, deletion approval, or error handling unless the user explicitly asks.
 - A recommendation may propose a scene, automation, lighting design, naming cleanup, favorite organization, repair, energy saving, capability discovery, or memory update, but any persistent change must go through Runtime confirmation.
-- Implicit candidates can inform recommendations, but they must not create room, group, scene, automation, favorite, device, gateway, or member configuration directly.
+- Preference-based local recommendations may be returned after `memory.remember` or when `recommendation.list` materializes saved preferences. They can suggest defaults or next-step plans, but they must not create room, group, scene, automation, favorite, device, gateway, or member configuration directly.
+- If Runtime returns no recommendation, say there is no current local recommendation. Do not fill the gap with model-generated advice.
 
 ## Feedback And Suppression
 

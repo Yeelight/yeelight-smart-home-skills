@@ -7,8 +7,9 @@ import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const skill = "yeelight-smart-home";
-const version = "0.1.0";
+const args = process.argv.slice(2);
+const skill = flag("--skill") || "yeelight-smart-home";
+const version = flag("--version") || latestReleaseVersion(skill);
 const releaseDir = path.join(root, "releases", skill, `v${version}`);
 const bridgeDir = path.join(root, "adapters", "yeelight-skill-bridge");
 const checks = [];
@@ -93,7 +94,7 @@ function checkPlatformSubmissionKits() {
 
 function checkDifyPackage() {
   const pluginRoot = path.join(root, "submissions", "dify", "plugin");
-  const packageFile = path.join(root, "submissions", "dify", "yeelight-smart-home-0.1.0.difypkg");
+  const packageFile = latestDifyPackage(skill);
   for (const file of [
     "manifest.yaml",
     "README.md",
@@ -319,4 +320,66 @@ function rel(file) {
 
 function tail(text) {
   return String(text || "").split(/\r?\n/).slice(-20).join("\n");
+}
+
+function flag(name) {
+  const index = args.indexOf(name);
+  if (index >= 0 && args[index + 1] && !args[index + 1].startsWith("--")) return args[index + 1];
+  const equal = args.find((item) => item.startsWith(`${name}=`));
+  return equal ? equal.slice(name.length + 1) : "";
+}
+
+function latestReleaseVersion(skillId) {
+  const releasesRoot = path.join(root, "releases", skillId);
+  const versions = fs.existsSync(releasesRoot)
+    ? fs.readdirSync(releasesRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory() && /^v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(entry.name))
+      .map((entry) => entry.name.slice(1))
+      .sort(compareSemver)
+    : [];
+  if (versions.length === 0) {
+    throw new Error(`no release versions found under ${rel(releasesRoot)}`);
+  }
+  return versions[versions.length - 1];
+}
+
+function latestDifyPackage(skillId) {
+  const dir = path.join(root, "submissions", "dify");
+  const pattern = new RegExp(`^${escapeRegExp(skillId)}-(\\d+\\.\\d+\\.\\d+(?:-[0-9A-Za-z.-]+)?)\\.difypkg$`);
+  const packages = fs.existsSync(dir)
+    ? fs.readdirSync(dir)
+      .map((name) => ({ name, match: name.match(pattern) }))
+      .filter((item) => item.match)
+      .sort((left, right) => compareSemver(left.match[1], right.match[1]))
+    : [];
+  if (packages.length === 0) {
+    return path.join(dir, `${skillId}-${version}.difypkg`);
+  }
+  return path.join(dir, packages[packages.length - 1].name);
+}
+
+function compareSemver(left, right) {
+  const leftParts = parseSemver(left);
+  const rightParts = parseSemver(right);
+  for (const index of [0, 1, 2]) {
+    const diff = leftParts.numbers[index] - rightParts.numbers[index];
+    if (diff !== 0) return diff;
+  }
+  if (leftParts.prerelease === rightParts.prerelease) return 0;
+  if (!leftParts.prerelease) return 1;
+  if (!rightParts.prerelease) return -1;
+  return leftParts.prerelease.localeCompare(rightParts.prerelease);
+}
+
+function parseSemver(value) {
+  const match = String(value).match(/^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/);
+  if (!match) throw new Error(`invalid semver: ${value}`);
+  return {
+    numbers: [Number(match[1]), Number(match[2]), Number(match[3])],
+    prerelease: match[4] || "",
+  };
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

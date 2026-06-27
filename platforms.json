@@ -8,7 +8,10 @@
       "region": "global",
       "automation": "fully-automated",
       "releaseAsset": true,
-      "status": "published"
+      "status": "published",
+      "version": "0.1.1",
+      "releaseTag": "yeelight-skill-yeelight-smart-home-v0.1.1",
+      "releaseUrl": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.1"
     },
     {
       "id": "clawhub",
@@ -110,7 +113,8 @@
       "region": "global",
       "automation": "repo-metadata",
       "metadataPath": ".github/plugin/marketplace.json",
-      "status": "published-metadata"
+      "status": "published-metadata",
+      "version": "0.1.1"
     },
     {
       "id": "claude-code-plugin-marketplace",
@@ -118,14 +122,17 @@
       "region": "global",
       "automation": "repo-metadata",
       "metadataPath": ".claude-plugin/marketplace.json",
-      "status": "published-metadata"
+      "status": "published-metadata",
+      "version": "0.1.1"
     },
     {
       "id": "claude-skill-zip",
       "title": "Claude Skill ZIP",
       "region": "global",
       "automation": "artifact-ready",
-      "status": "release-asset-ready"
+      "status": "release-asset-ready",
+      "version": "0.1.1",
+      "assetPath": "releases/yeelight-smart-home/v0.1.1/yeelight-smart-home-claude-skill-v0.1.1.zip"
     },
     {
       "id": "dify-marketplace",

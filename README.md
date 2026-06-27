@@ -6,7 +6,13 @@ Public release repository for Yeelight Smart Home agent skills.
 
 | Skill | Version | Runtime | Packages |
 | --- | --- | --- | --- |
-| `yeelight-smart-home` | `0.1.0` | `yeelight-home >= 0.1.7` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
+| `yeelight-smart-home` | `0.1.1` | `yeelight-home >= 0.1.7` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
+
+## Release
+
+- Repository: https://github.com/Yeelight/yeelight-smart-home-skills
+- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.1
+- Release evidence: `releases/yeelight-smart-home/v0.1.1/`
 
 ## Install
 
@@ -32,6 +38,22 @@ npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill ye
 - skills.sh page: https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home
 - Status: indexed and installable, with visible security audit pass badges.
 
+### Codex / Agent Plugin
+
+Install from this repository marketplace metadata or download `releases/yeelight-smart-home/v0.1.1/yeelight-smart-home-codex-plugin-v0.1.1.zip`.
+
+### Claude Skill ZIP
+
+Download and upload `releases/yeelight-smart-home/v0.1.1/yeelight-smart-home-claude-skill-v0.1.1.zip`.
+
+### GitHub Copilot Agent Skill
+
+Use `releases/yeelight-smart-home/v0.1.1/yeelight-smart-home-copilot-skill-v0.1.1.zip`.
+
+### Open Agent Skills
+
+Use `releases/yeelight-smart-home/v0.1.1/yeelight-smart-home-agent-skill-v0.1.1.zip`.
+
 ### LobeHub Skills
 
 First listing uses the web request form:
@@ -47,30 +69,6 @@ https://github.com/Yeelight/yeelight-smart-home-skills
 ```
 
 After LobeHub collects the repository, use `@lobehub/market-cli` to claim ownership and publish later versions.
-
-### Codex / Agent Plugin
-
-Install the plugin from this repository marketplace metadata, or download:
-
-- `releases/yeelight-smart-home/v0.1.0/yeelight-smart-home-codex-plugin-v0.1.0.zip`
-
-### Claude Skill ZIP
-
-Download and upload the Claude-compatible package:
-
-- `releases/yeelight-smart-home/v0.1.0/yeelight-smart-home-claude-skill-v0.1.0.zip`
-
-### GitHub Copilot Agent Skill
-
-Use the Copilot-compatible package:
-
-- `releases/yeelight-smart-home/v0.1.0/yeelight-smart-home-copilot-skill-v0.1.0.zip`
-
-### Open Agent Skills
-
-Use the open Agent Skill package:
-
-- `releases/yeelight-smart-home/v0.1.0/yeelight-smart-home-agent-skill-v0.1.0.zip`
 
 ## Runtime Dependency
 
@@ -93,25 +91,21 @@ adapters/yeelight-skill-bridge/
 The bridge exposes `GET /health`, `GET /openapi.json`, `POST /invoke` and `POST /mcp`.
 It calls only `yeelight-home invoke --stdin`; the runtime remains responsible for auth, policy and confirmation gates.
 
-## Release Evidence
+## Platform Status
 
-Release assets, manifests, checksums and validation summaries are under:
+See `platforms.json` and `submissions/` for platform-specific distribution status and submission kits.
 
-```text
-releases/yeelight-smart-home/v0.1.0/
-```
-
-Verify checksums before installing downloaded packages:
+## Verify
 
 ```sh
-cd releases/yeelight-smart-home/v0.1.0
-sha256sum -c checksums.txt
+cd releases/yeelight-smart-home/v0.1.1
+shasum -a 256 -c checksums.txt
 ```
 
 Full publication asset check:
 
 ```sh
-node scripts/verify-publication-assets.mjs
+node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.1
 ```
 
 Third-party directory submission status and evidence are tracked in `platforms.json` and `submissions/skill-directory-submission-status.json`.
@@ -122,6 +116,6 @@ For later Yeelight skills or new versions:
 
 1. Build and verify from the source repository's generic Skill release pipeline.
 2. Refresh this public distribution repository with `scripts/publish-skill-release.mjs`.
-3. Run `node scripts/verify-publication-assets.mjs`.
+3. Run `node scripts/verify-publication-assets.mjs --skill <skill-id> --version <x.y.z>`.
 4. Publish native Skill directories through platform CLI/form flows.
 5. Publish API/MCP-only platforms through the bridge adapter and verify installed-copy or deployed-endpoint smoke.

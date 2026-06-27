@@ -2,9 +2,9 @@
   "schemaVersion": "yeelight-skill-directory-submission-status-v1",
   "skill": {
     "id": "yeelight-smart-home",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "repository": "https://github.com/Yeelight/yeelight-smart-home-skills",
-    "release": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.0"
+    "release": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.1"
   },
   "platforms": [
     {

@@ -1,165 +1,150 @@
 {
-  "schemaVersion": "yeelight-skill-release-v1",
+  "schemaVersion": "yeelight-skill-package-v1",
   "generatedAt": "2026-06-27T12:22:17.700Z",
   "skillId": "yeelight-smart-home",
   "skillVersion": "0.1.1",
-  "channel": "codex-plugin",
-  "rootSha256": "38e52441ba8129574e3c573b63cad2d24e61eda68ae3afaf7b2aabd758f20ff3",
+  "sourcePath": "skill/yeelight-smart-home",
   "runtime": {
     "command": "yeelight-home invoke --stdin",
     "minVersion": "0.1.7",
     "bundled": false
   },
+  "rootSha256": "9a96af1cfb3a88f835d338ca600f89f872a99994439248f2d1a4fc8444f63335",
   "files": [
     {
-      "path": ".codex-plugin/plugin.json",
-      "size": 235,
-      "sha256": "c3eb988258630a3949390799d4304cb67c012a6652f08a78c24122943b822104"
-    },
-    {
-      "path": "README.md",
-      "size": 165,
-      "sha256": "51aafda3f6a4d604d54e419d99171a5c29185d0548bfa7f01e8886a3109283f3"
-    },
-    {
-      "path": "skills/yeelight-smart-home/LICENSE",
-      "size": 12,
-      "sha256": "227dcf1fad60e364e876ff1be1a79be6edba40c9a0b9e67be737524e73da83f7"
-    },
-    {
-      "path": "skills/yeelight-smart-home/README.md",
-      "size": 243,
-      "sha256": "7767bfe07325bede2a7b20b4fc2587a898e5984d7ceabc5af1cb08f665b08c80"
-    },
-    {
-      "path": "skills/yeelight-smart-home/SKILL.md",
+      "path": "SKILL.md",
       "size": 5934,
       "sha256": "b353957917fe47d6fa2eb4161ec821ecd219fb5bf0dc6e4063e4c5e322b40b26"
     },
     {
-      "path": "skills/yeelight-smart-home/agents/openai.yaml",
+      "path": "agents/openai.yaml",
       "size": 326,
       "sha256": "10f78a3e740c35dfc5157e4de38b3b38ae7aad20af8f54e7e12a773406a6dfd5"
     },
     {
-      "path": "skills/yeelight-smart-home/assets/catalog/yeelight-domain.json",
+      "path": "assets/catalog/yeelight-domain.json",
       "size": 198712,
       "sha256": "c0ed5f7d438237ef22bc63435e5dba89e78b6dd883243451c46c6a7e88b611c0"
     },
     {
-      "path": "skills/yeelight-smart-home/assets/intent-catalog.json",
+      "path": "assets/intent-catalog.json",
       "size": 4353,
       "sha256": "b4d8ea5ce3ff668d33e2f81f9983e1d0e7b1a40cfacf800ad95502261675b05c"
     },
     {
-      "path": "skills/yeelight-smart-home/assets/schemas/skill-request.schema.json",
+      "path": "assets/schemas/skill-request.schema.json",
       "size": 7349,
       "sha256": "e13d3056f557d25fb0cb97653054886f9e93500f11f5c9372ab3ffc20efcadad"
     },
     {
-      "path": "skills/yeelight-smart-home/assets/schemas/skill-response.schema.json",
+      "path": "assets/schemas/skill-response.schema.json",
       "size": 1638,
       "sha256": "785c278200394c51c5d50095b9069711c7ab5bacc595fcd968ed78fd936cef74"
     },
     {
-      "path": "skills/yeelight-smart-home/references/automation-events.md",
+      "path": "references/automation-events.md",
       "size": 1700,
       "sha256": "67ed6decfb6f3d422e4cac6ab37d40af4924b2e7c3c0fd218d0dabfb120a456e"
     },
     {
-      "path": "skills/yeelight-smart-home/references/automations.md",
+      "path": "references/automations.md",
       "size": 3904,
       "sha256": "d2107cf1911eb3befa0050d34ee9b63ca74fb7b85a43d961bcba7699b7abe16f"
     },
     {
-      "path": "skills/yeelight-smart-home/references/capability-boundaries.md",
+      "path": "references/capability-boundaries.md",
       "size": 3805,
       "sha256": "824581c50757195deb31b530ce5eac819e444f1efccb26defbc2b97a9ce1191f"
     },
     {
-      "path": "skills/yeelight-smart-home/references/device-control.md",
+      "path": "references/device-control.md",
       "size": 3826,
       "sha256": "aad2d2e82ab371b3c978d07c345ec7e2f60fa988b03fd68cffe1a750332ee345"
     },
     {
-      "path": "skills/yeelight-smart-home/references/device-lexicon.md",
+      "path": "references/device-lexicon.md",
       "size": 7194,
       "sha256": "4cfeb18f2920df8b377b1e7b516aa7bfe833b130a6c40aac386db9963a613854"
     },
     {
-      "path": "skills/yeelight-smart-home/references/diagnostics.md",
+      "path": "references/diagnostics.md",
       "size": 4645,
       "sha256": "357e25760b484ca2d8381a0699ac0d0ec05020f6ea1c4055ea03783b8804425d"
     },
     {
-      "path": "skills/yeelight-smart-home/references/groups.md",
+      "path": "references/groups.md",
       "size": 1433,
       "sha256": "fda662cf7b803a4c3f8d8d3d885cf0faad43a36426a7f6b5895d07a911730250"
     },
     {
-      "path": "skills/yeelight-smart-home/references/home-room-area.md",
+      "path": "references/home-room-area.md",
       "size": 8599,
       "sha256": "5cbc18547e0e7fb921283618c8188732472a2465862b9cdd198f66fd874bb785"
     },
     {
-      "path": "skills/yeelight-smart-home/references/lighting-design.md",
+      "path": "references/lighting-design.md",
       "size": 1507,
       "sha256": "363c3c3448a3f66625b635e247fb3c4265e2072d1a870fb999c118d9924d83a8"
     },
     {
-      "path": "skills/yeelight-smart-home/references/lighting-experience.md",
+      "path": "references/lighting-experience.md",
       "size": 3045,
       "sha256": "3bf4679d3f20f454744966ac05e6b90637a2f014db5ba88b0c6a38bdf332c74a"
     },
     {
-      "path": "skills/yeelight-smart-home/references/memory-and-personalization.md",
+      "path": "references/memory-and-personalization.md",
       "size": 3442,
       "sha256": "5f0d744dec3e45961d7da1d15b1cb324698e7b0c20d990e8209a6ea1e13bd06c"
     },
     {
-      "path": "skills/yeelight-smart-home/references/product-knowledge.md",
+      "path": "references/product-knowledge.md",
       "size": 3525,
       "sha256": "b29578efedb84351868daefb3a9a8d1467a127e509351894fbaf752a8fb1b472"
     },
     {
-      "path": "skills/yeelight-smart-home/references/recommendations.md",
+      "path": "references/recommendations.md",
       "size": 2383,
       "sha256": "2869582b421bce1493d3c14cf7b84e312970c986b67b29ca1ac990e7f0808243"
     },
     {
-      "path": "skills/yeelight-smart-home/references/runtime-status-and-errors.md",
+      "path": "references/runtime-status-and-errors.md",
       "size": 3157,
       "sha256": "e699a14418ce965defdc7b8f26e8753e458fe092ba30cda21c0cb5a7caa7b811"
     },
     {
-      "path": "skills/yeelight-smart-home/references/safety-and-confirmation.md",
+      "path": "references/safety-and-confirmation.md",
       "size": 2342,
       "sha256": "8daee9f65b99f1d368cd12c4f93813308f77f8300b4f0921806146ad0acd10e1"
     },
     {
-      "path": "skills/yeelight-smart-home/references/scenes.md",
+      "path": "references/scenes.md",
       "size": 2231,
       "sha256": "e1aa91ec4a3a96e358a83f9b835a770d4b0fd644be14cc3783988593a78b21cc"
     },
     {
-      "path": "skills/yeelight-smart-home/references/thing-model.md",
+      "path": "references/thing-model.md",
       "size": 8179,
       "sha256": "463418a712cf30c7d35bc8430308fbb67bb1bbcd896278dfebbc15c35f22e384"
     },
     {
-      "path": "skills/yeelight-smart-home/scripts/invoke.ps1",
+      "path": "scripts/invoke.ps1",
       "size": 3298,
       "sha256": "db82b461631d370f77db86afa32bfdee8333c732b59d5b93433e0e6615b60358"
     },
     {
-      "path": "skills/yeelight-smart-home/scripts/invoke.sh",
+      "path": "scripts/invoke.sh",
       "size": 3268,
       "sha256": "0205014d5e1a783ad7eb25f05e09bd462dfa6f0cdcf7c34d77a9a8a336d9504d"
     },
     {
-      "path": "skills/yeelight-smart-home/scripts/runtime-manifest.json",
+      "path": "scripts/runtime-manifest.json",
       "size": 1558,
       "sha256": "888075997629faff400044deb984ad7f1acee36abf699c7525a3fce2471aef9b"
     }
-  ]
+  ],
+  "scan": {
+    "ok": true,
+    "filesScanned": 26,
+    "violations": []
+  }
 }
