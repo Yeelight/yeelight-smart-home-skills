@@ -17,11 +17,14 @@
         "transfer request returned: Transferred yeelight-smart-home to @yeelight",
         "inspect @yeelight/yeelight-smart-home returned owner.handle=yeelight and latestVersion.version=0.1.0",
         "install @yeelight/yeelight-smart-home installed v0.1.0 successfully",
-        "inspect @axdlee/yeelight-smart-home no longer resolves"
+        "inspect @axdlee/yeelight-smart-home no longer resolves",
+        "clawhub skill publish under @yeelight published version 0.1.1 with versionId k97704w5v8snw8qzdegm6kr9h989f505",
+        "inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.1 and tags latest/yeelight/smart-home/lighting/agent-skill/codex/claude/copilot all pointing to 0.1.1",
+        "clawhub install @yeelight/yeelight-smart-home --version 0.1.1 installed into a clean temporary directory and updated-reference hashes matched the release package"
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
-        "Optional skill-card.md and aggregate security status completion"
+        "Optional skill-card.md and aggregate security status completion; ClawHub verify currently reports security.pending while asynchronous scans finish"
       ]
     },
     {
@@ -33,7 +36,9 @@
         "public skill page renders from yeelight/yeelight-smart-home-skills",
         "install command is visible on page",
         "Gen Agent Trust Hub, Socket and Snyk badges show Pass",
-        "real install smoke passed with npx --yes skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home; SKILL.md installed under .agents/skills/yeelight-smart-home"
+        "real install smoke passed with npx --yes skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home; SKILL.md installed under .agents/skills/yeelight-smart-home",
+        "after the 0.1.1 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk",
+        "installed-copy hashes for memory-and-personalization.md and recommendations.md matched the 0.1.1 release package"
       ]
     },
     {
