@@ -61,7 +61,7 @@
     },
     {
       "id": "lobehub",
-      "status": "request-form-url-entered-cloudflare-reverification-required",
+      "status": "request-form-submitted-awaiting-review",
       "url": "https://lobehub.com/zh/skills",
       "packagePath": "skills/yeelight-smart-home",
       "publishCommand": "Open https://lobehub.com/zh/skills, click 请求收录, submit https://github.com/Yeelight/yeelight-smart-home-skills",
@@ -73,20 +73,23 @@
         "CLI implementation requires SKILL.md at package root and uses --identifier or SKILL.md frontmatter identifier for version publishing after ownership exists",
         "unauthenticated lhm skill list returned Not logged in. Run `lhm login` first",
         "temporary headless browser was blocked by Vercel Security Checkpoint Code 21, so form submission must use a real browser session",
-        "real Chrome entered https://github.com/Yeelight/yeelight-smart-home-skills and clicked submit; LobeHub then triggered Cloudflare Turnstile re-verification and disabled submit again"
+        "real Chrome entered https://github.com/Yeelight/yeelight-smart-home-skills and clicked submit; LobeHub then triggered Cloudflare Turnstile re-verification and disabled submit again",
+        "user completed Cloudflare Turnstile verification in the real Chrome browser",
+        "real Chrome submitted https://github.com/Yeelight/yeelight-smart-home-skills through the LobeHub 请求收录 Skill form",
+        "after submit, the request modal closed and the page returned to the Skills marketplace list with no visible error message"
       ],
       "remaining": [
-        "complete the second Cloudflare Turnstile verification after clicking submit, then click submit again",
-        "complete Cloudflare Turnstile human verification in the real Chrome request form",
-        "submit https://github.com/Yeelight/yeelight-smart-home-skills in the GitHub 仓库地址 field",
         "wait for LobeHub brief review and automated collection workflow",
+        "verify public LobeHub skill page after listing appears",
         "after listing appears, sign in with official Yeelight LobeHub account via lhm login and connect GitHub",
         "claim yeelight-smart-home if claimable and use lhm skill publish for future version updates",
-        "verify public page, view metadata, install, and installed-copy runtime smoke"
+        "run lhm skills install and installed-copy runtime smoke"
       ],
       "requestForm": "https://lobehub.com/zh/skills -> 请求收录 -> GitHub 仓库地址",
       "repository": "https://github.com/Yeelight/yeelight-smart-home-skills",
-      "submissionPath": "submissions/lobehub/README.md"
+      "submissionPath": "submissions/lobehub/README.md",
+      "submittedRepository": "https://github.com/Yeelight/yeelight-smart-home-skills",
+      "submittedAt": "2026-06-27"
     },
     {
       "id": "tencent-skillhub",
