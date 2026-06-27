@@ -1,0 +1,287 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Yeelight Smart Home Skill Bridge",
+    "version": "0.1.0",
+    "description": "HTTPS bridge for invoking the Yeelight Smart Home Skill through the local yeelight-home runtime."
+  },
+  "servers": [
+    {
+      "url": "https://YOUR_PUBLIC_BRIDGE_DOMAIN",
+      "description": "Production bridge endpoint"
+    },
+    {
+      "url": "http://127.0.0.1:8787",
+      "description": "Local development endpoint"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Check bridge health",
+        "responses": {
+          "200": {
+            "description": "Bridge is reachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoke": {
+      "post": {
+        "operationId": "invokeYeelightSkill",
+        "summary": "Invoke the Yeelight Smart Home Skill",
+        "description": "Passes one SkillRequest to the local yeelight-home runtime. Persistent or risky writes still return confirmation_required before execution.",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Runtime returned success, partial, clarification_required or confirmation_required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid SkillRequest"
+          },
+          "401": {
+            "description": "Bridge authentication failed or runtime auth is required"
+          },
+          "422": {
+            "description": "Runtime blocked or does not support the requested action"
+          },
+          "500": {
+            "description": "Bridge or runtime error"
+          },
+          "502": {
+            "description": "Runtime could not be started or returned invalid output"
+          },
+          "504": {
+            "description": "Runtime invocation timed out"
+          }
+        }
+      }
+    },
+    "/mcp": {
+      "post": {
+        "operationId": "mcp",
+        "summary": "MCP JSON-RPC endpoint for Apps SDK compatible hosts",
+        "description": "Supports initialize, ping, tools/list and tools/call for yeelight_skill_invoke.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "MCP JSON-RPC response"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      },
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "required": [
+          "ok",
+          "service",
+          "skill",
+          "contractVersion",
+          "runtime"
+        ],
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "service": {
+            "type": "string"
+          },
+          "skill": {
+            "type": "string"
+          },
+          "contractVersion": {
+            "type": "string"
+          },
+          "runtime": {
+            "type": "object"
+          }
+        }
+      },
+      "SkillRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contractVersion",
+          "requestId",
+          "locale",
+          "utterance",
+          "intent"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "const": "1.0"
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "sessionId": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "zh-CN"
+            ]
+          },
+          "utterance": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "intent": {
+            "type": "string",
+            "description": "Intent from skills/yeelight-smart-home/assets/intent-catalog.json"
+          },
+          "homeRef": {
+            "type": "object"
+          },
+          "targets": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "object"
+            }
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "conversationContext": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object"
+          }
+        }
+      },
+      "SkillResponse": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "requestId",
+          "status",
+          "userMessage"
+        ],
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "const": "1.0"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "partial",
+              "clarification_required",
+              "confirmation_required",
+              "blocked",
+              "not_supported",
+              "auth_required",
+              "error"
+            ]
+          },
+          "userMessage": {
+            "type": "string"
+          },
+          "result": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "clarification": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "confirmation": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "execution": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

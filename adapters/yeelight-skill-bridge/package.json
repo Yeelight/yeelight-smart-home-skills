@@ -1,0 +1,13 @@
+{
+  "name": "@yeelight/yeelight-skill-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HTTP and MCP bridge for Yeelight Smart Home Skill marketplace adapters.",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

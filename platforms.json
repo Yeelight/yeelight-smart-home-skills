@@ -37,57 +37,75 @@
       "id": "dify-marketplace",
       "title": "Dify Marketplace",
       "region": "global/china",
-      "automation": "adapter-required",
+      "automation": "bridge-adapter-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/dify/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-review-required"
     },
     {
       "id": "openai-gpt-store-apps-sdk",
       "title": "OpenAI GPT Store / Apps SDK",
       "region": "global",
-      "automation": "app-adapter-required",
+      "automation": "mcp-bridge-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
+      "mcpEndpoint": "/mcp",
       "submissionPath": "submissions/openai/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-review-required"
     },
     {
       "id": "coze-store",
       "title": "Coze / 扣子商店",
       "region": "global/china",
-      "automation": "console-review-required",
+      "automation": "openapi-bridge-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/coze/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-console-review-required"
     },
     {
       "id": "aliyun-bailian",
       "title": "阿里云百炼",
       "region": "china",
-      "automation": "console-review-required",
+      "automation": "openapi-or-mcp-bridge-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
+      "mcpEndpoint": "/mcp",
       "submissionPath": "submissions/bailian/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-console-review-required"
     },
     {
       "id": "tencent-yuanqi",
       "title": "腾讯元器",
       "region": "china",
-      "automation": "console-review-required",
+      "automation": "openapi-or-mcp-bridge-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
+      "mcpEndpoint": "/mcp",
       "submissionPath": "submissions/yuanqi/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-console-review-required"
     },
     {
       "id": "baidu-qianfan",
       "title": "百度千帆",
       "region": "china",
-      "automation": "console-review-required",
+      "automation": "openapi-bridge-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/qianfan/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-console-review-required"
     },
     {
       "id": "volcano-ark",
       "title": "火山方舟",
       "region": "china",
-      "automation": "console-review-required",
+      "automation": "openapi-or-mcp-bridge-ready",
+      "adapterPath": "adapters/yeelight-skill-bridge",
+      "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
+      "mcpEndpoint": "/mcp",
       "submissionPath": "submissions/volcano-ark/README.md",
-      "status": "submission-kit-ready"
+      "status": "adapter-kit-ready-console-review-required"
     }
   ]
 }

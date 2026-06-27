@@ -44,6 +44,17 @@ yeelight-home invoke --stdin
 
 The runtime is not bundled in this repository.
 
+## Bridge Adapter
+
+Platforms that cannot install Skill ZIPs directly should use:
+
+```text
+adapters/yeelight-skill-bridge/
+```
+
+The bridge exposes `GET /health`, `GET /openapi.json`, `POST /invoke` and `POST /mcp`.
+It calls only `yeelight-home invoke --stdin`; the runtime remains responsible for auth, policy and confirmation gates.
+
 ## Release Evidence
 
 Release assets, manifests, checksums and validation summaries are under:
@@ -57,4 +68,10 @@ Verify checksums before installing downloaded packages:
 ```sh
 cd releases/yeelight-smart-home/v0.1.0
 sha256sum -c checksums.txt
+```
+
+Full publication asset check:
+
+```sh
+node scripts/verify-publication-assets.mjs
 ```

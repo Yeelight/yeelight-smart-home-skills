@@ -31,6 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check scripts/publish-skill-release.mjs
+          node scripts/verify-publication-assets.mjs
           python3 -m json.tool .github/plugin/marketplace.json >/dev/null
           python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
           python3 -m json.tool platforms.json >/dev/null

@@ -82,7 +82,78 @@ function writeMarketplaceFiles({ skill, version }) {
 }
 
 function writeReadme({ skill, version, releaseTag }) {
-  fs.writeFileSync(path.join(root, "README.md"), `# Yeelight Smart Home Skills\n\nPublic release repository for Yeelight Smart Home agent skills.\n\n## Published Skills\n\n| Skill | Version | Runtime | Packages |\n| --- | --- | --- | --- |\n| \`${skill}\` | \`${version}\` | \`yeelight-home >= 0.1.7\` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |\n\n## Release\n\n- Repository: https://github.com/Yeelight/yeelight-smart-home-skills\n- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/${releaseTag}\n- Release evidence: \`releases/${skill}/v${version}/\`\n\n## Install\n\n### Codex / Agent Plugin\n\nInstall from this repository marketplace metadata or download \`releases/${skill}/v${version}/${skill}-codex-plugin-v${version}.zip\`.\n\n### Claude Skill ZIP\n\nDownload and upload \`releases/${skill}/v${version}/${skill}-claude-skill-v${version}.zip\`.\n\n### GitHub Copilot Agent Skill\n\nUse \`releases/${skill}/v${version}/${skill}-copilot-skill-v${version}.zip\`.\n\n### Open Agent Skills\n\nUse \`releases/${skill}/v${version}/${skill}-agent-skill-v${version}.zip\`.\n\n## Runtime Dependency\n\nThis skill depends on the separately installed \`yeelight-home\` runtime and invokes it through:\n\n\`\`\`sh\nyeelight-home invoke --stdin\n\`\`\`\n\nThe runtime is not bundled in this repository.\n\n## Platform Status\n\nSee \`platforms.json\` and \`submissions/\` for platform-specific distribution status and submission kits.\n\n## Verify\n\n\`\`\`sh\ncd releases/${skill}/v${version}\nshasum -a 256 -c checksums.txt\n\`\`\`\n`, "utf8");
+  fs.writeFileSync(path.join(root, "README.md"), `# Yeelight Smart Home Skills
+
+Public release repository for Yeelight Smart Home agent skills.
+
+## Published Skills
+
+| Skill | Version | Runtime | Packages |
+| --- | --- | --- | --- |
+| \`${skill}\` | \`${version}\` | \`yeelight-home >= 0.1.7\` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
+
+## Release
+
+- Repository: https://github.com/Yeelight/yeelight-smart-home-skills
+- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/${releaseTag}
+- Release evidence: \`releases/${skill}/v${version}/\`
+
+## Install
+
+### Codex / Agent Plugin
+
+Install from this repository marketplace metadata or download \`releases/${skill}/v${version}/${skill}-codex-plugin-v${version}.zip\`.
+
+### Claude Skill ZIP
+
+Download and upload \`releases/${skill}/v${version}/${skill}-claude-skill-v${version}.zip\`.
+
+### GitHub Copilot Agent Skill
+
+Use \`releases/${skill}/v${version}/${skill}-copilot-skill-v${version}.zip\`.
+
+### Open Agent Skills
+
+Use \`releases/${skill}/v${version}/${skill}-agent-skill-v${version}.zip\`.
+
+## Runtime Dependency
+
+This skill depends on the separately installed \`yeelight-home\` runtime and invokes it through:
+
+\`\`\`sh
+yeelight-home invoke --stdin
+\`\`\`
+
+The runtime is not bundled in this repository.
+
+## Bridge Adapter
+
+Platforms that cannot install Skill ZIPs directly should use:
+
+\`\`\`text
+adapters/yeelight-skill-bridge/
+\`\`\`
+
+The bridge exposes \`GET /health\`, \`GET /openapi.json\`, \`POST /invoke\` and \`POST /mcp\`.
+It calls only \`yeelight-home invoke --stdin\`; the runtime remains responsible for auth, policy and confirmation gates.
+
+## Platform Status
+
+See \`platforms.json\` and \`submissions/\` for platform-specific distribution status and submission kits.
+
+## Verify
+
+\`\`\`sh
+cd releases/${skill}/v${version}
+shasum -a 256 -c checksums.txt
+\`\`\`
+
+Full publication asset check:
+
+\`\`\`sh
+node scripts/verify-publication-assets.mjs
+\`\`\`
+`, "utf8");
 }
 
 function flag(name) {
