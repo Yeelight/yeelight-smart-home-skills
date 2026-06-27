@@ -1,0 +1,61 @@
+name: Publish Skill Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      skill_id:
+        description: "Skill id"
+        required: true
+        default: "yeelight-smart-home"
+      version:
+        description: "Skill semver"
+        required: true
+        default: "0.1.0"
+      source_release_url:
+        description: "URL to a yeelight-smart-home-release-v<version>.tar.gz bundle or leave empty when files are committed"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate marketplace metadata
+        run: |
+          set -euo pipefail
+          node --check scripts/publish-skill-release.mjs
+          python3 -m json.tool .github/plugin/marketplace.json >/dev/null
+          python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
+          python3 -m json.tool platforms.json >/dev/null
+          cd "releases/${{ inputs.skill_id }}/v${{ inputs.version }}"
+          shasum -a 256 -c checksums.txt
+
+  github-release:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SKILL_ID: ${{ inputs.skill_id }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          tag="yeelight-skill-${SKILL_ID}-v${VERSION}"
+          release_dir="releases/${SKILL_ID}/v${VERSION}"
+          gh release view "$tag" >/dev/null 2>&1 && mode="upload" || mode="create"
+          if [ "$mode" = "create" ]; then
+            gh release create "$tag" "$release_dir"/* \
+              --title "Yeelight Smart Home Skill v${VERSION}" \
+              --notes-file "$release_dir/release-notes.md"
+          else
+            gh release upload "$tag" "$release_dir"/* --clobber
+          fi

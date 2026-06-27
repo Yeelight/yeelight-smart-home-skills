@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "canonicalRepository": "https://github.com/Yeelight/yeelight-smart-home-skills",
+  "platforms": [
+    {
+      "id": "github-release",
+      "title": "GitHub Release",
+      "region": "global",
+      "automation": "fully-automated",
+      "releaseAsset": true,
+      "status": "published"
+    },
+    {
+      "id": "github-copilot-cli-plugin-marketplace",
+      "title": "GitHub Copilot CLI Plugin Marketplace",
+      "region": "global",
+      "automation": "repo-metadata",
+      "metadataPath": ".github/plugin/marketplace.json",
+      "status": "published-metadata"
+    },
+    {
+      "id": "claude-code-plugin-marketplace",
+      "title": "Claude Code Plugin Marketplace",
+      "region": "global",
+      "automation": "repo-metadata",
+      "metadataPath": ".claude-plugin/marketplace.json",
+      "status": "published-metadata"
+    },
+    {
+      "id": "claude-skill-zip",
+      "title": "Claude Skill ZIP",
+      "region": "global",
+      "automation": "artifact-ready",
+      "status": "release-asset-ready"
+    },
+    {
+      "id": "dify-marketplace",
+      "title": "Dify Marketplace",
+      "region": "global/china",
+      "automation": "adapter-required",
+      "submissionPath": "submissions/dify/README.md",
+      "status": "submission-kit-ready"
+    },
+    {
+      "id": "openai-gpt-store-apps-sdk",
+      "title": "OpenAI GPT Store / Apps SDK",
+      "region": "global",
+      "automation": "app-adapter-required",
+      "submissionPath": "submissions/openai/README.md",
+      "status": "submission-kit-ready"
+    },
+    {
+      "id": "coze-store",
+      "title": "Coze / 扣子商店",
+      "region": "global/china",
+      "automation": "console-review-required",
+      "submissionPath": "submissions/coze/README.md",
+      "status": "submission-kit-ready"
+    },
+    {
+      "id": "aliyun-bailian",
+      "title": "阿里云百炼",
+      "region": "china",
+      "automation": "console-review-required",
+      "submissionPath": "submissions/bailian/README.md",
+      "status": "submission-kit-ready"
+    },
+    {
+      "id": "tencent-yuanqi",
+      "title": "腾讯元器",
+      "region": "china",
+      "automation": "console-review-required",
+      "submissionPath": "submissions/yuanqi/README.md",
+      "status": "submission-kit-ready"
+    },
+    {
+      "id": "baidu-qianfan",
+      "title": "百度千帆",
+      "region": "china",
+      "automation": "console-review-required",
+      "submissionPath": "submissions/qianfan/README.md",
+      "status": "submission-kit-ready"
+    },
+    {
+      "id": "volcano-ark",
+      "title": "火山方舟",
+      "region": "china",
+      "automation": "console-review-required",
+      "submissionPath": "submissions/volcano-ark/README.md",
+      "status": "submission-kit-ready"
+    }
+  ]
+}
