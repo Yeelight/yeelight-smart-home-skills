@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "yeelight-smart-home-skills",
+  "description": "Yeelight Smart Home plugins and skills for Claude Code and compatible agent runtimes.",
+  "owner": {
+    "name": "Yeelight",
+    "email": "support@yeelight.com"
+  },
+  "plugins": [
+    {
+      "name": "yeelight-smart-home",
+      "description": "Control, organize, diagnose, design and answer product questions for a Yeelight smart home through the local yeelight-home Runtime.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Yeelight"
+      },
+      "source": "./plugins/yeelight-smart-home",
+      "category": "productivity",
+      "homepage": "https://github.com/Yeelight/yeelight-smart-home-skills/tree/main/plugins/yeelight-smart-home"
+    }
+  ]
+}
