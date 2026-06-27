@@ -16,6 +16,13 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 
 | Platform | Ready Artifact | Real Submission Status |
 | --- | --- | --- |
+| ClawHub | Native Skill directory | Published under `@yeelight/yeelight-smart-home`; install smoke passed; publisher trust review still pending |
+| skills.sh | GitHub repository Skill | Indexed and installable from GitHub; public page shows security audit pass badges |
+| AgenticSkills | GitHub repository submission payload | Automatic API submission attempted; platform returned `Submission review queue is not configured.` |
+| NanoSkill | GitHub repository + email template | No public API/form found; email submission required |
+| Marketing Skills | GitHub repository | Not a fit for Yeelight smart-home Skill; no third-party submit route found |
+| Tencent SkillHub | Skill ZIP / folder payload | Publish API exists; unauthenticated requests return 401, login/real-name/enterprise flow required |
+| Molili / CocoLoop Skill | GitHub repository / Skill folder | No public submit endpoint found from public crawl |
 | Dify Marketplace | Bridge adapter + submission notes | Requires `.difypkg`, developer identity and PR review |
 | OpenAI GPT Store / Apps SDK | MCP endpoint + OpenAPI schema | Requires public HTTPS deployment and dashboard review |
 | Coze / 扣子 | OpenAPI schema | Requires console import, auth config, validation and publish |
@@ -34,3 +41,9 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 - A runtime host with `yeelight-home >= 0.1.7` installed and authenticated.
 
 Do not submit with a local URL, placeholder domain, missing privacy policy, or unauthenticated bridge.
+
+Machine-readable status:
+
+```text
+skill-directory-submission-status.json
+```

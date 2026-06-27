@@ -20,6 +20,7 @@ main().catch((error) => {
 
 async function main() {
   checkJSON("platforms_json", path.join(root, "platforms.json"));
+  checkJSON("skill_directory_submission_status", path.join(root, "submissions", "skill-directory-submission-status.json"));
   checkJSON("github_marketplace_json", path.join(root, ".github", "plugin", "marketplace.json"));
   checkJSON("claude_marketplace_json", path.join(root, ".claude-plugin", "marketplace.json"));
   const openApi = checkJSON("bridge_openapi_json", path.join(bridgeDir, "openapi.json"));
@@ -62,7 +63,22 @@ function checkOpenApi(openApi) {
 }
 
 function checkPlatformSubmissionKits() {
-  const platformIds = ["dify", "openai", "coze", "bailian", "yuanqi", "qianfan", "volcano-ark"];
+  const platformIds = [
+    "clawhub",
+    "skills-sh",
+    "agenticskills",
+    "nanoskill",
+    "marketing-skills",
+    "tencent-skillhub",
+    "cocoloop-molili",
+    "dify",
+    "openai",
+    "coze",
+    "bailian",
+    "yuanqi",
+    "qianfan",
+    "volcano-ark",
+  ];
   for (const platform of platformIds) {
     const readme = path.join(root, "submissions", platform, "README.md");
     const exists = fs.existsSync(readme);

@@ -100,6 +100,28 @@ Public release repository for Yeelight Smart Home agent skills.
 
 ## Install
 
+### ClawHub / OpenClaw
+
+The skill is published under the Yeelight publisher namespace:
+
+\`\`\`sh
+openclaw skills install @yeelight/${skill}
+\`\`\`
+
+- ClawHub page: https://clawhub.ai/yeelight/skills/${skill}
+- Status: published and installable. The ClawHub publisher namespace is \`@yeelight\`; platform trust/official review is still pending.
+
+### skills.sh
+
+The repository is indexed by skills.sh:
+
+\`\`\`sh
+npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill ${skill}
+\`\`\`
+
+- skills.sh page: https://www.skills.sh/yeelight/yeelight-smart-home-skills/${skill}
+- Status: indexed and installable, with visible security audit pass badges.
+
 ### Codex / Agent Plugin
 
 Install from this repository marketplace metadata or download \`releases/${skill}/v${version}/${skill}-codex-plugin-v${version}.zip\`.
@@ -153,6 +175,8 @@ Full publication asset check:
 \`\`\`sh
 node scripts/verify-publication-assets.mjs
 \`\`\`
+
+Third-party directory submission status and evidence are tracked in \`platforms.json\` and \`submissions/skill-directory-submission-status.json\`.
 `, "utf8");
 }
 

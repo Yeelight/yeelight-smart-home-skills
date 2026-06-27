@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "yeelight-skill-directory-submission-status-v1",
+  "skill": {
+    "id": "yeelight-smart-home",
+    "version": "0.1.0",
+    "repository": "https://github.com/Yeelight/yeelight-smart-home-skills",
+    "release": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.0"
+  },
+  "platforms": [
+    {
+      "id": "clawhub",
+      "status": "published-official-namespace-trust-review-pending",
+      "url": "https://clawhub.ai/yeelight/skills/yeelight-smart-home",
+      "installCommand": "openclaw skills install @yeelight/yeelight-smart-home",
+      "evidence": [
+        "publisher create yeelight returned ok with trusted=false",
+        "transfer request returned: Transferred yeelight-smart-home to @yeelight",
+        "inspect @yeelight/yeelight-smart-home returned owner.handle=yeelight and latestVersion.version=0.1.0",
+        "install @yeelight/yeelight-smart-home installed v0.1.0 successfully",
+        "inspect @axdlee/yeelight-smart-home no longer resolves"
+      ],
+      "remaining": [
+        "ClawHub publisher trust/official review",
+        "Optional skill-card.md and aggregate security status completion"
+      ]
+    },
+    {
+      "id": "skills-sh",
+      "status": "published-indexed-installable",
+      "url": "https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home",
+      "installCommand": "npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home",
+      "evidence": [
+        "public skill page renders from yeelight/yeelight-smart-home-skills",
+        "install command is visible on page",
+        "Gen Agent Trust Hub, Socket and Snyk badges show Pass"
+      ]
+    },
+    {
+      "id": "agenticskills",
+      "status": "blocked-platform-review-queue-not-configured",
+      "url": "https://agenticskills.io",
+      "submissionEndpoint": "https://agenticskills.io/api/submissions",
+      "evidence": [
+        "POST /api/submissions returned HTTP 503 with {\"error\":\"Submission review queue is not configured.\"}"
+      ],
+      "remaining": [
+        "contact hello@agenticskills.io or retry when queue is enabled"
+      ]
+    },
+    {
+      "id": "nanoskill",
+      "status": "contact-required-email-submission",
+      "url": "https://nanoskill.ai",
+      "contact": "team@nanoskill.ai",
+      "evidence": [
+        "no public submit API or form found",
+        "public flow points to email/Gmail compose"
+      ],
+      "remaining": [
+        "send submission from an approved Yeelight sender address"
+      ]
+    },
+    {
+      "id": "marketing-skills",
+      "status": "not-applicable-domain-specific-no-third-party-submit",
+      "url": "https://marketing-skills.com",
+      "evidence": [
+        "/submit returns 404",
+        "/share is for examples of existing marketing skills, not third-party smart-home skill submission"
+      ]
+    },
+    {
+      "id": "tencent-skillhub",
+      "status": "blocked-login-realname-or-enterprise-required",
+      "url": "https://skillhub.cn",
+      "legacyUrl": "https://skillhub.tencent.com",
+      "apiBase": "https://api.skillhub.cn",
+      "evidence": [
+        "GET /api/v1/auth/me returned HTTP 401 {\"error\":\"unauthorized\"}",
+        "GET /api/v1/community/skills/check-slug?slug=yeelight-smart-home returned HTTP 401 {\"error\":\"unauthorized\"}",
+        "frontend contains POST /api/v1/community/skills/publish and icon upload APIs"
+      ],
+      "remaining": [
+        "SkillHub login",
+        "phone binding / real-name / enterprise authentication as required by platform"
+      ]
+    },
+    {
+      "id": "cocoloop-molili",
+      "status": "blocked-no-public-submit-endpoint-found",
+      "url": "https://hub.cocoloop.cn",
+      "legacyUrl": "https://skill.molili.com.cn",
+      "evidence": [
+        "skill.molili.com.cn redirects to hub.cocoloop.cn",
+        "/submit, /publish and /contact return 404",
+        "public crawl found browsing/search/listed Skill data but no public submit endpoint"
+      ],
+      "remaining": [
+        "publisher/admin account or platform operator contact"
+      ]
+    }
+  ]
+}

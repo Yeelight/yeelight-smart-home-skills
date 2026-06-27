@@ -11,6 +11,77 @@
       "status": "published"
     },
     {
+      "id": "clawhub",
+      "title": "ClawHub",
+      "region": "global",
+      "automation": "cli-published-and-transferred",
+      "url": "https://clawhub.ai/yeelight/skills/yeelight-smart-home",
+      "installCommand": "openclaw skills install @yeelight/yeelight-smart-home",
+      "submissionPath": "submissions/clawhub/README.md",
+      "status": "published-official-namespace-trust-review-pending",
+      "owner": {
+        "handle": "yeelight",
+        "displayName": "Yeelight",
+        "trusted": false
+      }
+    },
+    {
+      "id": "skills-sh",
+      "title": "skills.sh",
+      "region": "global",
+      "automation": "github-indexed",
+      "url": "https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home",
+      "installCommand": "npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home",
+      "submissionPath": "submissions/skills-sh/README.md",
+      "status": "published-indexed-installable"
+    },
+    {
+      "id": "agenticskills",
+      "title": "AgenticSkills",
+      "region": "global",
+      "automation": "api-submission-attempted",
+      "url": "https://agenticskills.io",
+      "submissionPath": "submissions/agenticskills/README.md",
+      "status": "blocked-platform-review-queue-not-configured"
+    },
+    {
+      "id": "nanoskill",
+      "title": "NanoSkill",
+      "region": "global",
+      "automation": "email-only",
+      "url": "https://nanoskill.ai",
+      "submissionPath": "submissions/nanoskill/README.md",
+      "status": "contact-required-email-submission"
+    },
+    {
+      "id": "marketing-skills",
+      "title": "Marketing Skills",
+      "region": "global",
+      "automation": "not-applicable",
+      "url": "https://marketing-skills.com",
+      "submissionPath": "submissions/marketing-skills/README.md",
+      "status": "not-applicable-domain-specific-no-third-party-submit"
+    },
+    {
+      "id": "tencent-skillhub",
+      "title": "Tencent SkillHub",
+      "region": "china",
+      "automation": "login-gated-api",
+      "url": "https://skillhub.cn",
+      "submissionPath": "submissions/tencent-skillhub/README.md",
+      "status": "blocked-login-realname-or-enterprise-required"
+    },
+    {
+      "id": "cocoloop-molili",
+      "title": "Molili / CocoLoop Skill",
+      "region": "china",
+      "automation": "no-public-submit-endpoint-found",
+      "url": "https://hub.cocoloop.cn",
+      "legacyUrl": "https://skill.molili.com.cn",
+      "submissionPath": "submissions/cocoloop-molili/README.md",
+      "status": "blocked-no-public-submit-endpoint-found"
+    },
+    {
       "id": "github-copilot-cli-plugin-marketplace",
       "title": "GitHub Copilot CLI Plugin Marketplace",
       "region": "global",
