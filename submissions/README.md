@@ -20,7 +20,8 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 | skills.sh | GitHub repository Skill | Indexed and installable from GitHub; public page shows security audit pass badges; real `npx skills add` smoke passed |
 | NanoSkill | GitHub repository + email template | Official Yeelight email submitted; awaiting platform review response |
 | Marketing Skills | GitHub repository | Not a fit for Yeelight smart-home Skill; no third-party submit route found |
-| Tencent SkillHub | Skill folder payload | Original `yeelight-smart-home` slug is owned by another user; alternate slug `yeelight-smart-home-official` v0.1.1 is approved, both security scans passed, and real `skillhub install` smoke passed |
+| LobeHub Skills | GitHub repository | First-listing request form is ready; real browser reached the `请求收录 Skill` modal, but Cloudflare human verification must be completed before submit |
+| Tencent SkillHub | Skill folder payload | Original `yeelight-smart-home` slug is owned by another user; alternate slug `yeelight-smart-home-official` v0.1.2 is approved, both security scans passed, and real installed-copy runtime smoke passed |
 | Molili / CocoLoop Skill | GitHub repository / Skill folder | Official Yeelight email submitted to known operator contacts; awaiting publisher route |
 | Dify Marketplace | `.difypkg` + PR body | PR [langgenius/dify-plugins#2614](https://github.com/langgenius/dify-plugins/pull/2614) is open; `pre-check-plugin` passed; awaiting review |
 | OpenAI GPT Store / Apps SDK | MCP endpoint + OpenAPI schema | Requires public HTTPS deployment and dashboard review |
@@ -38,6 +39,7 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 - Logo and screenshots when required by the platform.
 - Test prompts and expected responses.
 - A runtime host with `yeelight-home >= 0.1.7` installed and authenticated.
+- For LobeHub first listing, submit the GitHub repository URL through the web `请求收录` form; after collection, use `lhm skill claim` and `lhm skill publish` for ownership and later versions.
 
 Do not submit with a local URL, placeholder domain, missing privacy policy, or unauthenticated bridge.
 

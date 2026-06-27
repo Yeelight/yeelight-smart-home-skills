@@ -69,6 +69,7 @@ function checkPlatformSubmissionKits() {
     "skills-sh",
     "nanoskill",
     "marketing-skills",
+    "lobehub",
     "tencent-skillhub",
     "cocoloop-molili",
     "dify",

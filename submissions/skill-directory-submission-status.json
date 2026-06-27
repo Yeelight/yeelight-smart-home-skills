@@ -60,16 +60,43 @@
       ]
     },
     {
+      "id": "lobehub",
+      "status": "request-form-ready-cloudflare-human-verification-required",
+      "url": "https://lobehub.com/zh/skills",
+      "packagePath": "skills/yeelight-smart-home",
+      "publishCommand": "Open https://lobehub.com/zh/skills, click 请求收录, submit https://github.com/Yeelight/yeelight-smart-home-skills",
+      "evidence": [
+        "LobeHub public page describes an Agent SKILLs marketplace for SKILL.md bundles and lists smart-home-iot as a category",
+        "The visible first-listing form is 请求收录 Skill and accepts a GitHub 仓库地址 field",
+        "Browser automation reached the LobeHub request form but Cloudflare Turnstile human verification kept the submit button disabled until a human completes the checkbox",
+        "@lobehub/market-cli 0.0.38 is available from npm and exposes skill list, skill publish, skill claim, skills view, and skills install commands",
+        "CLI implementation requires SKILL.md at package root and uses --identifier or SKILL.md frontmatter identifier for version publishing after ownership exists",
+        "unauthenticated lhm skill list returned Not logged in. Run `lhm login` first",
+        "temporary headless browser was blocked by Vercel Security Checkpoint Code 21, so form submission must use a real browser session"
+      ],
+      "remaining": [
+        "complete Cloudflare Turnstile human verification in the real Chrome request form",
+        "submit https://github.com/Yeelight/yeelight-smart-home-skills in the GitHub 仓库地址 field",
+        "wait for LobeHub brief review and automated collection workflow",
+        "after listing appears, sign in with official Yeelight LobeHub account via lhm login and connect GitHub",
+        "claim yeelight-smart-home if claimable and use lhm skill publish for future version updates",
+        "verify public page, view metadata, install, and installed-copy runtime smoke"
+      ],
+      "requestForm": "https://lobehub.com/zh/skills -> 请求收录 -> GitHub 仓库地址",
+      "repository": "https://github.com/Yeelight/yeelight-smart-home-skills",
+      "submissionPath": "submissions/lobehub/README.md"
+    },
+    {
       "id": "tencent-skillhub",
-      "status": "published-approved-installable",
+      "status": "published-approved-installable-functional-0.1.2",
       "url": "https://skillhub.cn",
       "legacyUrl": "https://skillhub.tencent.com",
       "apiBase": "https://api.skillhub.cn",
       "cliTutorial": "https://skillhub.cn/tutorials#publish-via-cli",
       "publishedSlug": "yeelight-smart-home-official",
       "skillId": 91967,
-      "version": "0.1.1",
-      "versionId": 121718,
+      "version": "0.1.2",
+      "versionId": 121721,
       "installCommand": "skillhub install yeelight-smart-home-official",
       "evidence": [
         "SkillHub tutorial documents CLI publishing via skillhub login --key skh_xxx --host https://api.skillhub.cn and skillhub publish <skill-dir>",
@@ -80,16 +107,22 @@
         "current account dashboard search returned no existing Yeelight skill before publishing the alternate slug",
         "alternate slug yeelight-smart-home-official was available and then published successfully as skillId 91967",
         "0.1.0 under yeelight-smart-home-official was rejected with reviewRejectReason content_audit_failed and reviewNote 审核未通过：未通过内容合规审查",
-        "0.1.1 minimal SkillHub package was resubmitted successfully with versionId 121718 and reviewStatus pending",
-        "Keen security report for 0.1.1 returned benign / 安全，无风险",
-        "Sanbu security report for 0.1.1 returned benign / 安全，无风险",
-        "0.1.1 dashboard reviewStatus became approved with auto-approved review note",
-        "real install smoke passed with skillhub install yeelight-smart-home-official; installed version 0.1.1 under /tmp/skillhub-yeelight-official-install-smoke-approved/skills/yeelight-smart-home-official"
+        "0.1.1 minimal SkillHub package was approved but is classified as an audit-probe package, not a functional release",
+        "0.1.2 functional SkillHub package was approved with versionId 121721 and fileCount 26",
+        "Keen security report for 0.1.2 returned benign / 安全，无风险",
+        "Sanbu security report for 0.1.2 returned benign / 安全，无风险",
+        "skillhub install yeelight-smart-home-official installed latest approved version 0.1.2 after 0.1.3 rejection",
+        "installed 0.1.2 package contains SKILL.md, agents/openai.yaml, intent catalog, redacted domain catalog, both schemas, 17 references, scripts/invoke.sh, scripts/invoke.ps1, and runtime-manifest.json",
+        "functional smoke from the SkillHub-installed 0.1.2 copy passed via sh scripts/invoke.sh; Runtime returned status success and 144 entities",
+        "0.1.3 shell-entrypoint documentation follow-up was rejected with content_audit_failed and did not replace public latest"
       ],
       "remaining": [
         "request SkillHub operator transfer or release of slug yeelight-smart-home to the official Yeelight publisher",
-        "decide whether to keep yeelight-smart-home-official or republish under yeelight-smart-home after slug transfer"
-      ]
+        "request SkillHub support to remove or hide rejected 0.1.3 from dashboard history if desired",
+        "keep yeelight-smart-home-official as the SkillHub-specific slug unless canonical slug transfer succeeds"
+      ],
+      "rejectedVersion": "0.1.3",
+      "rejectedVersionId": 121735
     },
     {
       "id": "cocoloop-molili",

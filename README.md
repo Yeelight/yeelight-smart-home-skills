@@ -32,6 +32,22 @@ npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill ye
 - skills.sh page: https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home
 - Status: indexed and installable, with visible security audit pass badges.
 
+### LobeHub Skills
+
+First listing uses the web request form:
+
+```text
+https://lobehub.com/zh/skills
+```
+
+Click `请求收录` and submit:
+
+```text
+https://github.com/Yeelight/yeelight-smart-home-skills
+```
+
+After LobeHub collects the repository, use `@lobehub/market-cli` to claim ownership and publish later versions.
+
 ### Codex / Agent Plugin
 
 Install the plugin from this repository marketplace metadata, or download:
@@ -99,3 +115,13 @@ node scripts/verify-publication-assets.mjs
 ```
 
 Third-party directory submission status and evidence are tracked in `platforms.json` and `submissions/skill-directory-submission-status.json`.
+
+## Reusable Release Flow
+
+For later Yeelight skills or new versions:
+
+1. Build and verify from the source repository's generic Skill release pipeline.
+2. Refresh this public distribution repository with `scripts/publish-skill-release.mjs`.
+3. Run `node scripts/verify-publication-assets.mjs`.
+4. Publish native Skill directories through platform CLI/form flows.
+5. Publish API/MCP-only platforms through the bridge adapter and verify installed-copy or deployed-endpoint smoke.

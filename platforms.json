@@ -54,6 +54,27 @@
       "status": "not-applicable-domain-specific-no-third-party-submit"
     },
     {
+      "id": "lobehub",
+      "title": "LobeHub Skills",
+      "region": "global/china",
+      "automation": "web-request-form-first-listing-cli-after-claim",
+      "url": "https://lobehub.com/zh/skills",
+      "cliPackage": "@lobehub/market-cli",
+      "cliCommands": {
+        "firstListing": "Open https://lobehub.com/zh/skills, click 请求收录, submit https://github.com/Yeelight/yeelight-smart-home-skills",
+        "login": "npx -y @lobehub/market-cli login",
+        "connectGitHub": "npx -y @lobehub/market-cli github connect",
+        "claim": "npx -y @lobehub/market-cli skill claim yeelight-smart-home",
+        "publishVersion": "npx -y @lobehub/market-cli skill publish --identifier yeelight-smart-home --dir skills/yeelight-smart-home",
+        "installSmoke": "npx -y @lobehub/market-cli skills install yeelight-smart-home --dir /tmp/lobehub-yeelight-smoke --agent codex"
+      },
+      "packagePath": "skills/yeelight-smart-home",
+      "submissionPath": "submissions/lobehub/README.md",
+      "status": "request-form-ready-cloudflare-human-verification-required",
+      "requestForm": "https://lobehub.com/zh/skills -> 请求收录 -> GitHub 仓库地址",
+      "repository": "https://github.com/Yeelight/yeelight-smart-home-skills"
+    },
+    {
       "id": "tencent-skillhub",
       "title": "Tencent SkillHub",
       "region": "china",
@@ -61,12 +82,15 @@
       "url": "https://skillhub.cn",
       "publishedSlug": "yeelight-smart-home-official",
       "skillId": 91967,
-      "version": "0.1.1",
-      "versionId": 121718,
+      "version": "0.1.2",
+      "versionId": 121721,
       "cliTutorial": "https://skillhub.cn/tutorials#publish-via-cli",
       "installCommand": "skillhub install yeelight-smart-home-official",
       "submissionPath": "submissions/tencent-skillhub/README.md",
-      "status": "published-approved-installable"
+      "status": "published-approved-installable-functional-0.1.2",
+      "rejectedVersion": "0.1.3",
+      "rejectedVersionId": 121735,
+      "installSmoke": "passed via sh scripts/invoke.sh from SkillHub-installed 0.1.2 copy"
     },
     {
       "id": "cocoloop-molili",

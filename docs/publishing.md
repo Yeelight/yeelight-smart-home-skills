@@ -7,6 +7,7 @@ This repository is the canonical GitHub distribution center for Yeelight Smart H
 - GitHub Release assets.
 - ClawHub skill publication under `@yeelight/yeelight-smart-home`.
 - skills.sh GitHub-indexed installation for `yeelight/yeelight-smart-home-skills`.
+- LobeHub first-listing request kit and post-listing CLI ownership/version workflow.
 - GitHub Copilot-compatible marketplace metadata at `.github/plugin/marketplace.json`.
 - Claude Code-compatible marketplace metadata at `.claude-plugin/marketplace.json`.
 - Codex/Open Agent plugin package under `plugins/`.
@@ -22,6 +23,34 @@ These directories can consume the repository or skill folder directly:
 - skills.sh: indexed from GitHub at `https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home`; install with `npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home`.
 
 ClawHub currently shows the Yeelight publisher namespace but the publisher itself is not platform-trusted yet. Submit a ClawHub namespace claim or sign in with an official Yeelight-owned ClawHub/GitHub account when a platform-level official/trusted badge is required.
+
+## LobeHub Skills
+
+LobeHub first listing is a web request flow, not a direct `lhm skill publish` flow.
+
+Use the visible form on:
+
+```text
+https://lobehub.com/zh/skills
+```
+
+Click `请求收录`, fill the GitHub repository URL, and submit:
+
+```text
+https://github.com/Yeelight/yeelight-smart-home-skills
+```
+
+Automation note: a real browser reached the `请求收录 Skill` modal, but LobeHub required Cloudflare Turnstile human verification before enabling submit. Headless automation was blocked by Vercel Security Checkpoint Code 21. Do not bypass that verification; complete it in a real browser session.
+
+After LobeHub collects the repository, use the CLI for ownership and later version publishing:
+
+```sh
+npx -y @lobehub/market-cli login
+npx -y @lobehub/market-cli github connect
+npx -y @lobehub/market-cli skill claim yeelight-smart-home
+npx -y @lobehub/market-cli skill publish --identifier yeelight-smart-home --dir skills/yeelight-smart-home
+npx -y @lobehub/market-cli skills install yeelight-smart-home --dir /tmp/lobehub-yeelight-smoke --agent codex
+```
 
 ## Bridge-Based Platform Publishing
 
@@ -51,5 +80,33 @@ Additional public skill directories are tracked in `submissions/skill-directory-
 
 - NanoSkill: no public API/form found; email submission is required.
 - Marketing Skills: domain-specific marketing directory; no third-party smart-home skill submission flow found.
-- Tencent SkillHub: CLI submission is approved and installable under `yeelight-smart-home-official` v0.1.1; both security scans passed. The canonical `yeelight-smart-home` slug is owned by another user or reserved outside the current account.
+- LobeHub Skills: first-listing request form accepts a GitHub repository URL; Cloudflare human verification blocks unattended automation, while CLI ownership/version commands are ready after listing.
+- Tencent SkillHub: CLI submission is approved and installable under `yeelight-smart-home-official` v0.1.2; both security scans passed and installed-copy runtime smoke passed. The canonical `yeelight-smart-home` slug is owned by another user or reserved outside the current account.
 - Molili / CocoLoop Skill: no public submit API or `/submit`, `/publish`, `/contact` route found from the public site crawl.
+
+## Reusable Skill Release Flow
+
+Use this flow for every future `yeelight-smart-home/skill/<skill-id>` package.
+
+1. Add or update the skill in the source repository release registry.
+2. Run the generic source release builder and verifier for that skill.
+3. Publish or refresh this public GitHub distribution repository from the generated release output.
+4. Run `node scripts/verify-publication-assets.mjs` from this repository.
+5. Update `platforms.json` and `submissions/skill-directory-submission-status.json` with platform-specific status and evidence.
+6. For native Skill directories, run platform install smoke from the installed copy, not only package smoke.
+7. For bridge-based platforms, verify `/health`, `/openapi.json`, authenticated `/invoke`, and `/mcp` with the deployed bridge.
+8. For review-gated platforms, record the exact blocking account, review, identity, HTTPS, privacy policy, or captcha requirement instead of marking the platform as published.
+
+Next-version quick path after the first release:
+
+```sh
+cd /Users/yeelight/Desktop/workspace/ai/yeelight-ai-online-service/yeelight-smart-home
+node tools/skill-release.mjs --skill <skill-id> --version <x.y.z> --dry-run --all-default-channels --ci
+node tools/skill-release-verify.mjs --skill <skill-id> --version <x.y.z>
+
+cd /tmp/yeelight-smart-home-skills-publish
+node scripts/publish-skill-release.mjs --source <release-output-root> --skill <skill-id> --version <x.y.z> --dry-run
+node scripts/verify-publication-assets.mjs
+```
+
+Only after those pass, use the platform-specific publish commands or forms documented under `submissions/<platform>/`.

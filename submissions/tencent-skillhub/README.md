@@ -2,6 +2,10 @@
 
 Status: approved and installable under the alternate slug `yeelight-smart-home-official`.
 
+Current public latest version: `0.1.2`.
+
+Important correction: `0.1.1` was only an audit-probe package and is not the functional release. The functional SkillHub release is `0.1.2`, which keeps the runtime invoke helpers, schemas, intent catalog, references, and a redacted domain catalog.
+
 Entrypoints:
 
 ```text
@@ -88,7 +92,7 @@ https://skillhub.cn/skill/yeelight-smart-home-official
 
 Likely trigger: the full canonical package includes a large local capability catalog, shell wrappers, and safety wording around credentials and high-impact operations. Those are legitimate in the GitHub/ClawHub package, but are noisy for SkillHub's community content audit.
 
-0.1.1 resubmission:
+0.1.1 audit-probe resubmission:
 
 ```json
 {
@@ -104,7 +108,7 @@ Likely trigger: the full canonical package includes a large local capability cat
 }
 ```
 
-Current dashboard verification:
+0.1.1 dashboard verification:
 
 ```json
 {
@@ -132,6 +136,81 @@ Additional verification:
 - `skillhub check-slug` reports `yeelight-smart-home-official` as owned by the current account and publishable for new versions.
 - `skillhub install yeelight-smart-home-official` installed version `0.1.1` into a clean temporary directory.
 - Installed target: `/tmp/skillhub-yeelight-official-install-smoke-approved/skills/yeelight-smart-home-official`.
+
+0.1.1 was intentionally not accepted as the official functional release because it contained only two files and could not exercise the expected Yeelight runtime flow.
+
+0.1.2 functional release:
+
+```json
+{
+  "version": "0.1.2",
+  "versionId": 121721,
+  "reviewStatus": "approved",
+  "reviewRejectReason": null,
+  "reviewNote": "auto-approved by skillhub-sanbu-scan-worker",
+  "securityReports": {
+    "keen": {
+      "status": "benign",
+      "statusText": "安全，无风险",
+      "reportUrl": "available"
+    },
+    "sanbu": {
+      "status": "benign",
+      "statusText": "安全，无风险",
+      "reportUrl": "available"
+    }
+  }
+}
+```
+
+0.1.2 package verification:
+
+- `fileCount`: 26.
+- Required files present: `SKILL.md`, `agents/openai.yaml`, `assets/intent-catalog.json`, `assets/catalog/yeelight-domain.json`, both schemas, `scripts/invoke.sh`, `scripts/invoke.ps1`, and `scripts/runtime-manifest.json`.
+- Referenced files: 18 referenced file tokens, no missing references.
+- References directory: 17 markdown references.
+- JSON files parsed successfully.
+- Installed latest version after review: `0.1.2`.
+- Installed target: `/tmp/skillhub-yeelight-official-install-smoke-latest-after-013/skills/yeelight-smart-home-official`.
+
+Functional install smoke from the SkillHub-installed copy:
+
+```sh
+skillhub install yeelight-smart-home-official --dir /tmp/skillhub-yeelight-official-install-smoke-latest-after-013/skills --force --json
+printf '{"contractVersion":"1.0","requestId":"latest-after-013-smoke","locale":"zh-CN","utterance":"列出家庭","intent":"entity.list"}' \
+  | sh /tmp/skillhub-yeelight-official-install-smoke-latest-after-013/skills/yeelight-smart-home-official/scripts/invoke.sh
+```
+
+Smoke result:
+
+```json
+{
+  "status": "success",
+  "userMessage": "已找到 144 个实体。",
+  "counts": {
+    "area": 1,
+    "automation": 1,
+    "device": 131,
+    "group": 2,
+    "room": 8,
+    "scene": 1
+  }
+}
+```
+
+0.1.3 follow-up attempt:
+
+```json
+{
+  "version": "0.1.3",
+  "versionId": 121735,
+  "reviewStatus": "rejected",
+  "reviewRejectReason": "content_audit_failed",
+  "reviewNote": "审核未通过：未通过内容合规审查"
+}
+```
+
+0.1.3 attempted to document a shell-based invoke entrypoint for SkillHub installs because the SkillHub installer does not preserve the Unix executable bit for `scripts/invoke.sh`. It was rejected by content compliance and did not replace the public latest version. `skillhub install yeelight-smart-home-official` still installs the approved functional `0.1.2` release.
 
 Required next action:
 
