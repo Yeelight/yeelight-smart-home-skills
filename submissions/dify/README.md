@@ -1,31 +1,39 @@
-# Dify Submission Kit
+# Dify Marketplace Submission Kit
 
-Status: bridge adapter ready, Dify package/Marketplace PR still requires a Dify developer identity.
+Status: `.difypkg` package ready, Dify Marketplace PR still requires an official Yeelight GitHub identity or explicit approval to submit from the current GitHub account.
 
 Current release assets:
 
 - `../../releases/yeelight-smart-home/v0.1.0/yeelight-smart-home-agent-skill-v0.1.0.zip`
 - `../../releases/yeelight-smart-home/v0.1.0/checksums.txt`
 
-Dify Marketplace does not consume this Skill ZIP directly. Use the bridge adapter:
+Dify Marketplace does not consume the Agent Skill ZIP directly. This repository now includes a Dify tool plugin package that calls the Yeelight bridge:
 
 ```text
-../../adapters/yeelight-skill-bridge/
+plugin/
+yeelight-smart-home-0.1.0.difypkg
 ```
 
 Recommended submission path:
 
-1. Deploy the bridge on a public HTTPS endpoint.
-2. Create a Dify tool plugin that calls `POST /invoke`.
-3. Include `manifest.yaml`, `README.md`, `PRIVACY.md`, non-default icon and required `_assets/`.
-4. Package one `.difypkg`.
-5. Submit one package through the official `langgenius/dify-plugins` PR flow.
+1. Deploy `../../adapters/yeelight-skill-bridge/` on a public HTTPS endpoint.
+2. In Dify, configure provider credentials:
+   - `bridge_url`: public HTTPS bridge URL.
+   - `api_key`: bridge API key, stored as a secret.
+3. Package locally:
+
+   ```sh
+   dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.0.difypkg
+   dify plugin checksum submissions/dify/yeelight-smart-home-0.1.0.difypkg
+   ```
+
+4. Fork `langgenius/dify-plugins`.
+5. Add only this package file under `yeelight/yeelight-smart-home/`.
+6. Submit the PR with `pull-request.md`.
 
 Required credentials/material:
 
 - Dify plugin developer identity.
-- Public repository URL.
-- Plugin icon, screenshots and usage examples.
-- Runtime installation instructions for `yeelight-home`.
 - Public HTTPS bridge URL.
-- Privacy policy URL or packaged `PRIVACY.md`.
+- Runtime installation instructions for `yeelight-home`.
+- Official Yeelight GitHub identity for Marketplace PR submission, or explicit approval to submit from the currently authenticated GitHub account.

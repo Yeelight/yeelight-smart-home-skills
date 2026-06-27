@@ -1,0 +1,24 @@
+{
+  "slug": "yeelight-smart-home",
+  "displayName": "Yeelight Smart Home",
+  "version": "0.1.0",
+  "summaryZh": "通过本地 yeelight-home runtime 控制、诊断、规划和查询 Yeelight 智能家居。",
+  "summaryEn": "Control, diagnose, plan, and answer product questions for a Yeelight smart home through the local yeelight-home runtime.",
+  "repository": "https://github.com/Yeelight/yeelight-smart-home-skills",
+  "release": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.0",
+  "changelog": "Initial public release.",
+  "publisher": "Yeelight",
+  "tags": [
+    "yeelight",
+    "smart-home",
+    "lighting",
+    "iot",
+    "home-automation"
+  ],
+  "runtime": "yeelight-home >= 0.1.7",
+  "safety": [
+    "Skill calls only yeelight-home invoke --stdin.",
+    "Runtime credentials remain local.",
+    "Persistent or risky changes require runtime confirmation."
+  ]
+}

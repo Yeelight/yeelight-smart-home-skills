@@ -39,7 +39,7 @@ Submission material lives under `submissions/`.
 
 These platforms now have a reusable bridge adapter and submission kit, but still require platform accounts, workspace ownership, public HTTPS deployment, privacy policy URLs and review or console actions:
 
-- Dify Marketplace: package `.difypkg` or submit a Marketplace PR after wrapping the bridge as a Dify plugin.
+- Dify Marketplace: `.difypkg` package and PR body are prepared under `submissions/dify/`; Marketplace publication requires a PR to `langgenius/dify-plugins`.
 - OpenAI GPT Store / Apps SDK: submit the public `/mcp` endpoint through the OpenAI dashboard review flow.
 - Coze / 扣子: import the OpenAPI bridge or create an API plugin in the console.
 - 阿里云百炼: create an API plugin or custom MCP service, test it, then publish the application.
@@ -49,7 +49,6 @@ These platforms now have a reusable bridge adapter and submission kit, but still
 
 Additional public skill directories are tracked in `submissions/skill-directory-submission-status.json`:
 
-- AgenticSkills: automatic API submission was attempted, but the platform returned `Submission review queue is not configured.`
 - NanoSkill: no public API/form found; email submission is required.
 - Marketing Skills: domain-specific marketing directory; no third-party smart-home skill submission flow found.
 - Tencent SkillHub: publish API exists, but login/real-name or enterprise authentication is required before automated submission.

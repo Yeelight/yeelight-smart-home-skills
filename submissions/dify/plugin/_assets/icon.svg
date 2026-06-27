@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Yeelight">
+  <rect width="128" height="128" rx="24" fill="#0B1220"/>
+  <circle cx="64" cy="64" r="42" fill="#F6C945"/>
+  <path d="M64 28a36 36 0 0 1 31 54H33a36 36 0 0 1 31-54Z" fill="#FFFFFF" opacity="0.92"/>
+  <path d="M44 91h40v10H44z" fill="#0B1220"/>
+  <path d="M52 106h24v8H52z" fill="#0B1220"/>
+</svg>

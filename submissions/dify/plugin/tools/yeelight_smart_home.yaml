@@ -1,0 +1,40 @@
+identity:
+  name: invoke_yeelight_skill
+  author: yeelight
+  label:
+    en_US: Invoke Yeelight Skill
+description:
+  human:
+    en_US: Invoke the Yeelight Smart Home skill through the configured bridge.
+  llm: Send one confirmed Yeelight Smart Home request to the bridge. Use an intent from the Yeelight Smart Home intent catalog. Persistent writes remain confirmation-gated by the runtime.
+parameters:
+  - name: utterance
+    type: string
+    required: true
+    label:
+      en_US: Utterance
+    human_description:
+      en_US: Natural-language Yeelight smart home request.
+    llm_description: Natural-language user request for Yeelight Smart Home.
+    form: llm
+  - name: intent
+    type: string
+    required: true
+    label:
+      en_US: Intent
+    human_description:
+      en_US: Intent from the Yeelight Smart Home intent catalog, such as home.list.
+    llm_description: Intent from skills/yeelight-smart-home/assets/intent-catalog.json.
+    form: llm
+  - name: parameters_json
+    type: string
+    required: false
+    label:
+      en_US: Parameters JSON
+    human_description:
+      en_US: Optional JSON object for SkillRequest.parameters.
+    llm_description: Optional JSON object string. Leave empty when no parameters are required.
+    form: llm
+extra:
+  python:
+    source: tools/yeelight_smart_home.py

@@ -31,6 +31,7 @@ async function main() {
   checkFile("bridge_privacy", path.join(bridgeDir, "privacy.md"));
   checkOpenApi(openApi);
   checkPlatformSubmissionKits();
+  checkDifyPackage();
   checkReleaseChecksums();
   checkScriptSyntax();
   await smokeBridge();
@@ -66,7 +67,6 @@ function checkPlatformSubmissionKits() {
   const platformIds = [
     "clawhub",
     "skills-sh",
-    "agenticskills",
     "nanoskill",
     "marketing-skills",
     "tencent-skillhub",
@@ -86,6 +86,45 @@ function checkPlatformSubmissionKits() {
     checks.push(check(`submission_${platform}`, exists && text.toLowerCase().includes("yeelight"), {
       file: rel(readme),
       hasBridge: text.includes("bridge") || text.includes("Bridge") || text.includes("桥接"),
+    }));
+  }
+}
+
+function checkDifyPackage() {
+  const pluginRoot = path.join(root, "submissions", "dify", "plugin");
+  const packageFile = path.join(root, "submissions", "dify", "yeelight-smart-home-0.1.0.difypkg");
+  for (const file of [
+    "manifest.yaml",
+    "README.md",
+    "PRIVACY.md",
+    "main.py",
+    "provider/yeelight_smart_home.yaml",
+    "provider/yeelight_smart_home.py",
+    "tools/yeelight_smart_home.yaml",
+    "tools/yeelight_smart_home.py",
+    "_assets/icon.svg",
+  ]) {
+    checkFile(`dify_plugin_${file.replaceAll("/", "_")}`, path.join(pluginRoot, file));
+  }
+  for (const icon of ["icon.svg", "icon-dark.svg"]) {
+    const iconPath = path.join(pluginRoot, "_assets", icon);
+    const text = fs.existsSync(iconPath) ? fs.readFileSync(iconPath, "utf8") : "";
+    checks.push(check(`dify_plugin_${icon}_custom`, Boolean(text) && !text.includes("DIFY_MARKETPLACE_TEMPLATE_ICON_DO_NOT_USE"), {
+      file: rel(iconPath),
+    }));
+  }
+  checkFile("dify_package_file", packageFile);
+  if (fs.existsSync(packageFile)) {
+    const result = spawnSync("unzip", ["-l", packageFile], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+    const listing = result.stdout || "";
+    const required = ["manifest.yaml", "README.md", "PRIVACY.md", "main.py", "provider/yeelight_smart_home.yaml", "tools/yeelight_smart_home.yaml"];
+    const missing = required.filter((item) => !listing.includes(item));
+    checks.push(check("dify_package_readable", (result.status ?? 1) === 0, {
+      file: rel(packageFile),
+      stderr: tail(result.stderr),
+    }));
+    checks.push(check("dify_package_contains_required_files", missing.length === 0, {
+      missing,
     }));
   }
 }

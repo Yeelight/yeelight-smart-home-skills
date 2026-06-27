@@ -36,15 +36,6 @@
       "status": "published-indexed-installable"
     },
     {
-      "id": "agenticskills",
-      "title": "AgenticSkills",
-      "region": "global",
-      "automation": "api-submission-attempted",
-      "url": "https://agenticskills.io",
-      "submissionPath": "submissions/agenticskills/README.md",
-      "status": "blocked-platform-review-queue-not-configured"
-    },
-    {
       "id": "nanoskill",
       "title": "NanoSkill",
       "region": "global",
@@ -108,11 +99,12 @@
       "id": "dify-marketplace",
       "title": "Dify Marketplace",
       "region": "global/china",
-      "automation": "bridge-adapter-ready",
+      "automation": "plugin-package-ready-pr-required",
       "adapterPath": "adapters/yeelight-skill-bridge",
       "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/dify/README.md",
-      "status": "adapter-kit-ready-review-required"
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.0.difypkg",
+      "status": "difypkg-ready-marketplace-pr-required"
     },
     {
       "id": "openai-gpt-store-apps-sdk",

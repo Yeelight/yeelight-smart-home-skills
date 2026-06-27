@@ -36,18 +36,6 @@
       ]
     },
     {
-      "id": "agenticskills",
-      "status": "blocked-platform-review-queue-not-configured",
-      "url": "https://agenticskills.io",
-      "submissionEndpoint": "https://agenticskills.io/api/submissions",
-      "evidence": [
-        "POST /api/submissions returned HTTP 503 with {\"error\":\"Submission review queue is not configured.\"}"
-      ],
-      "remaining": [
-        "contact hello@agenticskills.io or retry when queue is enabled"
-      ]
-    },
-    {
       "id": "nanoskill",
       "status": "contact-required-email-submission",
       "url": "https://nanoskill.ai",
@@ -57,7 +45,7 @@
         "public flow points to email/Gmail compose"
       ],
       "remaining": [
-        "send submission from an approved Yeelight sender address"
+        "send email-draft.md from an approved Yeelight sender address"
       ]
     },
     {
@@ -96,7 +84,22 @@
         "public crawl found browsing/search/listed Skill data but no public submit endpoint"
       ],
       "remaining": [
-        "publisher/admin account or platform operator contact"
+        "publisher/admin account or platform operator contact; operator-contact-draft.md is prepared"
+      ]
+    },
+    {
+      "id": "dify-marketplace",
+      "status": "difypkg-ready-marketplace-pr-required",
+      "url": "https://github.com/langgenius/dify-plugins",
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.0.difypkg",
+      "evidence": [
+        "Dify CLI is available locally",
+        "Dify Marketplace requires a .difypkg PR to langgenius/dify-plugins",
+        "plugin source and PR body are prepared under submissions/dify"
+      ],
+      "remaining": [
+        "deploy a public HTTPS bridge",
+        "submit Marketplace PR from an official Yeelight GitHub identity or after explicit approval to use current GitHub account"
       ]
     }
   ]

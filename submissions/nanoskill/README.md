@@ -23,3 +23,9 @@ Draft submission payload:
 Next action:
 
 - Send an email submission from an approved Yeelight sender address.
+
+Prepared draft:
+
+```text
+email-draft.md
+```
