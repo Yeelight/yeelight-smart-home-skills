@@ -17,7 +17,7 @@ Never call external tool servers or compatibility projects for Yeelight data or 
 4. Do not claim success until Runtime returns `success` or `partial`.
 5. Do not expose internal IDs unless Runtime requires it for ambiguity resolution or diagnostics.
 6. For normal query and transient control, make one Runtime invocation.
-7. Persistent changes must use Runtime pending-plan confirmation.
+7. Persistent changes must use Runtime pending-plan confirmation; for one user request with multiple allowlisted add/update/configure steps, prefer one `operation.batch.configure` plan so the user confirms once.
 8. R3 operations require local approval when Runtime returns that lane; Runtime-classified R2 delete plans still use ordinary `plan.commit`.
 9. Never create persistent rules only because an implicit habit was detected.
 10. Runtime validation and policy decisions are final.
@@ -30,20 +30,21 @@ Never call external tool servers or compatibility projects for Yeelight data or 
    - Product consultation, manual, FAQ, SKU/material-code resources, or product pedia: `references/product-knowledge.md`
    - Homes, rooms, areas: `references/home-room-area.md`
    - Groups: `references/groups.md`
-   - Scenes: `references/scenes.md`
-   - Automations: `references/automations.md`
-   - Lighting design or lighting mood planning: `references/lighting-design.md`
+   - Scenes, saved action bundles, or scene recipe conversion: `references/scenes.md`
+   - Automations, schedules, trigger-action rules, or automation design strategy: `references/automations.md`
+   - Lighting design, mood planning, subjective comfort wording, or multi-step rituals: `references/lighting-design.md`
+   - Product candidate selection for not-yet-installed lighting slots: run `node scripts/product-select.mjs --query "<user product wording>" --room "<room>" --goal "<design goal>" --limit 8`, then apply `references/lighting-design.md` and `references/product-knowledge.md`.
    - Device, gateway, scene, or automation diagnostics: `references/diagnostics.md`
    - Memory or personalization: `references/memory-and-personalization.md`
    - Recommendations and feedback: `references/recommendations.md`
-   - Delete, unbind, transfer, permission, bulk, or risky changes: `references/safety-and-confirmation.md`
+   - Delete, unbind, transfer, permission, bulk, mixed configuration, or risky changes: `references/safety-and-confirmation.md`
    - Runtime statuses, auth, partial results, retry, cache, or error handling: `references/runtime-status-and-errors.md`
    - Blocked capabilities, manual guidance, risk lanes, or non-enabled action classes: `references/capability-boundaries.md`
    - Thing model, category, component, property, or capability language: `references/thing-model.md`
-   - Device families, aliases, product words, or fuzzy device mentions: `references/device-lexicon.md`
-   - Automation event wording or condition/action vocabulary: `references/automation-events.md`
-   - Lighting ambience, scene recipes, mood translation, or design rules: `references/lighting-experience.md`
-3. Build one SkillRequest with natural target descriptions; do not resolve IDs yourself.
+   - Device families, aliases, product words, typo-prone wording, or fuzzy device mentions: `references/device-lexicon.md`
+   - Automation event wording, trigger-condition vocabulary, templates, patterns, or anti-patterns: `references/automation-events.md`
+   - Lighting ambience, scene recipes, compound flows, mood translation, or design rules: `references/lighting-experience.md`
+3. Build one SkillRequest with natural target descriptions; do not resolve IDs yourself. If the user asks for several non-destructive persistent changes in one request, build `operation.batch.configure` with `parameters.operations[]` instead of sending many separate pending-plan requests.
 4. Call `scripts/invoke` once with JSON on stdin.
 5. Follow Runtime status:
    - `success` or `partial`: explain actual result.

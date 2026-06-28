@@ -2,6 +2,8 @@
 
 Use this reference for homes, rooms, and areas.
 
+## Intent Routing
+
 - Use `home.list` when the user asks for all homes, needs to choose the right home, or a later delete/member/transfer plan needs account-level home candidates with counts.
 - Use `home.search` when the user provides a partial home name and needs candidates before selecting, updating, deleting, joining, or managing members of a home.
 - Use `entity.list` or `entity.get` for read-only entities inside one selected home.
@@ -16,6 +18,7 @@ Use this reference for homes, rooms, and areas.
 - Use `home.member.configure` when the user explicitly asks to change a member between normal and admin. Runtime returns a pending plan, rejects owner/master transfer through this intent, and verifies the role through `home.member.list`.
 - Use `home.member.remove`, `home.member.transfer`, or `home.member.quit` only for explicit member removal, owner transfer, or leaving a shared home. These are R3 local-approval plans; show the Runtime returned impact preview and approval command, then commit only by `planId` after local approval succeeds.
 - Use `home.create` when the user explicitly asks to create a new home/family. Pass only semantic fields such as `name`, `description`/`desc`, `icon`, `areaCode`, and `areaName`; Runtime returns an account-scoped pending plan and verifies the created home by home list or created-house accessibility after `plan.commit`.
+- If the user asks to create a new home and immediately design it, first create/select the home through `home.create` and `plan.commit`, then route the room and slot topology to `lighting.design.import`. Do not require real devices to be installed before creating design slots.
 - Use `home.update` when the user changes home profile fields such as name, description, icon, area code/name, building name/address, or floor name. Runtime must return a pending plan; home name is verified by home detail readback, while address/floor metadata relies on cloud write acknowledgement plus readable home detail.
 - Use `home.delete` only when the user explicitly asks to delete the current home. This is an R3 local-approval plan; do not treat chat confirmation as sufficient approval.
 - Use `home.sort.list` when the user asks to inspect the current home page or room organization order before changing it.
@@ -45,6 +48,29 @@ Use this reference for homes, rooms, and areas.
 - For favorite and sort writes, pass Runtime-returned semantic evidence such as `entityType` plus `resId`/`entityId`; do not ask the user for internal `typeId` values.
 - Use `room.delete` or `area.delete` only when the user explicitly asks to delete one target. Runtime must return a pending plan, re-check the target, and verify removal after commit.
 - Use `room.batch_delete` or `area.batch_delete` only when the user explicitly asks to delete multiple rooms or areas. Runtime caps one plan at 20 targets, resolves each target by id or unique name, and verifies every target disappeared from `entity.list`.
+
+## Spatial Modeling Rules
+
+- Home is the hard isolation boundary for entities, plans, local memory, and recommendations. Never merge homes with similar names.
+- Room is the primary user-facing operation anchor. Area is a higher-level organization layer for floors, zones, or public/private spaces.
+- A lighting or automation proposal should preserve the user's spatial scope. "餐桌上方" is narrower than "餐厅"; "起夜路径" may span multiple rooms but only along the path.
+- Do not create a default room, area, gateway binding, or real device placement to make a vague design look complete. If the user explicitly asks for an actionable lighting design with prebuilt slots, use `lighting.design.import` so Runtime creates governed design metadata.
+- When reordering home page or favorites, preserve the user's explicit order and leave unspecified items in their current relative order unless Runtime returns another plan.
+- For batch create/update/delete, keep every target explicit. Do not infer "all bedrooms" or "all lights" from a vague plural if Runtime did not resolve them.
+
+## Natural Language Mapping
+
+- "我有哪些家庭/房间/区域": read-only list/detail intents.
+- "新建儿童房/把书房改名": room or home/area persistent plan.
+- "把设备移到餐厅": `device.move` or batch move with explicit targets.
+- "首页把客厅放前面/收藏这些灯": sort or favorite pending plan.
+- "一楼公共区包括客厅餐厅": area update or create, depending on existing area evidence.
+- "还没装灯，先把客厅两个格栅灯槽位建好": `device.slot.create`.
+- "帮这个新家做完整照明设计并落到系统里": `home.create` if needed, then `lighting.design.import`.
+
+## Clarification Triggers
+
 - Ask one smallest clarification question when the target home, room, or area is ambiguous.
 - Do not choose a home by guessing from a name collision.
 - Do not invent sorting ranks or favorite resource types. Pass the user's requested order and natural target names to Runtime when exact IDs are not available.
+- Ask whether the change is conceptual design or real home configuration when the user mixes phrases such as "帮我规划" with "直接创建".

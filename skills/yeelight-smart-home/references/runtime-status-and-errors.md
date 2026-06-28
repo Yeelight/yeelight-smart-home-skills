@@ -10,6 +10,8 @@ Use this reference for authentication, environment selection, pagination, timeou
 - Reads may be paginated by Runtime. The user-facing answer should summarize the returned result, not page mechanics.
 - Do not blindly retry writes. If Runtime reports uncertainty, explain `partial` or `blocked` as returned.
 - After writes, trust Runtime to invalidate topology cache and re-check state when the adapter supports verification.
+- `operation.batch.configure` is the low-friction path for one user request with multiple allowlisted add/update/configure steps. It still returns `confirmation_required`, but one `plan.commit` submits the whole stored batch; commit must still contain only `planId`.
+- Do not put account-scoped `home.create` inside `operation.batch.configure`; create/select the home first, then batch the house-scoped configuration steps against that home.
 
 ## Status Handling
 

@@ -101,8 +101,8 @@ Agent 绝不能为了 Yeelight 数据或动作去使用 curl、raw HTTP、外部
 node tools/skill-structure-validate.js
 node tools/skill-contract-eval.js
 node tools/host-wrapper-smoke.js
-node tools/skill-release.mjs --skill yeelight-smart-home --version 0.1.2 --dry-run --all-default-channels --ci
-node tools/skill-release-verify.mjs --skill yeelight-smart-home --version 0.1.2
+node tools/skill-release.mjs --skill yeelight-smart-home --version 0.1.3 --dry-run --all-default-channels --ci
+node tools/skill-release-verify.mjs --skill yeelight-smart-home --version 0.1.3
 ```
 
 如果要做真实只读信心验证，需要准备好本地 runtime profile，并使用只读 entity listing。受保护写操作和生产 smoke 都必须单独明确确认。

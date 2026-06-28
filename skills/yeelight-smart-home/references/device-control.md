@@ -18,6 +18,7 @@ Use this reference for home summary, entity lists, entity details, capability ch
 - Use `entity.capabilities` before claiming a device, group, scene, or automation supports a property or action.
 - Use product-level `thing.schema.*` intents only for product model questions; do not substitute them for `entity.capabilities` on installed devices.
 - Use `product.pedia.search` for product consultation, manuals, FAQ candidates, SKU/material-code resources, and product attachments.
+- Use `device.slot.create` when the user explicitly asks to add or reserve not-yet-installed lighting device positions in a home. This creates design metadata slots through Runtime pending-plan confirmation; it is not device pairing, not network onboarding, and not evidence that the device is online.
 - Use `thing.product.info.batch_get` for v2 product definitions when the user provides product ids.
 - Use `thing.product.info.v3.batch_get` when the user provides product ids and a product definition version.
 - Use `thing.product.list.v3` when the user asks for the versioned product list, not for installed home devices.
