@@ -80,7 +80,7 @@ Use these as planning patterns only. Runtime still validates target entities, ca
 
 ## Persistent Rule Policy
 
-- Creating or updating automation is persistent configuration and must go through Runtime pending plan confirmation.
+- Creating or updating automation is persistent configuration and must go through semantic Runtime execution after caller-side user confirmation when needed.
 - Do not create a rule from an inferred habit, complaint, or one-time preference.
 - Do not auto-add real sensors or paired devices when a template needs missing hardware. For whole-home lighting design, missing lights may become design slots through lighting.design.import; missing triggers remain design metadata or recommendations until Runtime verifies real sensors.
 - Do not claim random timing, dynamic sunset, manual override recovery, air-conditioning control, audio playback, or panel/knob binding unless Runtime returns explicit support.

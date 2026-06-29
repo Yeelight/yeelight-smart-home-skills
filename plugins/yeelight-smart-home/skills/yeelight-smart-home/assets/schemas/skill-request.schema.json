@@ -252,10 +252,7 @@
         "favorite.delete",
         "favorite.batch_add",
         "favorite.batch_update",
-        "favorite.batch_delete",
-        "plan.commit",
-        "plan.cancel",
-        "execution.undo"
+        "favorite.batch_delete"
       ]
     },
     "targetReference": {

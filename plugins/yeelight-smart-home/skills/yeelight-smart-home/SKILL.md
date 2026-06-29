@@ -17,8 +17,8 @@ Never call external tool servers or compatibility projects for Yeelight data or 
 4. Do not claim success until Runtime returns `success` or `partial`.
 5. Do not expose internal IDs unless Runtime requires it for ambiguity resolution or diagnostics.
 6. For normal query and transient control, make one Runtime invocation.
-7. Persistent changes must use Runtime pending-plan confirmation; for one user request with multiple allowlisted add/update/configure steps, prefer one `operation.batch.configure` plan so the user confirms once.
-8. R3 operations require local approval when Runtime returns that lane; Runtime-classified R2 delete plans still use ordinary `plan.commit`.
+7. Functionality and user flow come first for reversible smart-home configuration. Use the lightest Runtime execution lane that can safely complete the goal.
+8. Runtime is a thin execution layer. Reversible configuration writes execute directly after Runtime validation. If user confirmation is needed, handle it in conversation first, then call the semantic intent once.
 9. Never create persistent rules only because an implicit habit was detected.
 10. Runtime validation and policy decisions are final.
 
@@ -44,18 +44,30 @@ Never call external tool servers or compatibility projects for Yeelight data or 
    - Device families, aliases, product words, typo-prone wording, or fuzzy device mentions: `references/device-lexicon.md`
    - Automation event wording, trigger-condition vocabulary, templates, patterns, or anti-patterns: `references/automation-events.md`
    - Lighting ambience, scene recipes, compound flows, mood translation, or design rules: `references/lighting-experience.md`
-3. Build one SkillRequest with natural target descriptions; do not resolve IDs yourself. If the user asks for several non-destructive persistent changes in one request, build `operation.batch.configure` with `parameters.operations[]` instead of sending many separate pending-plan requests.
+3. Build one SkillRequest with natural target descriptions; do not resolve IDs yourself. Every Runtime request must include this minimum shape:
+   ```json
+   {
+     "contractVersion": "1.0",
+     "requestId": "unique-request-id",
+     "locale": "zh-CN",
+     "utterance": "用户原始请求或确认后的等价请求",
+     "intent": "lighting.design.import",
+     "parameters": {}
+   }
+   ```
+   `requestId` must be unique for this invocation. Keep `utterance` non-empty and close to the user wording. Use `homeRef.name` when the user names an existing home and the Runtime can resolve it; use `parameters.houseId` only when the Runtime or user already supplied a specific home id. If the user asks for several non-destructive persistent changes in one request, build `operation.batch.configure` with `parameters.operations[]` instead of sending many separate requests.
 4. Call `scripts/invoke` once with JSON on stdin.
 5. Follow Runtime status:
    - `success` or `partial`: explain actual result.
    - `clarification_required`: ask exactly the returned smallest question.
-   - `confirmation_required`: show the returned plan and wait for user confirmation.
-   - `auth_required`: tell the user to run `yeelight-home auth login --qr`; if they cannot scan, tell them to import an approved token in their own terminal with `yeelight-home auth token set --stdin --region <region>`; do not ask for secrets.
+	- `auth_required`: tell the user to run `yeelight-home auth login --qr`; if they cannot scan, tell them to import an already authorized token in their own terminal with `yeelight-home auth token set --stdin --region <region>`; do not ask for secrets.
    - `error` with `runtime_missing`: explain that the local `yeelight-home` CLI is missing; tell the user to install it from the public Yeelight Home Runtime release or a supported package manager, or set `YEELIGHT_HOME_BIN`.
    - `blocked`, `not_supported`, or other `error`: explain the returned safe alternative.
-6. For confirmation, send `plan.commit` with the returned `planId` only.
-7. Do not add recommendations unless Runtime returned one.
-8. Do not infer, store, or present memory, personalization, or recommendation state independently of Runtime.
+6. Use `--dry-run` or `options.dryRun=true` only when you intentionally want a no-write preview before asking the user. After the user agrees, resend the same semantic request without dry-run.
+7. For destructive, permission-sensitive, unlinking, transfer, overwrite, or clear-all operations, ask the user for explicit natural-language agreement in chat first, then call the relevant semantic Runtime intent once.
+8. Local memory and recommendations are enabled by default. Before saving a preference, deduplicate first: use existing context or `memory.list` when useful, merge same-meaning memories, keep only genuinely new preference dimensions, and call `memory.remember` once per distinct normalized preference with concise evidence.
+9. Do not add recommendations unless Runtime returned one.
+10. Do not infer, store, or present memory, personalization, or recommendation state independently of Runtime.
 
 ## Response Style
 

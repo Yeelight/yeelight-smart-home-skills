@@ -10,7 +10,7 @@ Use this reference for authentication, environment selection, pagination, timeou
 - Reads may be paginated by Runtime. The user-facing answer should summarize the returned result, not page mechanics.
 - Do not blindly retry writes. If Runtime reports uncertainty, explain `partial` or `blocked` as returned.
 - After writes, trust Runtime to invalidate topology cache and re-check state when the adapter supports verification.
-- `operation.batch.configure` is the low-friction path for one user request with multiple allowlisted add/update/configure steps. It still returns `confirmation_required`, but one `plan.commit` submits the whole stored batch; commit must still contain only `planId`.
+- `operation.batch.configure` is the low-friction path for one user request with multiple allowlisted add/update/configure steps. Runtime executes the allowlisted batch directly and may return `partial` if a later step fails.
 - Do not put account-scoped `home.create` inside `operation.batch.configure`; create/select the home first, then batch the house-scoped configuration steps against that home.
 
 ## Status Handling
@@ -20,11 +20,17 @@ Use this reference for authentication, environment selection, pagination, timeou
 | `success` | State the actual result. |
 | `partial` | State what succeeded, what did not, and any returned safe next step. |
 | `clarification_required` | Ask exactly the smallest returned clarification question. |
-| `confirmation_required` | Show the returned plan; wait for user confirmation before `plan.commit`. |
-| `auth_required` | Tell the user to run the local QR login command; if QR is unavailable, tell them to import an approved token in their own terminal with `auth token set --stdin`; do not request secrets. |
+| `auth_required` | Tell the user to run the local QR login command; if QR is unavailable, tell them to import an already authorized token in their own terminal with `auth token set --stdin`; do not request secrets. |
 | `blocked` | Explain the returned reason and safe alternative. |
 | `not_supported` | Explain the unsupported capability without attempting raw fallback. |
 | `error` | Report the redacted message and avoid guessing cause or success. |
+
+## Dry-Run Preview
+
+- Use `options.dryRun=true` or wrapper/CLI `--dry-run` only when a no-write preview is useful before user confirmation.
+- Dry-run preview is not a stored operation. It exists only to help the caller explain the planned semantic request before resending without dry-run.
+- After the user agrees, resend the same semantic request without dry-run. Keep the user's original wording and targets stable.
+- If Runtime reports `profile_mismatch`, `region_mismatch`, missing house context, or validation errors, ask the smallest clarification or regenerate the semantic request in the current context.
 
 ## Runtime Missing
 

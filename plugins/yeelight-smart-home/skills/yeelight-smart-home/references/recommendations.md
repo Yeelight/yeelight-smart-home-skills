@@ -11,8 +11,8 @@ Use this reference for proactive suggestions and feedback.
 
 - Do not add, invent, rank, or queue a recommendation that Runtime did not return.
 - Present at most one non-essential recommendation in a conversation, and only the item returned by Runtime.
-- Do not surface recommendations during troubleshooting, auth recovery, safety confirmation, deletion approval, or error handling unless the user explicitly asks.
-- A recommendation may propose a scene, automation, lighting design, naming cleanup, favorite organization, repair, energy saving, capability discovery, or memory update, but any persistent change must go through Runtime confirmation.
+- Do not surface recommendations during troubleshooting, auth recovery, destructive-change confirmation, or error handling unless the user explicitly asks.
+- A recommendation may propose a scene, automation, lighting design, naming cleanup, favorite organization, repair, energy saving, capability discovery, or memory update, but any persistent change must go through semantic Runtime execution after any caller-side user confirmation that is needed.
 - Preference-based local recommendations may be returned after `memory.remember` or when `recommendation.list` materializes saved preferences. They can suggest defaults or next-step plans, but they must not create room, group, scene, automation, favorite, device, gateway, or member configuration directly.
 - If Runtime returns no recommendation, say there is no current local recommendation. Do not fill the gap with model-generated advice.
 
@@ -29,10 +29,10 @@ Use this reference for proactive suggestions and feedback.
 
 ## Display Threshold
 
-- Do not show a recommendation during auth recovery, diagnostics, delete approval, or high-risk confirmation.
+- Do not show a recommendation during auth recovery, diagnostics, destructive-change confirmation, or high-risk confirmation.
 - If the current user task completed successfully and Runtime returned a high-confidence recommendation, present it as one optional next step.
 - If the user asks "有什么建议", call `recommendation.list` and summarize returned candidates in priority order.
-- If the suggestion would create or change cloud configuration, say it is a proposal and route the actual change through pending-plan confirmation.
+- If the suggestion would create or change cloud configuration, say it is a proposal and route the actual change through semantic Runtime execution.
 
 ## Feedback And Suppression
 

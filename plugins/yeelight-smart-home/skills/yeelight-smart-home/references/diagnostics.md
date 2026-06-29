@@ -11,17 +11,17 @@ Use this reference for troubleshooting devices, gateways, scenes, and automation
 - Use `gateway.thread.get` when the user asks about Thread, Matter bridge, Thread network, border-router, or child Thread connectivity evidence for one gateway.
 - Use `gateway.stats.list` when the user asks for gateway summaries with home or room child-device counts.
 - Use `gateway.scene_relation.list` before explaining which scenes may depend on a gateway.
-- Use `gateway.configure` when the user explicitly asks to change gateway name, description, icon, MAC metadata, or room associations. Runtime must return a pending plan, validate referenced rooms against the current home, and verify through `gateway.detail.get`.
-- Use `gateway.delete` only when the user explicitly asks to delete a gateway. Runtime must return an R3 local-approval plan; ordinary chat confirmation is not enough.
+- Use `gateway.configure` when the user explicitly asks to change gateway name, description, icon, MAC metadata, or room associations. Runtime must validate and execute the semantic request directly, validate referenced rooms against the current home, and verify through `gateway.detail.get`.
+- Use `gateway.delete` only when the user explicitly asks to delete a gateway. This is R3 high impact: confirm in chat first, then call Runtime directly.
 - Use `panel.list` when the user asks which panels are in the home.
 - Use `panel.get` when the user asks for one panel's detail, button layout, visible buttons, or current button bindings.
 - Use `panel.button.type.get` when the user asks for one panel's buttons of a specific press or key type.
-- Use `panel.button.configure` only when the user explicitly asks to change one panel's button configuration. Runtime must return a pending plan and later verify with panel detail reads.
+- Use `panel.button.configure` only when the user explicitly asks to change one panel's button configuration. Runtime must validate and execute the semantic request directly and later verify with panel detail reads.
 - Use `panel.button_event.update` when the user explicitly asks to change one existing panel button event, and pass only `buttonEventId`, optional `alias`, and sanitized `details`.
-- Use `panel.button_event.batch_update` only when the user gives multiple explicit button events for the same panel. Keep the batch small; Runtime caps and verifies the plan.
-- Use `panel.button_event.reset` only for an explicit request to clear one panel button event binding. Runtime returns a pending plan before reset.
+- Use `panel.button_event.batch_update` only when the user gives multiple explicit button events for the same panel. Keep the batch small; Runtime caps the request and verifies the result when supported.
+- Use `panel.button_event.reset` only for an explicit request to clear one panel button event binding. Runtime validates and executes the semantic request directly before reset.
 - Use `knob.get` when the user asks for one rotary knob's mode, detail, bound resources, or current multi-knob configuration.
-- Use `knob.configure` only when the user explicitly asks to change one rotary knob configuration. Runtime must return a pending plan and later verify with knob detail reads.
+- Use `knob.configure` only when the user explicitly asks to change one rotary knob configuration. Runtime must validate and execute the semantic request directly and later verify with knob detail reads.
 - Use `knob.reset` only for an explicit request to clear one multi-knob sub-key binding and include the target knob device plus `index`.
 - Use `screen.control.list` when the user asks which devices or scenes a screen can control.
 - Use `ai_voice.product.list` when the user asks which product ids support AI voice recognition. This is a product catalog read, not account binding or third-party credential access.
@@ -51,5 +51,5 @@ Use this reference for troubleshooting devices, gateways, scenes, and automation
 - If evidence is missing, report unknowns clearly and do not invent a cause.
 - Do not ask the model to run separate raw checks; pass the diagnostic intent to Runtime.
 - Do not start firmware, OTA, gateway, or app upgrades from the Skill. Maintenance upgrade and version intents here are read-only evidence.
-- Do not use B2B panel endpoints, legacy single-knob reset, or raw panel/knob payloads. Panel and knob writes must go through the semantic pending-plan intents above.
-- If the likely fix changes configuration, route that fix through the relevant pending-plan intent rather than describing it as already repaired.
+- Do not use B2B panel endpoints, legacy single-knob reset, or raw panel/knob payloads. Panel and knob writes must go through the semantic semantic write intents above.
+- If the likely fix changes configuration, route that fix through the relevant semantic write intent rather than describing it as already repaired.

@@ -6,7 +6,7 @@ Use this reference for ambience, lighting design, scene planning, and mood trans
 
 - Treat recipes as candidate guidance, not executable truth.
 - Apply only properties that Runtime validates on the target entities.
-- Temporary ambience can use Runtime-reviewed control intents; persistent scenes, automations, groups, and device settings require a pending plan.
+- Temporary ambience can use Runtime-reviewed control intents; persistent scenes, automations, groups, and device settings use direct semantic Runtime execution after any caller-side confirmation.
 - Prefer warm, low-brightness, slow transitions for rest and sleep. Prefer neutral or cooler task light for focus and reading.
 - Avoid colorful or dynamic effects when the user dislikes color effects, asks for sleep, or asks for low stimulation.
 - Decode subjective language into intent, activity, time, room role, intensity, and constraints before choosing any parameter.

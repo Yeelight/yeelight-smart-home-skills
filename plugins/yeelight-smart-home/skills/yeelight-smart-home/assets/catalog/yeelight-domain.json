@@ -7655,10 +7655,10 @@
     ]
   },
   "runtimePolicy": {
-    "directExecution": false,
+    "directExecution": true,
     "requiresCapabilityCheck": true,
     "implicitMemoryCreatesPersistentConfig": false,
     "legacyAutoAddPhysicalDeviceRule": "blocked",
-    "designSlotCreationRule": "allowed_with_pending_plan"
+    "designSlotCreationRule": "allowed_with_semantic_runtime_execution"
   }
 }

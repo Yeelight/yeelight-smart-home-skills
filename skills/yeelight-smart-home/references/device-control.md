@@ -18,15 +18,15 @@ Use this reference for home summary, entity lists, entity details, capability ch
 - Use `entity.capabilities` before claiming a device, group, scene, or automation supports a property or action.
 - Use product-level `thing.schema.*` intents only for product model questions; do not substitute them for `entity.capabilities` on installed devices.
 - Use `product.pedia.search` for product consultation, manuals, FAQ candidates, SKU/material-code resources, and product attachments.
-- Use `device.slot.create` when the user explicitly asks to add or reserve not-yet-installed lighting device positions in a home. This creates design metadata slots through Runtime pending-plan confirmation; it is not device pairing, not network onboarding, and not evidence that the device is online.
+- Use `device.slot.create` when the user explicitly asks to add or reserve not-yet-installed lighting device positions in a home. This creates design metadata slots through Runtime semantic execution; it is not device pairing, not network onboarding, and not evidence that the device is online.
 - Use `thing.product.info.batch_get` for v2 product definitions when the user provides product ids.
 - Use `thing.product.info.v3.batch_get` when the user provides product ids and a product definition version.
 - Use `thing.product.list.v3` when the user asks for the versioned product list, not for installed home devices.
 - Use `node.property_config.get` when the user asks for installed-node property configuration evidence for a known node id and node type.
 - Use `state.query` for current device state.
 - Use `entity.rename.batch` when the user explicitly asks to batch rename devices and scenes. Keep every item explicit and let Runtime resolve/validate targets; Runtime currently accepts device and scene resources, caps one plan at 20 items, and verifies names with `entity.list`.
-- Use `device.remove` only when the user explicitly asks to delete a device record from the home. Runtime must return an R3 local-approval plan and verify the device disappeared from `entity.list` after approved commit.
-- Use `device.unbind` only when the user explicitly asks to unbind a device from the current account/home. Runtime must return an R3 local-approval plan, accepts only `clearMac` and `unbindRelDevices` as options, and verifies the device disappeared from `entity.list` after approved commit.
+- Use `device.remove` only when the user explicitly asks to delete a device record from the home. This is R3 high impact: confirm in chat first, then call Runtime; Runtime verifies the device disappeared from `entity.list`.
+- Use `device.unbind` only when the user explicitly asks to unbind a device from the current account/home. This is R3 high impact: confirm in chat first, then call Runtime. Runtime accepts only `clearMac` and `unbindRelDevices` as options and verifies the device disappeared from `entity.list`.
 - Use light-specific intents for power, brightness, color temperature, and RGB color when the user asks for direct lighting control.
 - Use `behavior.execute` only for a temporary behavior that maps to Runtime-reviewed light properties: power, brightness, color temperature, or RGB color.
 - Use `scene.execute` for running an existing scene.
