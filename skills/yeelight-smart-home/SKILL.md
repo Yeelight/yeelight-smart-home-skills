@@ -19,8 +19,9 @@ Never call external tool servers or compatibility projects for Yeelight data or 
 6. For normal query and transient control, make one Runtime invocation.
 7. Functionality and user flow come first for reversible smart-home configuration. Use the lightest Runtime execution lane that can safely complete the goal.
 8. Runtime is a thin execution layer. Reversible configuration writes execute directly after Runtime validation. If user confirmation is needed, handle it in conversation first, then call the semantic intent once.
-9. Never create persistent rules only because an implicit habit was detected.
-10. Runtime validation and policy decisions are final.
+9. Keep AI decisions in the Skill layer. Product selection, grouping strategy, scene design, automation intent, memory interpretation, and recommendations must be authored or confirmed by the Skill/user; do not rely on Runtime to invent them from fuzzy wording.
+10. Never create persistent rules only because an implicit habit was detected.
+11. Runtime validation and policy decisions are final.
 
 ## Workflow
 
@@ -32,6 +33,7 @@ Never call external tool servers or compatibility projects for Yeelight data or 
    - Groups: `references/groups.md`
    - Scenes, saved action bundles, or scene recipe conversion: `references/scenes.md`
    - Automations, schedules, trigger-action rules, or automation design strategy: `references/automations.md`
+   - Nested scene, automation, lighting-design import, panel button, knob, or light-action JSON payloads: `references/action-payloads.md`
    - Lighting design, mood planning, subjective comfort wording, or multi-step rituals: `references/lighting-design.md`
    - Product candidate selection for not-yet-installed lighting slots: run `node scripts/product-select.mjs --query "<user product wording>" --room "<room>" --goal "<design goal>" --limit 8`, then apply `references/lighting-design.md` and `references/product-knowledge.md`.
    - Device, gateway, scene, or automation diagnostics: `references/diagnostics.md`

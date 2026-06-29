@@ -24,7 +24,7 @@ assert_runtime_compatible() {
 if [ -n "${YEELIGHT_HOME_BIN:-}" ]; then
   if [ -x "$YEELIGHT_HOME_BIN" ]; then
     assert_runtime_compatible "$YEELIGHT_HOME_BIN"
-    exec "$YEELIGHT_HOME_BIN" invoke --stdin
+    exec "$YEELIGHT_HOME_BIN" invoke --stdin "$@"
   fi
   cat <<'JSON'
 {"contractVersion":"1.0","requestId":"runtime-missing","status":"error","userMessage":"YEELIGHT_HOME_BIN 指向的 yeelight-home 不存在或不可执行。请将 YEELIGHT_HOME_BIN 设置为 yeelight-home 可执行文件的绝对路径，或取消该环境变量后使用 PATH 中公开安装的 yeelight-home。安装后先运行 yeelight-home auth status --json；若未登录，优先运行 yeelight-home auth login --qr；无法扫码时，可在你自己的终端通过安全输入管道运行 yeelight-home auth token set --stdin --region <region> 导入已获准的 token。houseId 是可选默认家庭，只有家庭内设备、房间、情景、自动化等操作需要选择。","error":{"code":"runtime_missing","message":"YEELIGHT_HOME_BIN is not executable"}}
@@ -34,7 +34,7 @@ fi
 
 if command -v yeelight-home >/dev/null 2>&1; then
   assert_runtime_compatible "yeelight-home"
-  exec yeelight-home invoke --stdin
+  exec yeelight-home invoke --stdin "$@"
 fi
 
 cat <<'JSON'

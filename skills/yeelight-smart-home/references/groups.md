@@ -14,7 +14,7 @@ Use this reference for device groups and lighting groups.
 - Use `group.batch_delete` only when the user explicitly asks to delete multiple groups. Runtime caps one request at 20 groups, resolves each target by id or unique name, and verifies every group disappeared from `entity.list`.
 - Do not assume devices can be grouped together. Runtime must validate device membership and capability rules.
 - If the user says "this room's lights" and a group is not named, pass natural target text to Runtime rather than inventing a group.
-- If the user is importing a lighting design with not-yet-installed slots and asks for same-type grouping, route the whole topology to `lighting.design.import`. Treat generated groups as design metadata until Runtime confirms the import; do not present them as existing controllable groups before real devices are installed.
+- If the user is importing a lighting design with not-yet-installed slots and asks for same-type grouping, the Skill must decide the room-local grouping strategy and pass explicit `groups[]` rows to `lighting.design.import`. Treat imported groups as design metadata until Runtime confirms the import; do not present them as existing controllable groups before real devices are installed.
 
 ## Grouping Rules
 
@@ -28,7 +28,7 @@ Use this reference for device groups and lighting groups.
 ## User Wording
 
 - "把这几盏灯编成一组": `group.create` with explicit member candidates.
-- "各房间相同类型自动成组" while creating slots: `lighting.design.import` with grouped design topology.
+- "各房间相同类型自动成组" while creating slots: `lighting.design.import` with Skill-authored `groups[]` in the grouped design topology.
 - "改一下这个灯组名字": `group.update`.
 - "把餐厅灯组删了": `group.delete`.
 - "以后客厅这些灯一起调": propose a group plan or a scene, depending on whether the user wants a control target or a saved effect.

@@ -101,8 +101,8 @@ From the `yeelight-smart-home` workspace root:
 node tools/skill-structure-validate.js
 node tools/skill-contract-eval.js
 node tools/host-wrapper-smoke.js
-node tools/skill-release.mjs --skill yeelight-smart-home --version 0.1.4 --dry-run --all-default-channels --ci
-node tools/skill-release-verify.mjs --skill yeelight-smart-home --version 0.1.4
+node tools/skill-release.mjs --skill yeelight-smart-home --version 0.1.5 --dry-run --all-default-channels --ci
+node tools/skill-release-verify.mjs --skill yeelight-smart-home --version 0.1.5
 ```
 
 For live read-only confidence, use a prepared local runtime profile and read-only entity listing. Live writes and production smoke require explicit operator agreement before running the test.

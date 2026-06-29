@@ -53,3 +53,11 @@ Use this reference for troubleshooting devices, gateways, scenes, and automation
 - Do not start firmware, OTA, gateway, or app upgrades from the Skill. Maintenance upgrade and version intents here are read-only evidence.
 - Do not use B2B panel endpoints, legacy single-knob reset, or raw panel/knob payloads. Panel and knob writes must go through the semantic semantic write intents above.
 - If the likely fix changes configuration, route that fix through the relevant semantic write intent rather than describing it as already repaired.
+
+## Panel And Knob Payloads
+
+- Load `references/action-payloads.md` for shared panel button action rows, light params, repeat vocabulary, and knob configuration payload rules.
+- For panel button event writes, the event details list is complete replacement data for that button event. Preserve returned timing, rank, target, and product-specific params unless the user asked to change them.
+- For `panel.button_event.batch_update`, each buttonEvents row contains one buttonEventId, optional alias, and its own complete details list.
+- For `knob.configure`, prefer `knob.get` first, preserve the existing row, and update only the intended row. The param map is product-specific; do not invent event codes for rotation, press, or sensitivity behavior.
+- If Runtime returns `payloadShape`, `examples`, `nextStep`, or a detail payload for panel/knob writes, rebuild from those fields rather than inventing raw panel or knob JSON.

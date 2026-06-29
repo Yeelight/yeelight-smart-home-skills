@@ -81,6 +81,32 @@ Use this reference to reason about Yeelight Pro entity, capability, product-mode
 | Gateway and bridge | Gateway identity, topology, Thread/Matter evidence and reviewed gateway configuration | 网关 |
 | Environment and shading | Curtain, HVAC and environment device words; control only when Runtime validates support | 窗帘、梦幻帘、空调、新风、地暖、温控器组件 |
 
+## Property Key Dictionary
+
+Use this dictionary to interpret Runtime evidence and user wording. It is not a raw write contract.
+
+| Key | Meaning | Skill behavior |
+| --- | --- | --- |
+| p | power/on | Map 开灯/关灯 to high-level light power intents or action params only after Runtime validates target support. |
+| l | brightness | Map 亮一点/暗一点/亮度 to brightness semantics, range 1-100 when Runtime accepts it. |
+| ct | color temperature | Map 暖一点/冷一点/色温 to color-temperature semantics; lower values are warmer. |
+| c | RGB color | Use only for explicit color requests and Runtime-supported color targets. |
+| m | mode | Product-specific mode; preserve from Runtime evidence, do not invent values. |
+| o | online | Read-only online state. Do not use as a control property. |
+| mv | motion detected | Motion sensor evidence for automation planning. |
+| oc | occupancy detected | Occupancy/presence evidence for automation planning. |
+| dc | door closed | Contact sensor evidence for door/window automations. |
+| act | sensor active | Sensor active state evidence. |
+| alm | alarm | Sensor alarm evidence. |
+| t / h | temperature / humidity | Environment readings for diagnostics or automation conditions when Runtime supports them. |
+| ll | environment light level | Illuminance-level evidence for daylight-aware automation suggestions. |
+| cp / tp / tra | curtain current/target/travel values | Curtain percentage or travel semantics; only control when Runtime validates curtain capability. |
+| sp | switch power | Single-channel or multi-channel switch power. Channel-prefixed forms such as 0-sp, 1-sp, 1-p, or 2-p must come from Runtime evidence. |
+| blp | backlight power | Switch/panel backlight semantics, product-specific. |
+| acp/acm/acct/actt/acf/aco/acd | HVAC channel keys | Air-condition power, mode, current temperature, target temperature, fan speed, online, and delay. Channel-prefixed forms such as 1-acp require Runtime evidence. |
+| mpmp/mppm/vol | media keys | Music/media playback or volume semantics. Product-specific; preserve only from Runtime evidence. |
+| lc/li/slisaon/slisaon_rdy/bp/rl/rd/dd/ch_num/acn | device attributes | LAN control, LED indicator, smart switch, power-on behavior, relay state, motor direction, default duration, channel count, and HVAC count. Treat as configuration/diagnostic attributes, not generic light actions. |
+
 ## Runtime Evidence Order
 
 | Evidence | Use |

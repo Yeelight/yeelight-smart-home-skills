@@ -4,7 +4,7 @@ Use this reference for automation rules and schedules.
 
 ## Intent Routing
 
-- Use `automation.create` when the user wants a new persistent rule. Runtime validates, creates the automation, and verifies it through the automation list when supported.
+- Use `automation.create` when the user wants a new persistent rule. Runtime validates, creates the automation, and verifies it through the automation list when supported. It needs a complete rule payload: name, active window, repeat rule, condition `params`, and `actions[]`.
 - When the user imports a full lighting design that includes simple scheduled design intent such as "主卧每天 9 点亮起来", route to `lighting.design.import` if it is part of the requested design topology. For a standalone automation or later edit, use `automation.create` or `automation.update`.
 - Use `automation.supported.list` or `automation.supported.v2.list` when the user asks what automation conditions/actions are supported or when a future automation write needs source-backed capability evidence.
 - Use `automation.list` when the user asks for all saved automations in one home or when a follow-up update/delete/toggle needs a complete home-level automation candidate list.
@@ -62,3 +62,29 @@ Use this reference for automation rules and schedules.
 - Timing words such as delayed execution, delayed off, duration, repeat window, and active time range are allowed only as parameters for Runtime planning.
 - Dynamic light flow, curtain motor action, audio playback, panel action, and air-conditioning mode are product-specific; do not claim support unless Runtime returns it.
 - If Runtime blocks automation creation or update, keep the proposal as non-applied guidance and explain the returned reason.
+
+## Update Payload Contract
+
+For follow-ups such as "把回家开灯自动化改到 18 点" or "主卧每天 9 点亮起来改成暖光", do not send a partial patch. Use this flow:
+
+1. Resolve the target automation by name or id if needed.
+2. Call `automation.detail.get`.
+3. Prefer the returned `editablePayload` when Runtime provides it. Otherwise use the returned detail as the source of the complete rule.
+4. Preserve the full condition object and full `actions[]` list unless the user explicitly asked to replace them.
+5. Modify only the intended fields: schedule conditions inside `params`, active window, repeat rule, action `set` object inside `params`, or name.
+6. Send `automation.update` with the complete rule payload.
+
+`automation.create` and `automation.update` both require a complete rule shape. For create, omit `automationId`; for update, include it and preserve all existing conditions/actions unless the user explicitly asked to replace them.
+
+`automation.detail.get` should return `editablePayload` and `updateShape` when Runtime can read enough cloud detail. Treat `editablePayload` as the safest source for update requests. If it contains JSON-string fields that Runtime parsed into objects, keep them as objects in the next SkillRequest; Runtime will compact them for cloud write.
+
+`automation.create` requires the same complete shape as update except `automationId` is omitted. `automation.update` includes `automationId` and resends the full rule payload. Load `references/action-payloads.md` for condition params, action rows, light params, repeat types, and complete create/update examples. Key reminders:
+
+- The common daily schedule condition is an and group with one alarm condition using `HH:mm:ss` clock format.
+- Source-backed event, fact, or fact-change conditions must come from Runtime supported-list, detail, or clarification evidence.
+- Preserve nested condition groups and unknown product-specific action keys returned by `automation.detail.get`.
+- Status toggles do not belong in automation update.
+
+Do not put `status` in `automation.update`. Use `automation.enable` or `automation.disable` for state toggles.
+
+If Runtime returns `clarification_required` with `payloadShape`, `examples`, or `nextStep`, treat those fields as the authoritative call contract. Ask only if a required target, field, or action choice is still missing after reading that contract.

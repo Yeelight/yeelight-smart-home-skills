@@ -25,6 +25,16 @@ Use this reference for authentication, environment selection, pagination, timeou
 | `not_supported` | Explain the unsupported capability without attempting raw fallback. |
 | `error` | Report the redacted message and avoid guessing cause or success. |
 
+## Structured Clarification
+
+- If Runtime clarification contains `payloadShape`, `examples`, or `nextStep`, treat those fields as the machine-readable call contract.
+- Use that contract to repair the next SkillRequest when the missing information can be derived from current context or from a Runtime read such as `scene.detail.get` or `automation.detail.get`.
+- Do not tell the user that the payload shape is unknown when Runtime has returned `payloadShape` or `editablePayload`.
+- Ask the user only when the contract still lacks a business choice that cannot be inferred, such as which scene action to edit among multiple plausible actions.
+- For complex JSON writes such as scene, automation, lighting design import, operation batch, favorite batch, home sort, room batch, panel event, or knob configuration, do not guess nested field names. If the first request is rejected, rebuild from Runtime's returned `payloadShape`, `examples`, `nextStep`, or detail `editablePayload`, then send one corrected semantic request.
+- `acceptedFields` alone is not enough for nested writes. When a field such as `details`, `params`, `actions`, `rooms`, `items`, `buttonEvents`, or `operations` is involved, inspect Runtime's nested `payloadShape` or detail `updateShape` before answering the user. If Runtime failed to include nested shape for a supported complex write, report that as a Runtime contract problem instead of guessing raw API JSON.
+- For read-modify-write flows, `scene.detail.get` and `automation.detail.get` `editablePayload` are the source payloads. Preserve them, apply the minimal intended edit, and resend a complete update payload.
+
 ## Dry-Run Preview
 
 - Use `options.dryRun=true` or wrapper/CLI `--dry-run` only when a no-write preview is useful before user confirmation.

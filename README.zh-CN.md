@@ -8,7 +8,7 @@
 
 | Skill | Version | Runtime | Packages |
 | --- | --- | --- | --- |
-| `yeelight-smart-home` | `0.1.4` | `yeelight-home >= 0.1.7` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
+| `yeelight-smart-home` | `0.1.5` | `yeelight-home >= 0.1.7` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
 
 ## 这个 Skill 能做什么
 
@@ -19,10 +19,10 @@
 ## 发布信息
 
 - 仓库：https://github.com/Yeelight/yeelight-smart-home-skills
-- 最新 Release：https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.4
-- 发布证据：`releases/yeelight-smart-home/v0.1.4/`
-- 校验和：`releases/yeelight-smart-home/v0.1.4/checksums.txt`
-- 验证摘要：`releases/yeelight-smart-home/v0.1.4/validation-summary.json`
+- 最新 Release：https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.5
+- 发布证据：`releases/yeelight-smart-home/v0.1.5/`
+- 校验和：`releases/yeelight-smart-home/v0.1.5/checksums.txt`
+- 验证摘要：`releases/yeelight-smart-home/v0.1.5/validation-summary.json`
 
 ## 安装方式
 
@@ -64,7 +64,7 @@ skillhub install yeelight-smart-home-official
 可以通过本仓库 marketplace metadata 安装，也可以下载：
 
 ```text
-releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-codex-plugin-v0.1.4.zip
+releases/yeelight-smart-home/v0.1.5/yeelight-smart-home-codex-plugin-v0.1.5.zip
 ```
 
 ### Claude Skill ZIP
@@ -72,7 +72,7 @@ releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-codex-plugin-v0.1.4.zip
 下载并上传：
 
 ```text
-releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-claude-skill-v0.1.4.zip
+releases/yeelight-smart-home/v0.1.5/yeelight-smart-home-claude-skill-v0.1.5.zip
 ```
 
 ### GitHub Copilot Agent Skill
@@ -80,7 +80,7 @@ releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-claude-skill-v0.1.4.zip
 使用：
 
 ```text
-releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-copilot-skill-v0.1.4.zip
+releases/yeelight-smart-home/v0.1.5/yeelight-smart-home-copilot-skill-v0.1.5.zip
 ```
 
 ### Open Agent Skills
@@ -88,7 +88,7 @@ releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-copilot-skill-v0.1.4.zip
 使用：
 
 ```text
-releases/yeelight-smart-home/v0.1.4/yeelight-smart-home-agent-skill-v0.1.4.zip
+releases/yeelight-smart-home/v0.1.5/yeelight-smart-home-agent-skill-v0.1.5.zip
 ```
 
 ### LobeHub Skills
@@ -155,14 +155,14 @@ Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感
 校验 Release 文件：
 
 ```sh
-cd releases/yeelight-smart-home/v0.1.4
+cd releases/yeelight-smart-home/v0.1.5
 shasum -a 256 -c checksums.txt
 ```
 
 运行完整发布资产检查：
 
 ```sh
-node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.4
+node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.5
 ```
 
 该检查会覆盖 JSON 元数据、双语 README 互链、包校验和、各平台提审材料、Dify 包结构、Node 脚本语法，以及 bridge 的 health/invoke/MCP smoke。

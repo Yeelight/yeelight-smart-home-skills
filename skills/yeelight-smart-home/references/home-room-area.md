@@ -46,6 +46,10 @@ Use this reference for homes, rooms, and areas.
 - Use `favorite.batch_add` or `favorite.batch_update` when the user asks to organize multiple favorites in one request. Runtime must execute one semantic batch request and later verify every item through the favorites list.
 - Use `favorite.delete` when the user explicitly asks to remove one favorite shortcut. Use `favorite.batch_delete` when the user explicitly asks to remove multiple favorite shortcuts. Runtime resolves the target favorites first, caps one request at 20 items, executes directly, and verifies every removal through `favorite.list`.
 - For favorite and sort writes, pass Runtime-returned semantic evidence such as `entityType` plus `resId`/`entityId`; do not ask the user for internal `typeId` values.
+- For `home.sort.configure`, use a shape with a sort surface/target plus `items[]`; each item carries an entity type, resource id, and rank. Read `home.sort.list` first when preserving existing unspecified items.
+- For favorite batch writes, use `items[]`; each row carries a favorite id for updates/deletes or a resource identity for add, plus optional rank and validity.
+- For `room.batch_create` and `room.batch_update`, use `rooms[]` or `items[]`; create rows need names, update rows need room ids.
+- For `device.move_room.batch`, use explicit `items[]` rows of device id and target room id, or an equivalent device-to-room map when Runtime accepts it.
 - Use `room.delete` or `area.delete` only when the user explicitly asks to delete one target. Runtime must validate and execute the semantic request directly, re-check the target, and verify removal after execution.
 - Use `room.batch_delete` or `area.batch_delete` only when the user explicitly asks to delete multiple rooms or areas. Runtime caps one request at 20 targets, resolves each target by id or unique name, and verifies every target disappeared from `entity.list`.
 
