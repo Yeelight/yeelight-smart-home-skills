@@ -5,7 +5,7 @@ Use this reference for automation rules and schedules.
 ## Intent Routing
 
 - Use `automation.create` when the user wants a new persistent rule. Runtime validates, creates the automation, and verifies it through the automation list when supported. It needs a complete rule payload: name, active window, repeat rule, condition `params`, and `actions[]`.
-- When the user imports a full lighting design that includes simple scheduled design intent such as "主卧每天 9 点亮起来", route to `lighting.design.import` if it is part of the requested design topology. For a standalone automation or later edit, use `automation.create` or `automation.update`.
+- When the user imports a full lighting design that includes simple scheduled design intent such as "主卧每天 9 点亮起来", route to `lighting.design.import` if it is part of the requested HouseMeta topology and can target imported `tempId` resources. For a standalone automation or later edit, use `automation.create` or `automation.update`.
 - Use `automation.supported.list` or `automation.supported.v2.list` when the user asks what automation conditions/actions are supported or when a future automation write needs source-backed capability evidence.
 - Use `automation.list` when the user asks for all saved automations in one home or when a follow-up update/delete/toggle needs a complete home-level automation candidate list.
 - Use `automation.list.page` when the user asks to browse, count, or review saved automations with pagination.

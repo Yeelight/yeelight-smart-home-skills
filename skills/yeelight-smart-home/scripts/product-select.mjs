@@ -41,6 +41,7 @@ const DESIGN_TOKENS = {
   openings: ["35开孔", "55开孔", "65开孔", "75开孔", "80开孔"],
   sizes: ["2.5寸", "3寸"],
   headCounts: ["3头", "5头", "6头", "10头", "12头"],
+  wattages: ["8w", "12w", "15w", "36w"],
   shapes: ["方形", "圆形"],
   series: ["S系列", "爱思系列", "S21", "S20", "E+系列", "E20", "E系列", "M20", "D系列", "P20", "P21", "Nightingale"],
   keywords: ["夙夜", "Pro", "线下版", "标准版", "国内版", "电竞", "梦幻帘"],
@@ -86,6 +87,7 @@ function requestedSignals(input, categoryHint) {
     openings: tokenMatches(normalizedInput, DESIGN_TOKENS.openings),
     sizes: tokenMatches(normalizedInput, DESIGN_TOKENS.sizes),
     headCounts: tokenMatches(normalizedInput, DESIGN_TOKENS.headCounts),
+    wattages: tokenMatches(normalizedInput, DESIGN_TOKENS.wattages).map((item) => item.toUpperCase()),
     shapes: tokenMatches(normalizedInput, DESIGN_TOKENS.shapes),
     series: tokenMatches(normalizedInput, DESIGN_TOKENS.series).map((item) => item === "爱思系列" ? "S系列" : item),
     keywords: tokenMatches(normalizedInput, DESIGN_TOKENS.keywords),
@@ -127,7 +129,7 @@ function scoreProduct(product, query, categoryHint, requested) {
       score += evidencePush(evidence, alias, 38);
     }
   }
-  for (const token of ["黑色", "白色", "深空灰", "嵌入式", "明装", "方形", "圆形", "36度", "24度", "60度", "75开孔", "55开孔", "3寸", "5头", "6头", "10头", "12头", "夙夜", "Nightingale"]) {
+  for (const token of ["黑色", "白色", "深空灰", "嵌入式", "明装", "方形", "圆形", "36度", "24度", "60度", "75开孔", "55开孔", "3寸", "5头", "6头", "10头", "12头", "8w", "12w", "15w", "36w", "夙夜", "Nightingale"]) {
     if (contains(normalizedQuery, token) && contains([product.productName, product.productSku, product.productSpu, ...(product.aliases || [])].join(" "), token)) {
       score += evidencePush(evidence, token, 10);
     }
@@ -213,7 +215,7 @@ function constraintPenalty(product, normalizedQuery) {
   for (const token of ["8度", "15度", "24度", "32度", "36度", "60度"]) {
     if (contains(normalizedQuery, token) && !contains(text, token)) penalty += 40;
   }
-  for (const token of ["35开孔", "55开孔", "65开孔", "75开孔", "80开孔", "3寸", "5头", "6头", "10头", "12头"]) {
+  for (const token of ["35开孔", "55开孔", "65开孔", "75开孔", "80开孔", "3寸", "5头", "6头", "10头", "12头", "8w", "12w", "15w", "36w"]) {
     if (contains(normalizedQuery, token) && !contains(text, token)) penalty += 25;
   }
   if ((contains(normalizedQuery, "爱思系列") || contains(normalizedQuery, "s系列")) && product.series !== "S系列") {

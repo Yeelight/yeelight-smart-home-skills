@@ -4850,7 +4850,9 @@
       "doNotInventCapabilities": true,
       "requireRuntimeCapabilityCheck": true,
       "rawSourceDocumentsPackaged": false,
-      "persistentChangesNeedPendingPlan": true,
+      "directSemanticWrites": true,
+      "dryRunPreviewOnly": true,
+      "callerOwnsUserConfirmation": true,
       "implicitHabitCreatesPersistentConfig": false
     },
     "controlHierarchy": [

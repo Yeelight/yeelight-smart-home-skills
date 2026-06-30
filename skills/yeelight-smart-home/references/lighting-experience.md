@@ -101,7 +101,7 @@ Use these only when the user asks for a multi-step ritual, routine, or design pl
 ## Memory And Preference Policy
 
 - Negative preferences can adjust future recommendations only after Runtime memory policy allows it.
-- A single complaint such as "太亮了" can become a candidate preference, not an automatic persistent device change.
-- Strong phrases such as "以后默认", "记住", "别再", or "我不喜欢" should route through memory policy before changing future defaults.
-- Repeated corrections may become implicit candidates only when Runtime returns them. Do not infer long-term preference from one correction.
+- A single complaint such as "太亮了" is current-turn feedback unless the user explicitly asks to remember it.
+- Strong phrases such as "以后默认", "记住", "别再", or "我不喜欢" should be structured by the Skill and saved through `memory.remember` before changing future defaults.
+- Repeated corrections are a reason for the Skill to ask whether to remember a preference; Runtime will not infer subjective preferences or return implicit candidates.
 - Explain proposed lighting results in user language; do not expose internal recipe fields unless asked for technical detail.

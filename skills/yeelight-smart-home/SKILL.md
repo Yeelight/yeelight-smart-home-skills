@@ -21,24 +21,33 @@ Never call external tool servers or compatibility projects for Yeelight data or 
 8. Runtime is a thin execution layer. Reversible configuration writes execute directly after Runtime validation. If user confirmation is needed, handle it in conversation first, then call the semantic intent once.
 9. Keep AI decisions in the Skill layer. Product selection, grouping strategy, scene design, automation intent, memory interpretation, and recommendations must be authored or confirmed by the Skill/user; do not rely on Runtime to invent them from fuzzy wording.
 10. Never create persistent rules only because an implicit habit was detected.
-11. Runtime validation and policy decisions are final.
+11. Explicit Yeelight-domain memory must be saved through Runtime `memory.remember` first. Writing only to host memory such as WorkBuddy, Codex, or a generic assistant memory file is not completion and must not be described as saved.
+12. For explicit Yeelight memory, structure and write the Runtime memory before any host memory. If Runtime fails, paused, or needs clarification, say so and do not claim the preference was saved.
+13. Operation lessons are not user preferences. Use `operation.lesson.record` only for reusable Skill/Runtime usage experience such as fastest paths, parameter-shape traps, fallback paths, resource-resolution pitfalls, or confirmed capability gaps.
+14. Runtime validation and policy decisions are final.
+15. For complex nested payloads, prefer objective Runtime contract lookup over guessing. Use `intent.explain` when the required `details`, `params`, `actions`, `items`, `operations`, `buttonEvents`, or HouseMeta shape is unclear.
 
 ## Workflow
 
 1. Classify the request into one intent from `assets/intent-catalog.json`.
-2. Load only the relevant file from `references/` when the request needs routing detail or domain knowledge:
+2. Load only the relevant file from `references/` when the request needs routing detail or domain knowledge. If unsure, read `references/README.md` first as the shortest-path router:
    - Query, state, capability, temporary device control: `references/device-control.md`
    - Product consultation, manual, FAQ, SKU/material-code resources, or product pedia: `references/product-knowledge.md`
    - Homes, rooms, areas: `references/home-room-area.md`
    - Groups: `references/groups.md`
    - Scenes, saved action bundles, or scene recipe conversion: `references/scenes.md`
    - Automations, schedules, trigger-action rules, or automation design strategy: `references/automations.md`
-   - Nested scene, automation, lighting-design import, panel button, knob, or light-action JSON payloads: `references/action-payloads.md`
-   - Lighting design, mood planning, subjective comfort wording, or multi-step rituals: `references/lighting-design.md`
-   - Product candidate selection for not-yet-installed lighting slots: run `node scripts/product-select.mjs --query "<user product wording>" --room "<room>" --goal "<design goal>" --limit 8`, then apply `references/lighting-design.md` and `references/product-knowledge.md`.
+   - Nested `details`, `params`, `actions`, `items`, `operations`, `buttonEvents`, or machine-readable Runtime schemas: `references/payload-shapes.md`; `references/action-payloads.md` is only a compatibility index.
+   - Lighting design routing and full-home workflow: `references/lighting-design.md`.
+   - HouseMeta `/v1/meta/import`, future device slots, imported groups, areas, and short-key compatibility: `references/housemeta-import.md`.
+   - Product candidate selection for not-yet-installed lighting slots: run `node scripts/product-select.mjs --query "<user product wording>" --room "<room>" --goal "<design goal>" --limit 8`, then apply `references/lighting-product-selection.md` and `references/product-knowledge.md`.
+   - Scene recipe conversion: `references/scene-recipes.md` plus `references/lighting-experience.md` when ambience judgment matters.
+   - Automation recipe conversion: `references/automation-recipes.md` plus `references/automation-events.md` when triggers or condition vocabulary matter.
+   - Full multi-room lighting import examples: `assets/examples/housemeta-full-home-lighting-design.json`.
    - Device, gateway, scene, or automation diagnostics: `references/diagnostics.md`
    - Memory or personalization: `references/memory-and-personalization.md`
    - Recommendations and feedback: `references/recommendations.md`
+   - Operation lessons, known pitfalls, fastest paths, repeated Runtime usage failures, parameter-shape learnings, or capability workarounds: `references/operation-lessons.md`
    - Delete, unbind, transfer, permission, bulk, mixed configuration, or risky changes: `references/safety-and-confirmation.md`
    - Runtime statuses, auth, partial results, retry, cache, or error handling: `references/runtime-status-and-errors.md`
    - Blocked capabilities, manual guidance, risk lanes, or non-enabled action classes: `references/capability-boundaries.md`
@@ -58,6 +67,7 @@ Never call external tool servers or compatibility projects for Yeelight data or 
    }
    ```
    `requestId` must be unique for this invocation. Keep `utterance` non-empty and close to the user wording. Use `homeRef.name` when the user names an existing home and the Runtime can resolve it; use `parameters.houseId` only when the Runtime or user already supplied a specific home id. If the user asks for several non-destructive persistent changes in one request, build `operation.batch.configure` with `parameters.operations[]` instead of sending many separate requests.
+   For ordinary control, state query, scene execution, and automation enable/disable, pass the natural target in the same request. Include room qualifiers such as `parameters.roomName`, `parameters.targetRoomName`, or a room target together with `deviceName`, `sceneName`, or `automationName` when the user said them. Use direct `light.power.set`, `light.brightness.set`, `light.color_temperature.set`, or `light.color.set` for ordinary lighting control. Do not preflight with `entity.list`, `entity.get`, or `entity.capabilities` just to find an ID.
 4. Call `scripts/invoke` once with JSON on stdin.
 5. Follow Runtime status:
    - `success` or `partial`: explain actual result.
@@ -67,9 +77,11 @@ Never call external tool servers or compatibility projects for Yeelight data or 
    - `blocked`, `not_supported`, or other `error`: explain the returned safe alternative.
 6. Use `--dry-run` or `options.dryRun=true` only when you intentionally want a no-write preview before asking the user. After the user agrees, resend the same semantic request without dry-run.
 7. For destructive, permission-sensitive, unlinking, transfer, overwrite, or clear-all operations, ask the user for explicit natural-language agreement in chat first, then call the relevant semantic Runtime intent once.
-8. Local memory and recommendations are enabled by default. Before saving a preference, deduplicate first: use existing context or `memory.list` when useful, merge same-meaning memories, keep only genuinely new preference dimensions, and call `memory.remember` once per distinct normalized preference with concise evidence.
-9. Do not add recommendations unless Runtime returned one.
-10. Do not infer, store, or present memory, personalization, or recommendation state independently of Runtime.
+8. Local memory and recommendations are enabled by default. When the user says "记住", "以后默认", "我喜欢", "我不喜欢", "不要推荐", or equivalent Yeelight preference wording, call Runtime `memory.remember` before claiming the memory was saved. Do not substitute host memory. For a single sentence with multiple distinct dimensions, such as ambience plus product positioning, normalize each dimension first and send one `memory.remember` request with `parameters.preferences[]`; use one item per distinct canonical preference with concise evidence. Use existing context or `memory.list` only when useful for conflict resolution; Runtime upsert deduplicates exact same structured preferences.
+9. When a Runtime/Skill usage attempt reveals a reusable operational lesson, such as an intent that is unsupported, a nested JSON shape that must be fetched before update, a faster lookup path, or a reliable fallback, save a concise structured lesson with `operation.lesson.record`. Before attempting a complex or previously failed capability, query `operation.lesson.list` for the target intent or symptom and apply the returned lesson if it is still relevant.
+10. When a complex write needs a large JSON payload and the loaded reference does not fully answer the exact shape, call `intent.explain` with `parameters.intent` set to the target intent. Use its `payloadGuide.payloadShape`, `examples`, and `nextStep` as the objective contract. This is local-only and should replace trial-and-error guessing.
+11. Recommendation judgment belongs to the Skill/AI layer. When you decide a suggestion is useful, first save a structured candidate with Runtime `recommendation.record`, then use `recommendation.list` to present the Runtime-backed pending item. Do not present unsaved model-only recommendations as local recommendations.
+12. Do not infer, store, or present memory, personalization, recommendation, or operation-lesson state independently of Runtime. Runtime stores and returns the structured state; the Skill owns subjective interpretation.
 
 ## Response Style
 

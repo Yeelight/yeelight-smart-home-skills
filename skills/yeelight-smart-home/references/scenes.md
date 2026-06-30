@@ -11,7 +11,7 @@ Use this reference for existing scenes and scene configuration.
 - Use `scene.search` when the user gives a fuzzy scene name or asks to find matching scenes.
 - Use `scene.detail.get` when the user asks what an existing scene will do or before proposing a scene update.
 - Use `scene.create` for a new persistent scene; Runtime must validate and execute the semantic request directly. It needs the same complete `details[]` action-item shape as `scene.update`, except `sceneId` is omitted.
-- When the user imports a full lighting design that includes scene names such as "离家模式" or "回家模式", route to `lighting.design.import` if the scene is part of the requested design topology. For a standalone saved scene, use `scene.create`.
+- When the user imports a full lighting design that includes scene names such as "离家模式" or "回家模式", route to `lighting.design.import` if the scene is part of the requested HouseMeta topology and can target imported `tempId` resources. For a standalone saved scene, use `scene.create`.
 - Use `scene.update` for edits to an existing scene. It requires a complete updated action list and is verified by scene detail after execution.
 - Use `scene.test` only for a test run request; Runtime may block if not enabled.
 - Use `scene.delete` only when the user explicitly asks to delete one scene. Runtime must validate and execute the semantic request directly, re-check the scene, and verify removal after execution.

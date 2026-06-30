@@ -1,6 +1,6 @@
 {
   "name": "yeelight-smart-home",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Control, organize, diagnose, design and answer product questions for a Yeelight smart home through the local yeelight-home Runtime.",
   "skills": "./skills/"
 }

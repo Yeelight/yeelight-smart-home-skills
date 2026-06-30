@@ -46,8 +46,10 @@ node scripts/product-select.mjs --query "白色嵌入式射灯" --room "客厅" 
   - `designRoles` such as ambient, accent, task, focused, comfort, control, sensing, covering, or climate;
   - `designKeywords` such as version, short-name, or product-positioning words;
   - `capabilityTags` such as power, brightness, colorTemperature, color, openPercent, or sensorEvents;
+  - adjustable property and event evidence when the later scene or automation needs dimming, color temperature, RGB color, switch state, motion, contact, illuminance, or presence behavior;
   - the room role and the design goal.
 - Do not select only because a string matched first. The script recalls candidates and organizes evidence; the AI must make the final design judgment.
+- Do not discard a candidate only because one optional attribute is absent; separate hard constraints from preferences. Hard constraints include material code, category, install style, color, opening, size, beam angle, wattage, shape, series, and required capability.
 - For a full design import, pass the chosen `materialCode`, `pid`, `pcId`, `productName`, `productSku`, `productSpu`, `category`, and `series` in the slot item so Runtime receives explicit product identity.
 - Keep a short note such as "AI chose this as a black embedded grille accent candidate" or "AI assumed 75 opening 36° S-series spot for bedroom focus lighting" when importing design slots. This makes later review and installer handoff auditable.
 
