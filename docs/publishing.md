@@ -5,7 +5,8 @@ This repository is the canonical GitHub distribution center for Yeelight Smart H
 ## Automated Now
 
 - GitHub Release assets.
-- ClawHub skill publication under `@yeelight/yeelight-smart-home`.
+- ClawHub skill publication under `@yeelight/yeelight-smart-home` from the same
+  release workflow, after GitHub Release assets are created.
 - skills.sh GitHub-indexed installation for `yeelight/yeelight-smart-home-skills`.
 - LobeHub first-listing request kit and post-listing CLI ownership/version workflow.
 - GitHub Copilot-compatible marketplace metadata at `.github/plugin/marketplace.json`.
@@ -92,10 +93,12 @@ Use this flow for every future `yeelight-smart-home/skill/<skill-id>` package.
 2. Run the generic source release builder and verifier for that skill.
 3. Publish or refresh this public GitHub distribution repository from the generated release output.
 4. Run `node scripts/verify-publication-assets.mjs` from this repository.
-5. Update `platforms.json` and `submissions/skill-directory-submission-status.json` with platform-specific status and evidence.
-6. For native Skill directories, run platform install smoke from the installed copy, not only package smoke.
-7. For bridge-based platforms, verify `/health`, `/openapi.json`, authenticated `/invoke`, and `/mcp` with the deployed bridge.
-8. For review-gated platforms, record the exact blocking account, review, identity, HTTPS, privacy policy, or captcha requirement instead of marking the platform as published.
+5. Ensure repository secret `CLAWHUB_TOKEN` is configured; `publish-skill.yml`
+   publishes `skills/<skill-id>` to ClawHub after the GitHub Release job.
+6. Update `platforms.json` and `submissions/skill-directory-submission-status.json` with platform-specific status and evidence.
+7. For native Skill directories, run platform install smoke from the installed copy, not only package smoke.
+8. For bridge-based platforms, verify `/health`, `/openapi.json`, authenticated `/invoke`, and `/mcp` with the deployed bridge.
+9. For review-gated platforms, record the exact blocking account, review, identity, HTTPS, privacy policy, or captcha requirement instead of marking the platform as published.
 
 Next-version quick path after the first release:
 
@@ -107,6 +110,7 @@ node tools/skill-release-verify.mjs --skill <skill-id> --version <x.y.z>
 cd /tmp/yeelight-smart-home-skills-publish
 node scripts/publish-skill-release.mjs --source <release-output-root> --skill <skill-id> --version <x.y.z> --dry-run
 node scripts/verify-publication-assets.mjs
+node scripts/publish-clawhub-skill.mjs --skill <skill-id> --version <x.y.z> --dry-run
 ```
 
 Only after those pass, use the platform-specific publish commands or forms documented under `submissions/<platform>/`.

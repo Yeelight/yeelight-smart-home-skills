@@ -20,11 +20,13 @@
         "inspect @axdlee/yeelight-smart-home no longer resolves",
         "clawhub skill publish under @yeelight published version 0.1.1 with versionId k97704w5v8snw8qzdegm6kr9h989f505",
         "inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.1 and tags latest/yeelight/smart-home/lighting/agent-skill/codex/claude/copilot all pointing to 0.1.1",
-        "clawhub install @yeelight/yeelight-smart-home --version 0.1.1 installed into a clean temporary directory and updated-reference hashes matched the release package"
+        "clawhub install @yeelight/yeelight-smart-home --version 0.1.1 installed into a clean temporary directory and updated-reference hashes matched the release package",
+        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.7 after the GitHub skill release",
+        "future GitHub Skill release workflow runs publish to ClawHub automatically through scripts/publish-clawhub-skill.mjs and the CLAWHUB_TOKEN repository secret"
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
-        "Optional skill-card.md and aggregate security status completion; ClawHub verify currently reports security.pending while asynchronous scans finish"
+        "ClawHub mirror and third-party directory pages can lag behind the ClawHub registry latestVersion"
       ]
     },
     {

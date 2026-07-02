@@ -31,6 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check scripts/publish-skill-release.mjs
+          node --check scripts/publish-clawhub-skill.mjs
           node scripts/verify-publication-assets.mjs
           python3 -m json.tool .github/plugin/marketplace.json >/dev/null
           python3 -m json.tool .claude-plugin/marketplace.json >/dev/null
@@ -60,3 +61,33 @@ jobs:
           else
             gh release upload "$tag" "$release_dir"/* --clobber
           fi
+
+  clawhub-publish:
+    needs:
+      - validate
+      - github-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install ClawHub CLI
+        run: npm install -g clawhub@latest
+      - name: Publish Skill to ClawHub
+        env:
+          CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
+          SKILL_ID: ${{ inputs.skill_id }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          node scripts/publish-clawhub-skill.mjs \
+            --skill "$SKILL_ID" \
+            --version "$VERSION" \
+            --owner yeelight \
+            --slug "$SKILL_ID" \
+            --name "Yeelight Smart Home" \
+            --source-repo "Yeelight/yeelight-smart-home-skills" \
+            --source-commit "${{ github.sha }}" \
+            --source-ref "yeelight-skill-${SKILL_ID}-v${VERSION}" \
+            --source-path "skills/${SKILL_ID}"
