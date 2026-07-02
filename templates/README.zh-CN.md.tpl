@@ -26,6 +26,14 @@
 
 ## 安装方式
 
+### 让 AI 一句话帮你安装
+
+如果你使用的是可以执行本地终端命令的 AI 助手，可以直接把下面这一句话发给它：
+
+```text
+请从 Yeelight 官方 GitHub Release 或已支持的包管理渠道，为我的系统安装 yeelight-home CLI，然后从 Yeelight 官方 Skill Release、ClawHub 或这个 GitHub 仓库安装 Yeelight Smart Home Skill。安装后用 `yeelight-home doctor --json` 验证 CLI，并引导我执行 `yeelight-home auth login --qr`；不要要求我把 token、密码或 cookie 粘贴到聊天里。
+```
+
 ### ClawHub / OpenClaw
 
 该 Skill 已发布到 Yeelight 官方 publisher namespace：
@@ -47,17 +55,6 @@ npx skills add {{repositoryInstallUrl}} --skill {{skill}}
 
 - skills.sh 页面：https://www.skills.sh/yeelight/yeelight-smart-home-skills/{{skill}}
 - 状态：已索引且可安装，页面可见安全审计通过标识。
-
-### Tencent SkillHub
-
-Tencent SkillHub 使用了平台专用 slug，因为 canonical slug 已被占用：
-
-```sh
-skillhub install {{skillhubSlug}}
-```
-
-- SkillHub 页面：https://skillhub.cn
-- 状态：最新已审核通过的 SkillHub 包已发布、可安装，并通过了功能 smoke；详细版本以 `platforms.json` 为准。
 
 ### Codex / Agent Plugin
 
@@ -144,7 +141,7 @@ Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感
 
 当前状态分类：
 
-- 已发布且可安装：GitHub Release、ClawHub、skills.sh、Tencent SkillHub。
+- 已发布且可安装：GitHub Release、ClawHub、skills.sh。
 - 已提交或等待审核：LobeHub、NanoSkill、Molili/CocoLoop、Dify Marketplace。
 - Adapter kit 已准备好，等待控制台审核：OpenAI GPT Store / Apps SDK、Coze、百炼、元器、千帆、火山方舟。
 

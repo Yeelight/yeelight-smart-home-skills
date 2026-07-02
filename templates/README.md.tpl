@@ -26,6 +26,14 @@ It is intentionally packaged as a Skill, not as a bundled runtime. The Skill con
 
 ## Install
 
+### One-Sentence AI Install
+
+If you use a local AI assistant that can run terminal commands, paste this single request:
+
+```text
+Install the official yeelight-home CLI for my operating system from Yeelight's GitHub Release or supported package manager, then install the Yeelight Smart Home Skill from the official Yeelight Skill release, ClawHub, or this GitHub repository. Verify the CLI with `yeelight-home doctor --json`, and guide me through `yeelight-home auth login --qr`; do not ask me to paste tokens, passwords, or cookies into chat.
+```
+
 ### ClawHub / OpenClaw
 
 The Skill is published under the official Yeelight publisher namespace:
@@ -47,17 +55,6 @@ npx skills add {{repositoryInstallUrl}} --skill {{skill}}
 
 - skills.sh page: https://www.skills.sh/yeelight/yeelight-smart-home-skills/{{skill}}
 - Status: indexed and installable, with visible security audit pass badges.
-
-### Tencent SkillHub
-
-Tencent SkillHub uses a platform-specific slug because the canonical slug was already occupied:
-
-```sh
-skillhub install {{skillhubSlug}}
-```
-
-- SkillHub page: https://skillhub.cn
-- Status: published, approved, installable, and functional on the latest approved SkillHub package tracked in `platforms.json`.
 
 ### Codex / Agent Plugin
 
@@ -144,7 +141,7 @@ The bridge calls only `yeelight-home invoke --stdin`; the runtime remains respon
 
 Current status classes include:
 
-- Published and installable: GitHub Release, ClawHub, skills.sh, Tencent SkillHub.
+- Published and installable: GitHub Release, ClawHub, skills.sh.
 - Submitted or awaiting marketplace review: LobeHub, NanoSkill, Molili/CocoLoop, Dify Marketplace.
 - Adapter kit ready for console review: OpenAI GPT Store / Apps SDK, Coze, Bailian, Yuanqi, Qianfan, Volcano Ark.
 
