@@ -22,7 +22,7 @@ Extract slots, not IDs. A good SkillRequest keeps these slots visible for Runtim
 | Looks like installed entity | 客厅主灯、餐厅灯组、回家情景、离家自动化 | `entity.list`/domain list/detail first; ask clarification on collisions. |
 | Looks like product family | S系列筒灯、120射灯、青空灯、跑道屏 | Use product/schema or design context; do not claim it exists in the home. |
 | Looks like symptom | 网关离线、灯不亮、自动化没触发 | Route to diagnostics, preserving symptom words and target candidates. |
-| Looks like organization | 首页排序、收藏、房间、区域、分组 | Route to home-room-area/groups reference and semantic Runtime writes when persistent. |
+| Looks like organization | 首页排序、收藏、房间、区域、分组 | Route to home-room-area/groups reference and Runtime writes when persistent. |
 | Looks like installer/pairing | 配网、绑定、扫码、BLE、添加设备 | Do not simulate onboarding; use Runtime block/manual guidance unless reviewed. |
 
 ## Device Language Families
@@ -96,11 +96,18 @@ Extract slots, not IDs. A good SkillRequest keeps these slots visible for Runtim
 | 十五度 | 15° | number_unit |
 | 二十四度 | 24° | number_unit |
 | 艾斯系列 | S系列 | phonetic |
+| 艾思系列 | S系列 | phonetic |
+| 艾思 | S系列 | phonetic |
 | 爱斯系列 | S系列 | phonetic |
+| 爱思系列 | S系列 | phonetic |
 | 爱思 | S系列 | phonetic |
 | 120射灯 | E20射灯 | folk_name |
+| 120度射灯 | E20射灯 | folk_name |
+| 一二零射灯 | E20射灯 | folk_name |
 | 一来 | 易来 | phonetic |
+| 夜来 | 易来 | phonetic |
 | 干节点 | 干接点 | synonym |
+| 乾接点 | 干接点 | synonym |
 | 开合帘 | 窗帘 | folk_name |
 | 小夜灯 | 夜灯 | folk_name |
 | 槽位 | 设计槽位 | design_slot |
@@ -111,5 +118,5 @@ Extract slots, not IDs. A good SkillRequest keeps these slots visible for Runtim
 - "客厅灯" may mean one device, a light group, every light in the room, or a scene target. Keep location and role separate.
 - "有人传感器" or "感应器" is sensor vocabulary, not proof that the user's home has that sensor.
 - "120射灯" or "S系列筒灯" is product language. Do not assume installed target, model id, or capability from it.
-- Physical pairing/onboarding assumptions are blocked. Lighting design slots are allowed only through semantic Runtime execution and must not be described as online devices.
+- Physical pairing/onboarding assumptions are blocked. Lighting design slots are allowed only through Runtime execution and must not be described as online devices.
 - For product selection or lighting design, mention candidate families only as candidate guidance when Runtime or the user's request asks for design/recommendation context.

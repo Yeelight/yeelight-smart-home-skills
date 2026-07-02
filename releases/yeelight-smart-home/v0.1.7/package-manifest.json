@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "yeelight-skill-package-v1",
+  "generatedAt": "2026-07-02T06:36:36.134Z",
+  "skillId": "yeelight-smart-home",
+  "skillVersion": "0.1.7",
+  "sourcePath": "skill/yeelight-smart-home",
+  "runtime": {
+    "command": "yeelight-home invoke --stdin",
+    "minVersion": "0.1.17",
+    "bundled": false
+  },
+  "rootSha256": "8ef24e36d3e042830da12fe16c40d7734a6f4c4602b20cf2668a7d3bf83d9d95",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "size": 14391,
+      "sha256": "2acfb57278a488513002d7a84bdb56cef6d15d0fd6fc861fcdaf5192ee5f0890"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "size": 326,
+      "sha256": "10f78a3e740c35dfc5157e4de38b3b38ae7aad20af8f54e7e12a773406a6dfd5"
+    },
+    {
+      "path": "assets/catalog/lighting-design-products.json",
+      "size": 284234,
+      "sha256": "0011e0eb5d00c40acd4a85c01635b78c112fb1d8cec3b53c1254e18cbf4c95cc"
+    },
+    {
+      "path": "assets/catalog/yeelight-domain.json",
+      "size": 236141,
+      "sha256": "2aafd974574d15697763309cf1e38737b39ff0e6e84f284504f27fe5b4b76dfb"
+    },
+    {
+      "path": "assets/examples/lighting-design-full-home.json",
+      "size": 14292,
+      "sha256": "059765d942e4afb4d24920b2ef2b1fae19dd9659f6402a185c23e10d17caf3a1"
+    },
+    {
+      "path": "assets/intent-catalog.json",
+      "size": 4536,
+      "sha256": "dc2780c5ab880f84b2d916f8c176364f421c937a53ba9976e740c866b2ec0e94"
+    },
+    {
+      "path": "assets/schemas/skill-request.schema.json",
+      "size": 7556,
+      "sha256": "9f73131c60f40d4d7e3bb83af0a9003994cc7d5113c13c57911236f1742d300b"
+    },
+    {
+      "path": "assets/schemas/skill-response.schema.json",
+      "size": 1542,
+      "sha256": "56a27fc56a3374558c1d45029c2de0e1ab13e9973303e933755b86915259e6f6"
+    },
+    {
+      "path": "references/README.md",
+      "size": 3594,
+      "sha256": "7bcfa25132a73b92e2dedff1cb901e49accc629d0b546b226d156439cefec1bd"
+    },
+    {
+      "path": "references/action-payloads.md",
+      "size": 1028,
+      "sha256": "1ea3a5f843b760aa33d08a0d6c0d4ec6d8bbd9ccb5a87fc6b0cd2b14cec5f31b"
+    },
+    {
+      "path": "references/automation-events.md",
+      "size": 7842,
+      "sha256": "fd62a283572e9925d46db5fa161f949065fd8269340e4c829273157c79e722d1"
+    },
+    {
+      "path": "references/automation-recipes.md",
+      "size": 2640,
+      "sha256": "78aac8100ba0ea01a00ca59356b5c284ad6b6efb0081e0980f1849a95bbf30d7"
+    },
+    {
+      "path": "references/automations.md",
+      "size": 9815,
+      "sha256": "9d5090b88366795f262ab1ce47533455feea68f5144c9688ac7e33681ad44f9f"
+    },
+    {
+      "path": "references/capability-boundaries.md",
+      "size": 3585,
+      "sha256": "96cb27732a9e9968ffd859f5ceab2c5d0ad1a890667ae414330ee1cb77e161a8"
+    },
+    {
+      "path": "references/device-control.md",
+      "size": 11343,
+      "sha256": "bffa4364237671fdbdc0119792e328430b5ba74e96cf793a09035077f7e881c2"
+    },
+    {
+      "path": "references/device-lexicon.md",
+      "size": 9380,
+      "sha256": "38a5217fda91a437956ec287767cb3fd572b3e107198e27d39cc391b01468c2e"
+    },
+    {
+      "path": "references/diagnostics.md",
+      "size": 7469,
+      "sha256": "859f49b6ac33605bd6c4a842aa4d78f9b9f52767820b987acbae0f891a3086e7"
+    },
+    {
+      "path": "references/groups.md",
+      "size": 4198,
+      "sha256": "5b237fe11c23577b005a5f220f2414e0fccb15fe563013755198ffa743307953"
+    },
+    {
+      "path": "references/home-room-area.md",
+      "size": 14993,
+      "sha256": "7c749841618acb70264258c4329c638885e1a64b6800fb291f38fa1472fb3ab9"
+    },
+    {
+      "path": "references/lighting-design-import.md",
+      "size": 6916,
+      "sha256": "9d0948bff77cb3c7408dfd78d51070db5d87bf1b2a54771c46fc7437d17c6564"
+    },
+    {
+      "path": "references/lighting-design.md",
+      "size": 9806,
+      "sha256": "badf8e95961b67dcdb7382dba3de70a70c3e7ea515289b069e3ee34400d4d777"
+    },
+    {
+      "path": "references/lighting-experience.md",
+      "size": 10384,
+      "sha256": "2510ec4558af016f0847ce6c1791fdfa6f1401023d2add9b79c3af965f8addd0"
+    },
+    {
+      "path": "references/lighting-product-selection.md",
+      "size": 4535,
+      "sha256": "09bdd5fdd50788fa617bee06702d19727e19be951fcdc382a1f3837e01c83975"
+    },
+    {
+      "path": "references/memory-and-personalization.md",
+      "size": 16400,
+      "sha256": "e2356ef0a76f01644cb0f513430cc02d82d084759f01682f1ae7157ed26b8d28"
+    },
+    {
+      "path": "references/operation-lessons.md",
+      "size": 11572,
+      "sha256": "d650d06b6ab29e92a2b3677646af1287d422a127d33d5d15af5f88bbf9d01a88"
+    },
+    {
+      "path": "references/payload-shapes.md",
+      "size": 5214,
+      "sha256": "5afd5438110e590cc3e66e3b9216a9247b1e67f5a678ae1478aa2c2089271c57"
+    },
+    {
+      "path": "references/product-knowledge.md",
+      "size": 7070,
+      "sha256": "0621bbbfdd324943680fe8d66317d65de32b0fa814cc92c0f74644fc75b53758"
+    },
+    {
+      "path": "references/recommendations.md",
+      "size": 7033,
+      "sha256": "87281d54930fd57200b050441152b49093903343a6ad2e4186ef5def4c76f4a4"
+    },
+    {
+      "path": "references/response-presentation.md",
+      "size": 5073,
+      "sha256": "8a13ab7643becf18d76abc2a078b816c3ee326eff63a478e046f6cfbd77af8c1"
+    },
+    {
+      "path": "references/runtime-status-and-errors.md",
+      "size": 7673,
+      "sha256": "7e0947b21b7dbf24573ca7740162cd47afde874f741b92624ba84e2931c7e6fb"
+    },
+    {
+      "path": "references/safety-and-confirmation.md",
+      "size": 3009,
+      "sha256": "3ea6358f13592a90a3ff46af1cd917fd77761ffed8ae50ee86c5134d27392215"
+    },
+    {
+      "path": "references/scene-recipes.md",
+      "size": 2258,
+      "sha256": "8522fbcf32eaa20bba552fdd8b2c5cabb284a166631b8b791a3a1a169449e0b0"
+    },
+    {
+      "path": "references/scenes.md",
+      "size": 7424,
+      "sha256": "dccc67e6fa5c146aa1c2abcfe3d74a00459885d9a8571ffee7737d53800dabde"
+    },
+    {
+      "path": "references/thing-model.md",
+      "size": 11162,
+      "sha256": "d3e8623e0b56ac9c2392363e5b526b52d2b1d573fd6483680bfb3acad6578d11"
+    },
+    {
+      "path": "scripts/invoke.ps1",
+      "size": 4120,
+      "sha256": "2312c31f41fee950455fab62ef6a752494abfa30704535bf154c56f955453049"
+    },
+    {
+      "path": "scripts/invoke.sh",
+      "size": 3692,
+      "sha256": "d2ed975d2ac073fa2251c35b54df7da8174df31611cb5faa0ecaac9d4b9990bd"
+    },
+    {
+      "path": "scripts/product-select.mjs",
+      "size": 15148,
+      "sha256": "b7c82ceca9375308a8f3cfef1192de0dfaa2570f55f07025bb6dae32402af539"
+    },
+    {
+      "path": "scripts/runtime-manifest.json",
+      "size": 1543,
+      "sha256": "b1e9063108d37098ba905ee22b7193d5452073f0f2ef00f408cae716d00a4c36"
+    }
+  ],
+  "scan": {
+    "ok": true,
+    "filesScanned": 38,
+    "violations": []
+  }
+}

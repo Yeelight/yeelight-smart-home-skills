@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const skillDir = path.resolve(__dirname, "..");
 const catalogPath = path.join(skillDir, "assets", "catalog", "lighting-design-products.json");
+const domainCatalogPath = path.join(skillDir, "assets", "catalog", "yeelight-domain.json");
 
 function parseArgs(argv) {
   const result = { query: "", limit: 8, category: "", room: "", goal: "" };
@@ -44,8 +45,8 @@ const DESIGN_TOKENS = {
   wattages: ["8w", "12w", "15w", "36w"],
   shapes: ["方形", "圆形"],
   series: ["S系列", "爱思系列", "S21", "S20", "E+系列", "E20", "E系列", "M20", "D系列", "P20", "P21", "Nightingale"],
-  keywords: ["夙夜", "Pro", "线下版", "标准版", "国内版", "电竞", "梦幻帘"],
-  categories: ["吸顶灯", "格栅灯", "筒射灯", "射灯", "筒灯", "青空灯", "灯带", "智能开关", "面板", "旋钮", "传感器", "人在传感器"]
+  keywords: ["夙夜", "Pro", "线下版", "标准版", "国内版", "电竞", "梦幻帘", "干接点"],
+  categories: ["吸顶灯", "格栅灯", "筒射灯", "射灯", "筒灯", "青空灯", "灯带", "智能开关", "面板", "旋钮", "传感器", "人在传感器", "模块"]
 };
 
 const CATEGORY_COMPATIBILITY = {
@@ -55,7 +56,20 @@ const CATEGORY_COMPATIBILITY = {
   "传感器": ["传感器", "人在传感器"]
 };
 
-function normalize(value) {
+function readLexicalAliases() {
+  try {
+    const catalog = JSON.parse(fs.readFileSync(domainCatalogPath, "utf8"));
+    return (catalog.language?.lexicalAliases || [])
+      .filter((item) => item?.from && item?.to)
+      .sort((a, b) => String(b.from).length - String(a.from).length);
+  } catch {
+    return [];
+  }
+}
+
+const LEXICAL_ALIASES = readLexicalAliases();
+
+function normalizeBase(value) {
   return String(value || "")
     .trim()
     .toLowerCase()
@@ -65,13 +79,35 @@ function normalize(value) {
     .replaceAll("_", "")
     .replaceAll("（", "(")
     .replaceAll("）", ")")
-    .replaceAll("°", "度")
-    .replaceAll("爱思", "s");
+    .replaceAll("°", "度");
+}
+
+function applyLexicalAliases(value) {
+  let result = String(value || "");
+  for (const alias of LEXICAL_ALIASES) {
+    const from = String(alias.from || "");
+    const to = String(alias.to || "");
+    if (from && to) {
+      result = result.split(from).join(to);
+    }
+  }
+  return result;
+}
+
+function normalize(value) {
+  return normalizeBase(applyLexicalAliases(value));
 }
 
 function contains(haystack, needle) {
   const text = normalize(needle);
-  return text !== "" && haystack.includes(text);
+  return text !== "" && normalize(haystack).includes(text);
+}
+
+function containsEither(left, right) {
+  const normalizedLeft = normalize(left);
+  const normalizedRight = normalize(right);
+  return normalizedLeft !== "" && normalizedRight !== "" &&
+    (normalizedLeft.includes(normalizedRight) || normalizedRight.includes(normalizedLeft));
 }
 
 function tokenMatches(normalizedText, tokens) {
@@ -108,11 +144,11 @@ function scoreProduct(product, query, categoryHint, requested) {
   const evidence = [];
   let score = 0;
   if (!normalizedQuery) return null;
-  if (contains(normalizedQuery, product.materialCode)) {
-    score += evidencePush(evidence, product.materialCode, 120);
+  if (contains(normalizedQuery, product.skuCode)) {
+    score += evidencePush(evidence, product.skuCode, 120);
   }
   for (const field of ["productName", "productSku", "productSpu"]) {
-    if (contains(normalizedQuery, product[field])) {
+    if (containsEither(normalizedQuery, product[field])) {
       score += evidencePush(evidence, product[field], 45);
     }
   }
@@ -125,7 +161,7 @@ function scoreProduct(product, query, categoryHint, requested) {
     score += evidencePush(evidence, product.series, 22);
   }
   for (const alias of product.aliases || []) {
-    if (contains(normalizedQuery, alias)) {
+    if (containsEither(normalizedQuery, alias)) {
       score += evidencePush(evidence, alias, 38);
     }
   }
@@ -166,6 +202,9 @@ function hasDesignValue(product, key, value) {
   if (key === "categories") {
     const compatible = CATEGORY_COMPATIBILITY[value] || [value];
     return productValues.some((candidate) => compatible.some((item) => normalize(candidate) === normalize(item)));
+  }
+  if (key === "keywords") {
+    return productValues.some((candidate) => normalize(candidate) === normalize(value)) || contains(productText(product), value);
   }
   return productValues.some((candidate) => normalize(candidate) === normalize(value));
 }
@@ -257,12 +296,12 @@ function designNotes(product, constraintReview) {
 
 function selectionGuidance(matches) {
   if (matches.length === 0) {
-    return "No candidate was found. Ask for a product family, series, install style, color, or material code, or use product.pedia.search for official product facts.";
+    return "No candidate was found. Ask for a product family, series, install style, color, or SKU, or use product.pedia.search for official product facts.";
   }
   if (matches.length >= 2 && Math.abs(matches[0].score - matches[1].score) < 8) {
     return "Top candidates are close. AI should decide from room role, optical intent, installation constraints, color, series, wattage/opening, and whether the user needs a concrete design now.";
   }
-  return "Use the top candidate only if its design notes and missing constraints fit the user request. Otherwise choose another candidate and pass explicit product identity to Runtime.";
+  return "Use the top candidate only if its design notes and missing constraints fit the user request. Otherwise choose another candidate and pass explicit skuCode, capabilityPid, and productComponentId to Runtime.";
 }
 
 function confidence(score) {
@@ -282,15 +321,15 @@ const matches = products
   .sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
     if ((b.product.priority || 0) !== (a.product.priority || 0)) return (b.product.priority || 0) - (a.product.priority || 0);
-    return String(a.product.materialCode).localeCompare(String(b.product.materialCode));
+    return String(a.product.skuCode).localeCompare(String(b.product.skuCode));
   })
   .slice(0, limit)
   .map((match) => {
     const constraintReview = evaluateConstraints(match.product, requested);
     return {
-      materialCode: match.product.materialCode,
-      pid: match.product.pid,
-      pcId: match.product.pcId,
+      skuCode: match.product.skuCode,
+      capabilityPid: match.product.capabilityPid,
+      productComponentId: match.product.productComponentId,
       productName: match.product.productName,
       productSku: match.product.productSku,
       productSpu: match.product.productSpu,
@@ -313,11 +352,13 @@ const matches = products
 
 process.stdout.write(JSON.stringify({
   query: input,
+  normalizedQuery: normalize(input),
   catalog: "skill_lighting_design_products",
+  lexicalAliasCount: LEXICAL_ALIASES.length,
   requestedSignals: requested,
   returned: matches.length,
   candidates: matches,
   selectionGuidance: selectionGuidance(matches),
-  runtimeRule: "After AI chooses a candidate, pass materialCode, pid, pcId, productName, productSku, productSpu, category, series, and notes into lighting.design.import or device.slot.create. Do not rely on fuzzy Runtime auto-selection for final design choices."
+  runtimeRule: "After AI chooses a candidate, copy skuCode, capabilityPid, productComponentId, and readable productName/category/series/notes into lighting.design.import or device.slot.create. Do not rely on fuzzy Runtime auto-selection for final design choices."
 }, null, 2));
 process.stdout.write("\n");

@@ -1,8 +1,8 @@
 [
   {
-    "materialCode": "1-000000016",
-    "pid": 8390662,
-    "pcId": 0,
+    "skuCode": "1-000000016",
+    "capabilityPid": 8390662,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro干接点输入模块",
     "productSku": "YLP-干接点输入模块",
@@ -42,9 +42,9 @@
     ]
   },
   {
-    "materialCode": "1-000000021",
-    "pid": 8784640,
-    "pcId": 0,
+    "skuCode": "1-000000021",
+    "capabilityPid": 8784640,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21 人体红外传感器",
     "productSku": "YLP-S21人体红外传感器-标准版",
@@ -93,9 +93,9 @@
     ]
   },
   {
-    "materialCode": "1-000000031",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000000031",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro M20 吸顶灯 C450",
     "productSku": "YLP-M20吸顶灯-标准版-C450-星空",
@@ -148,9 +148,9 @@
     ]
   },
   {
-    "materialCode": "1-000000586",
-    "pid": 198659,
-    "pcId": 4,
+    "skuCode": "1-000000586",
+    "capabilityPid": 198659,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 蓝牙Mesh球泡",
     "productSku": "YLP-S20球泡-线下版-A60-E27-白色",
@@ -198,9 +198,9 @@
     ]
   },
   {
-    "materialCode": "1-000000792",
-    "pid": 460800,
-    "pcId": 0,
+    "skuCode": "1-000000792",
+    "capabilityPid": 460800,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S20 双路控制模块（MESH版）",
     "productSku": "YLP-S20双路控制模块-标准版-白色",
@@ -244,9 +244,9 @@
     ]
   },
   {
-    "materialCode": "1-000000798",
-    "pid": 854019,
-    "pcId": 0,
+    "skuCode": "1-000000798",
+    "capabilityPid": 854019,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21 智能墙壁开关（三键）",
     "productSku": "YLP-S21墙壁开关-标准版-智能款-86*86mm-三键-白色",
@@ -290,9 +290,9 @@
     ]
   },
   {
-    "materialCode": "1-000000800",
-    "pid": 8390660,
-    "pcId": 0,
+    "skuCode": "1-000000800",
+    "capabilityPid": 8390660,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21 智能情景开关（六键）",
     "productSku": "YLP-S21情景开关-标准版-6键-零火-白色",
@@ -334,9 +334,9 @@
     ]
   },
   {
-    "materialCode": "1-000000801",
-    "pid": 8390660,
-    "pcId": 0,
+    "skuCode": "1-000000801",
+    "capabilityPid": 8390660,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21 智能情景开关（六键）",
     "productSku": "YLP-S21情景开关-标准版-6键-零火-灰色",
@@ -375,9 +375,9 @@
     ]
   },
   {
-    "materialCode": "1-000000892",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000000892",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 低压驱动 120W",
     "productSku": "YLP-S21低压灯带电源-线下版-120W",
@@ -424,9 +424,9 @@
     ]
   },
   {
-    "materialCode": "1-000000894",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000000894",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 轨道射灯",
     "productSku": "YLP-S20轨道射灯-线下版-黑色-三线-15°",
@@ -482,9 +482,9 @@
     ]
   },
   {
-    "materialCode": "1-000000963",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000000963",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 嵌入式筒射灯3寸方形",
     "productSku": "YLP-S20嵌入式筒射灯-线下版-黑色-3寸-窄边框-方形-15°",
@@ -548,9 +548,9 @@
     ]
   },
   {
-    "materialCode": "1-000001009",
-    "pid": 395264,
-    "pcId": 12,
+    "skuCode": "1-000001009",
+    "capabilityPid": 395264,
+    "productComponentId": 12,
     "connectType": -1,
     "productName": "Yeelight Pro S20 窗帘电机",
     "productSku": "YLP-S20窗帘电机-标准版-白色",
@@ -592,9 +592,9 @@
     ]
   },
   {
-    "materialCode": "1-000001020",
-    "pid": 8456448,
-    "pcId": 0,
+    "skuCode": "1-000001020",
+    "capabilityPid": 8456448,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S20 人体传感器",
     "productSku": "YLP-S20人体传感器-标准版-白色",
@@ -644,9 +644,9 @@
     ]
   },
   {
-    "materialCode": "1-000001021",
-    "pid": 8522496,
-    "pcId": 0,
+    "skuCode": "1-000001021",
+    "capabilityPid": 8522496,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S20 门窗传感器",
     "productSku": "YLP-S20门窗传感器-标准版-白色",
@@ -692,9 +692,9 @@
     ]
   },
   {
-    "materialCode": "1-000001023",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001023",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 嵌入式筒射灯3寸圆形",
     "productSku": "YLP-S20嵌入式筒射灯-线下版-黑色-3寸-窄边框-圆形-15°",
@@ -758,9 +758,9 @@
     ]
   },
   {
-    "materialCode": "1-000001028",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001028",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 嵌入式筒射灯2.5寸圆形",
     "productSku": "YLP-S20嵌入式筒射灯-线下版-黑色-2.5寸-窄边框-圆形-36°",
@@ -828,9 +828,9 @@
     ]
   },
   {
-    "materialCode": "1-000001030",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001030",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯模组",
     "productSku": "YLP-S21嵌入式筒射灯模组-线下版-3寸-24°-星空灰",
@@ -890,9 +890,9 @@
     ]
   },
   {
-    "materialCode": "1-000001031",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001031",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯模组",
     "productSku": "YLP-S21嵌入式筒射灯模组-线下版-3寸-36°-星空灰",
@@ -955,9 +955,9 @@
     ]
   },
   {
-    "materialCode": "1-000001036",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001036",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 明装筒射灯",
     "productSku": "YLP-S20明装筒射灯-线下版-黑色-24°-方形",
@@ -1017,9 +1017,9 @@
     ]
   },
   {
-    "materialCode": "1-000001037",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001037",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 明装筒射灯",
     "productSku": "YLP-S20明装筒射灯-线下版-黑色-36°-方形",
@@ -1082,9 +1082,9 @@
     ]
   },
   {
-    "materialCode": "1-000001038",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001038",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 明装斗胆灯(双头)",
     "productSku": "YLP-S21明装斗胆灯-线下版-双头-白色-30°",
@@ -1137,9 +1137,9 @@
     ]
   },
   {
-    "materialCode": "1-000001040",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000001040",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 明装斗胆灯(双头)",
     "productSku": "YLP-S21明装斗胆灯-线下版-双头-黑色-30°",
@@ -1192,9 +1192,9 @@
     ]
   },
   {
-    "materialCode": "1-000001043",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000001043",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸泛光灯-30cm",
     "productSku": "YLP-S21嵌入式磁吸泛光灯-线下版-30cm-黑色",
@@ -1245,9 +1245,9 @@
     ]
   },
   {
-    "materialCode": "1-000001045",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000001045",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸格栅灯-10头",
     "productSku": "YLP-S21嵌入式磁吸格栅灯-线下版-10头-黑色",
@@ -1305,9 +1305,9 @@
     ]
   },
   {
-    "materialCode": "1-000001046",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000001046",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸折叠射灯-5头",
     "productSku": "YLP-S21嵌入式磁吸折叠射灯-线下版-5头-黑色",
@@ -1364,9 +1364,9 @@
     ]
   },
   {
-    "materialCode": "1-000001048",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000001048",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸轨道射灯",
     "productSku": "YLP-S21嵌入式磁吸轨道射灯-线下版-24°-黑色",
@@ -1427,9 +1427,9 @@
     ]
   },
   {
-    "materialCode": "1-000001049",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000001049",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸吊线灯",
     "productSku": "YLP-S21嵌入式磁吸吊线灯-线下版-黑色",
@@ -1480,9 +1480,9 @@
     ]
   },
   {
-    "materialCode": "1-000001085",
-    "pid": 133121,
-    "pcId": 3,
+    "skuCode": "1-000001085",
+    "capabilityPid": 133121,
+    "productComponentId": 3,
     "connectType": -1,
     "productName": "Yeelight 青空灯",
     "productSku": "YLP-青空灯-标准版-白色",
@@ -1527,9 +1527,9 @@
     ]
   },
   {
-    "materialCode": "1-000001247",
-    "pid": 198661,
-    "pcId": 4,
+    "skuCode": "1-000001247",
+    "capabilityPid": 198661,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro M20 嵌入式射灯-3寸",
     "productSku": "YLP-M20嵌入式射灯-线下版-白色-3寸",
@@ -1586,9 +1586,9 @@
     ]
   },
   {
-    "materialCode": "1-000001279",
-    "pid": 8653058,
-    "pcId": 0,
+    "skuCode": "1-000001279",
+    "capabilityPid": 8653058,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro M20 旋钮开关",
     "productSku": "YLP-M20旋钮开关-线下版-深空灰",
@@ -1630,9 +1630,9 @@
     ]
   },
   {
-    "materialCode": "1-000001309",
-    "pid": 8391425,
-    "pcId": 0,
+    "skuCode": "1-000001309",
+    "capabilityPid": 8391425,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S20系列4键情景开关(零火版)",
     "productSku": "YLP-S20情景开关-线下版-4键-零火-深空灰",
@@ -1674,9 +1674,9 @@
     ]
   },
   {
-    "materialCode": "1-000001312",
-    "pid": 16787456,
-    "pcId": 0,
+    "skuCode": "1-000001312",
+    "capabilityPid": 16787456,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21 全面屏开关",
     "productSku": "YLP-S21全面屏开关-线下版-深灰色",
@@ -1717,9 +1717,9 @@
     ]
   },
   {
-    "materialCode": "1-000001331",
-    "pid": 8456449,
-    "pcId": 0,
+    "skuCode": "1-000001331",
+    "capabilityPid": 8456449,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro P20 人在传感器",
     "productSku": "YLP-P20人在传感器-线下版",
@@ -1766,9 +1766,9 @@
     ]
   },
   {
-    "materialCode": "1-000001360",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000001360",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸轨道射灯-15°",
     "productSku": "YLP-P20明装磁吸轨道射灯-线下版-15°-黑色",
@@ -1828,9 +1828,9 @@
     ]
   },
   {
-    "materialCode": "1-000002044",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002044",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式格栅灯-5头",
     "productSku": "YLP-E20嵌入式格栅灯-线下版-5头-黑色-32°",
@@ -1890,9 +1890,9 @@
     ]
   },
   {
-    "materialCode": "1-000002045",
-    "pid": 133123,
-    "pcId": 3,
+    "skuCode": "1-000002045",
+    "capabilityPid": 133123,
+    "productComponentId": 3,
     "connectType": -1,
     "productName": "Yeelight Pro P20 青空灯",
     "productSku": "YLP-P20青空灯-标准版",
@@ -1936,9 +1936,9 @@
     ]
   },
   {
-    "materialCode": "1-000002062",
-    "pid": 854018,
-    "pcId": 0,
+    "skuCode": "1-000002062",
+    "capabilityPid": 854018,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21 智能墙壁开关 L1（双键）",
     "productSku": "YLP-S21墙壁开关-标准版-智能款-86*90mm-双键-白色",
@@ -1982,9 +1982,9 @@
     ]
   },
   {
-    "materialCode": "1-000002169",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002169",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20色温灯泡",
     "productSku": "YLP-E20球泡-线下版-色温-白色-E27",
@@ -2032,9 +2032,9 @@
     ]
   },
   {
-    "materialCode": "1-000002170",
-    "pid": 264193,
-    "pcId": 5,
+    "skuCode": "1-000002170",
+    "capabilityPid": 264193,
+    "productComponentId": 5,
     "connectType": -1,
     "productName": "Yeelight Pro E20彩光灯泡",
     "productSku": "YLP-E20球泡-线下版-彩光-白色-E27",
@@ -2084,9 +2084,9 @@
     ]
   },
   {
-    "materialCode": "1-000002532",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002532",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式磁吸泛光灯-30cm",
     "productSku": "YLP-E20嵌入式磁吸泛光灯-线下版-30cm-黑色",
@@ -2137,9 +2137,9 @@
     ]
   },
   {
-    "materialCode": "1-000002533",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002533",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式磁吸泛光灯-60cm",
     "productSku": "YLP-E20嵌入式磁吸泛光灯-线下版-60cm-黑色",
@@ -2190,9 +2190,9 @@
     ]
   },
   {
-    "materialCode": "1-000002535",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002535",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式磁吸格栅灯-12头",
     "productSku": "YLP-E20嵌入式磁吸格栅灯-线下版-12头-黑色",
@@ -2250,9 +2250,9 @@
     ]
   },
   {
-    "materialCode": "1-000002538",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002538",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式磁吸轨道射灯",
     "productSku": "YLP-E20嵌入式磁吸轨道射灯-线下版-24°-黑色",
@@ -2313,9 +2313,9 @@
     ]
   },
   {
-    "materialCode": "1-000002539",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000002539",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式磁吸吊线灯",
     "productSku": "YLP-E20嵌入式磁吸吊线灯-线下版-黑色",
@@ -2366,9 +2366,9 @@
     ]
   },
   {
-    "materialCode": "1-000002867",
-    "pid": 1124352,
-    "pcId": 0,
+    "skuCode": "1-000002867",
+    "capabilityPid": 1124352,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro P20 全景屏面板",
     "productSku": "YLP-P20全景屏面板-线下版-丝墨青",
@@ -2410,9 +2410,9 @@
     ]
   },
   {
-    "materialCode": "1-000002997",
-    "pid": 1050624,
-    "pcId": 0,
+    "skuCode": "1-000002997",
+    "capabilityPid": 1050624,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21全面屏开关（Mesh版）",
     "productSku": "YLP-S21全面屏开关-标准版-汉玉白-Mesh",
@@ -2456,9 +2456,9 @@
     ]
   },
   {
-    "materialCode": "1-000002998",
-    "pid": 1050624,
-    "pcId": 0,
+    "skuCode": "1-000002998",
+    "capabilityPid": 1050624,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S21全面屏开关（Mesh版）",
     "productSku": "YLP-S21全面屏开关-标准版-晶墨灰-Mesh",
@@ -2504,9 +2504,9 @@
     ]
   },
   {
-    "materialCode": "1-000003236",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003236",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro 12W超小型柱状电源",
     "productSku": "YLP-12W超小型柱状电源-电源平台",
@@ -2549,9 +2549,9 @@
     ]
   },
   {
-    "materialCode": "1-000003563",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003563",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸泛光灯-30cm-升级款",
     "productSku": "YLP-S21嵌入式磁吸泛光灯-线下版-30cm-黑色-升级款",
@@ -2602,9 +2602,9 @@
     ]
   },
   {
-    "materialCode": "1-000003568",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003568",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式磁吸吊线灯-升级款",
     "productSku": "YLP-S21嵌入式磁吸吊线灯-线下版-黑色-升级款",
@@ -2655,9 +2655,9 @@
     ]
   },
   {
-    "materialCode": "1-000003759",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003759",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 低压驱动 36W",
     "productSku": "YLP-S21低压灯带电源-线下版-36W",
@@ -2704,9 +2704,9 @@
     ]
   },
   {
-    "materialCode": "1-000003760",
-    "pid": 395264,
-    "pcId": 12,
+    "skuCode": "1-000003760",
+    "capabilityPid": 395264,
+    "productComponentId": 12,
     "connectType": -1,
     "productName": "Yeelight Pro S21窗帘电机",
     "productSku": "YLP-S21窗帘电机-线下版-白色",
@@ -2748,9 +2748,9 @@
     ]
   },
   {
-    "materialCode": "1-000003787",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003787",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸圆-15°-零售版",
@@ -2805,9 +2805,9 @@
     ]
   },
   {
-    "materialCode": "1-000003788",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003788",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸圆-24°-零售版",
@@ -2863,9 +2863,9 @@
     ]
   },
   {
-    "materialCode": "1-000003789",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003789",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸圆-36°-零售版",
@@ -2924,9 +2924,9 @@
     ]
   },
   {
-    "materialCode": "1-000003790",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003790",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸方-15°-零售版",
@@ -2981,9 +2981,9 @@
     ]
   },
   {
-    "materialCode": "1-000003791",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003791",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸方-24°-零售版",
@@ -3039,9 +3039,9 @@
     ]
   },
   {
-    "materialCode": "1-000003792",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003792",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸方-36°-零售版",
@@ -3100,9 +3100,9 @@
     ]
   },
   {
-    "materialCode": "1-000003793",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003793",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯--3寸圆无边框-15°-零售版",
@@ -3159,9 +3159,9 @@
     ]
   },
   {
-    "materialCode": "1-000003794",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003794",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯--3寸圆无边框-24°-零售版",
@@ -3219,9 +3219,9 @@
     ]
   },
   {
-    "materialCode": "1-000003795",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003795",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯--3寸圆无边框-36°-零售版",
@@ -3282,9 +3282,9 @@
     ]
   },
   {
-    "materialCode": "1-000003796",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003796",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸双方斗胆-15°-零售版",
@@ -3339,9 +3339,9 @@
     ]
   },
   {
-    "materialCode": "1-000003797",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003797",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸双方斗胆-24°-零售版",
@@ -3397,9 +3397,9 @@
     ]
   },
   {
-    "materialCode": "1-000003798",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003798",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸双方斗胆-36°-零售版",
@@ -3458,9 +3458,9 @@
     ]
   },
   {
-    "materialCode": "1-000003799",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003799",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸四方斗胆-15°-零售版",
@@ -3515,9 +3515,9 @@
     ]
   },
   {
-    "materialCode": "1-000003800",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003800",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸四方斗胆-24°-零售版",
@@ -3573,9 +3573,9 @@
     ]
   },
   {
-    "materialCode": "1-000003801",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003801",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S21 嵌入式筒射灯-零售版",
     "productSku": "YLP-S21嵌入式射灯-3寸四方斗胆-36°-零售版",
@@ -3634,9 +3634,9 @@
     ]
   },
   {
-    "materialCode": "1-000003802",
-    "pid": 198658,
-    "pcId": 4,
+    "skuCode": "1-000003802",
+    "capabilityPid": 198658,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 高压灯带-零售版",
     "productSku": "YLP-S20高压灯带-线下版-色温-白色-1m-零售版",
@@ -3684,9 +3684,9 @@
     ]
   },
   {
-    "materialCode": "1-000003810",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003810",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro Nightingale青空灯夙夜版Pro",
     "productSku": "YLP-Nightingale青空灯-夙夜版Pro",
@@ -3736,9 +3736,9 @@
     ]
   },
   {
-    "materialCode": "1-000003812",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003812",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro 10W超小型柱状电源",
     "productSku": "YLP-10W超小型柱状电源-电源平台",
@@ -3781,9 +3781,9 @@
     ]
   },
   {
-    "materialCode": "1-000003813",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003813",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro 8W超小型柱状电源",
     "productSku": "YLP-8W超小型柱状电源-电源平台",
@@ -3826,9 +3826,9 @@
     ]
   },
   {
-    "materialCode": "1-000003854",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003854",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-24°-深空灰-V1",
@@ -3888,9 +3888,9 @@
     ]
   },
   {
-    "materialCode": "1-000003855",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003855",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-36°深空灰-V1",
@@ -3953,9 +3953,9 @@
     ]
   },
   {
-    "materialCode": "1-000003856",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003856",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-60°-V1",
@@ -4012,9 +4012,9 @@
     ]
   },
   {
-    "materialCode": "1-000003857",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003857",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro D系列嵌入式筒灯-3寸",
     "productSku": "YLP-D系列嵌入式筒灯-线下版-3寸-深空灰-V1",
@@ -4072,9 +4072,9 @@
     ]
   },
   {
-    "materialCode": "1-000003858",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003858",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro D系列嵌入式射灯-3寸",
     "productSku": "YLP-D系列嵌入式射灯-线下版-3寸-24°-深空灰-V1",
@@ -4134,9 +4134,9 @@
     ]
   },
   {
-    "materialCode": "1-000003874",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000003874",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro 5W超小型柱状电源",
     "productSku": "YLP-5W超小型柱状电源-电源平台",
@@ -4179,9 +4179,9 @@
     ]
   },
   {
-    "materialCode": "1-000003897",
-    "pid": 8980736,
-    "pcId": 0,
+    "skuCode": "1-000003897",
+    "capabilityPid": 8980736,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E系列旋钮开关",
     "productSku": "YLP-E系列旋钮开关-标准版",
@@ -4220,9 +4220,9 @@
     ]
   },
   {
-    "materialCode": "1-000003991",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000003991",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E20 嵌入式磁吸折叠射灯-黑色-6头",
     "productSku": "YLP-E20嵌入式磁吸折叠射灯-线下版-黑色-6头",
@@ -4279,9 +4279,9 @@
     ]
   },
   {
-    "materialCode": "1-000004047",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004047",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸线条灯-30CM",
     "productSku": "YLP-P20明装磁吸线条灯-线下版-30cm-黑色-YC",
@@ -4334,9 +4334,9 @@
     ]
   },
   {
-    "materialCode": "1-000004048",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004048",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸线条灯-30CM",
     "productSku": "YLP-P20明装磁吸线条灯-线下版-30cm-白色-YC",
@@ -4389,9 +4389,9 @@
     ]
   },
   {
-    "materialCode": "1-000004049",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004049",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸线条灯-60CM",
     "productSku": "YLP-P20明装磁吸线条灯-线下版-60cm-白色-YC",
@@ -4444,9 +4444,9 @@
     ]
   },
   {
-    "materialCode": "1-000004050",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004050",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸格栅灯-5头",
     "productSku": "YLP-P20明装磁吸格栅灯-线下版-5头-白色-YC",
@@ -4503,9 +4503,9 @@
     ]
   },
   {
-    "materialCode": "1-000004051",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004051",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸格栅灯-10头",
     "productSku": "YLP-P20明装磁吸格栅灯-线下版-10头-黑色-YC",
@@ -4563,9 +4563,9 @@
     ]
   },
   {
-    "materialCode": "1-000004052",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004052",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸格栅灯-10头",
     "productSku": "YLP-P20明装磁吸格栅灯-线下版-10头-白色-YC",
@@ -4622,9 +4622,9 @@
     ]
   },
   {
-    "materialCode": "1-000004053",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004053",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸折叠射灯-5头",
     "productSku": "YLP-P20明装磁吸折叠射灯-线下版-5头-白色-YC",
@@ -4681,9 +4681,9 @@
     ]
   },
   {
-    "materialCode": "1-000004054",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004054",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸折叠射灯-5头",
     "productSku": "YLP-P20明装磁吸折叠射灯-线下版-5头-黑色-YC",
@@ -4740,9 +4740,9 @@
     ]
   },
   {
-    "materialCode": "1-000004055",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004055",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸轨道射灯-15°",
     "productSku": "YLP-P20明装磁吸轨道射灯-线下版-15°-黑色-YC",
@@ -4802,9 +4802,9 @@
     ]
   },
   {
-    "materialCode": "1-000004056",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004056",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸轨道射灯-15°",
     "productSku": "YLP-P20明装磁吸轨道射灯-线下版-15°-白色-YC",
@@ -4864,9 +4864,9 @@
     ]
   },
   {
-    "materialCode": "1-000004057",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004057",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸轨道射灯-24°",
     "productSku": "YLP-P20明装磁吸轨道射灯-线下版-24°-白色-YC",
@@ -4927,9 +4927,9 @@
     ]
   },
   {
-    "materialCode": "1-000004058",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004058",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸轨道射灯-24°",
     "productSku": "YLP-P20明装磁吸轨道射灯-线下版-24°-黑色-YC",
@@ -4990,9 +4990,9 @@
     ]
   },
   {
-    "materialCode": "1-000004059",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004059",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸格栅灯-5头",
     "productSku": "YLP-P20明装磁吸格栅灯-线下版-5头-黑色-YC",
@@ -5050,9 +5050,9 @@
     ]
   },
   {
-    "materialCode": "1-000004060",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004060",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro P20 明装磁吸线条灯-60CM",
     "productSku": "YLP-P20明装磁吸线条灯-线下版-60cm-黑色-YC",
@@ -5105,9 +5105,9 @@
     ]
   },
   {
-    "materialCode": "1-000004144",
-    "pid": 1443840,
-    "pcId": 39,
+    "skuCode": "1-000004144",
+    "capabilityPid": 1443840,
+    "productComponentId": 39,
     "connectType": -1,
     "productName": "Yeelight Pro S系列梦幻帘窗帘电机",
     "productSku": "YLP-S系列梦幻帘窗帘电机-线下版-白色",
@@ -5152,9 +5152,9 @@
     ]
   },
   {
-    "materialCode": "1-000004253",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004253",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式格栅灯",
     "productSku": "YLP-E系列嵌入式格栅灯-线下版-3头-黑色",
@@ -5210,9 +5210,9 @@
     ]
   },
   {
-    "materialCode": "1-000004254",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004254",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式格栅灯",
     "productSku": "YLP-E系列嵌入式格栅灯-线下版-3头-白色",
@@ -5267,9 +5267,9 @@
     ]
   },
   {
-    "materialCode": "1-000004255",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004255",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式格栅灯",
     "productSku": "YLP-E系列嵌入式格栅灯-线下版-6头-黑色",
@@ -5325,9 +5325,9 @@
     ]
   },
   {
-    "materialCode": "1-000004256",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004256",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式格栅灯",
     "productSku": "YLP-E系列嵌入式格栅灯-线下版-6头-白色",
@@ -5382,9 +5382,9 @@
     ]
   },
   {
-    "materialCode": "1-000004340",
-    "pid": 198672,
-    "pcId": 4,
+    "skuCode": "1-000004340",
+    "capabilityPid": 198672,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "青空灯P21",
     "productSku": "YLP-青空灯P21",
@@ -5427,9 +5427,9 @@
     ]
   },
   {
-    "materialCode": "1-000004475",
-    "pid": 198662,
-    "pcId": 4,
+    "skuCode": "1-000004475",
+    "capabilityPid": 198662,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro M20 T43球泡-E14",
     "productSku": "YLP-M20球泡-标准版-色温-白色-T43-E14-CH",
@@ -5477,9 +5477,9 @@
     ]
   },
   {
-    "materialCode": "1-000004476",
-    "pid": 198662,
-    "pcId": 4,
+    "skuCode": "1-000004476",
+    "capabilityPid": 198662,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro M20 T43球泡-E27",
     "productSku": "YLP-M20球泡-线下版-色温-T43-E27-CH",
@@ -5524,9 +5524,9 @@
     ]
   },
   {
-    "materialCode": "1-000004711",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004711",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-8°-15w-深空灰",
@@ -5589,9 +5589,9 @@
     ]
   },
   {
-    "materialCode": "1-000004712",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004712",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-15°-15w-深空灰",
@@ -5654,9 +5654,9 @@
     ]
   },
   {
-    "materialCode": "1-000004713",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004713",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-24°-15w-深空灰",
@@ -5720,9 +5720,9 @@
     ]
   },
   {
-    "materialCode": "1-000004714",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004714",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-36°-15w-深空灰",
@@ -5789,9 +5789,9 @@
     ]
   },
   {
-    "materialCode": "1-000004715",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004715",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-60°-15w-深空灰",
@@ -5855,9 +5855,9 @@
     ]
   },
   {
-    "materialCode": "1-000004740",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004740",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-超薄款",
     "productSku": "YLP-E系列嵌入式射灯-超薄款-75开孔-24°",
@@ -5913,9 +5913,9 @@
     ]
   },
   {
-    "materialCode": "1-000004751",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000004751",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-无边框款",
     "productSku": "YLP-E系列嵌入式射灯模组-无边框款-80开孔-24°",
@@ -5973,9 +5973,9 @@
     ]
   },
   {
-    "materialCode": "1-000004752",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000004752",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-无边框款",
     "productSku": "YLP-E系列嵌入式射灯模组-无边框款-80开孔-36°",
@@ -6036,9 +6036,9 @@
     ]
   },
   {
-    "materialCode": "1-000004753",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000004753",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-无边框款",
     "productSku": "YLP-E系列嵌入式射灯模组-无边框款-80开孔-60°",
@@ -6096,9 +6096,9 @@
     ]
   },
   {
-    "materialCode": "1-000004858",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004858",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-8°-12w-深空灰",
@@ -6161,9 +6161,9 @@
     ]
   },
   {
-    "materialCode": "1-000004859",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004859",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-15°-12w-深空灰",
@@ -6226,9 +6226,9 @@
     ]
   },
   {
-    "materialCode": "1-000004860",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004860",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-24°-12w-深空灰",
@@ -6292,9 +6292,9 @@
     ]
   },
   {
-    "materialCode": "1-000004861",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004861",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-36°-12w-深空灰",
@@ -6361,9 +6361,9 @@
     ]
   },
   {
-    "materialCode": "1-000004862",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004862",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-75开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-75开孔-60°-12w-深空灰",
@@ -6427,9 +6427,9 @@
     ]
   },
   {
-    "materialCode": "1-000004863",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004863",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-55开孔-24°-8w-深空灰",
@@ -6493,9 +6493,9 @@
     ]
   },
   {
-    "materialCode": "1-000004864",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004864",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-55开孔-36°-8w-深空灰",
@@ -6562,9 +6562,9 @@
     ]
   },
   {
-    "materialCode": "1-000004865",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004865",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-55开孔-60°-8w-深空灰",
@@ -6628,9 +6628,9 @@
     ]
   },
   {
-    "materialCode": "1-000004866",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004866",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯光学配件-线下版-55开孔-蜂窝网-10PCS",
@@ -6684,9 +6684,9 @@
     ]
   },
   {
-    "materialCode": "1-000004870",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004870",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯面环-线下版-55开孔-圆形-窄边框-单头-10PCS",
@@ -6745,9 +6745,9 @@
     ]
   },
   {
-    "materialCode": "1-000004871",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004871",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯面环-线下版-55开孔-方形-窄边框-单头-10PCS",
@@ -6806,9 +6806,9 @@
     ]
   },
   {
-    "materialCode": "1-000004872",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004872",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯面环-线下版-55开孔-方形-窄边框-双头-10PCS",
@@ -6867,9 +6867,9 @@
     ]
   },
   {
-    "materialCode": "1-000004873",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004873",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯面环-线下版-55开孔-圆形-无边框-单头-10PCS",
@@ -6928,9 +6928,9 @@
     ]
   },
   {
-    "materialCode": "1-000004874",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004874",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯面环-线下版-55开孔-方形-无边框-单头-10PCS",
@@ -6989,9 +6989,9 @@
     ]
   },
   {
-    "materialCode": "1-000004875",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004875",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯面环-线下版-55开孔-方形-无边框-双头-10PCS",
@@ -7050,9 +7050,9 @@
     ]
   },
   {
-    "materialCode": "1-000004876",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004876",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-圆形-反光杯-枪黑-10PCS",
@@ -7109,9 +7109,9 @@
     ]
   },
   {
-    "materialCode": "1-000004877",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004877",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-圆形-反光杯-亮银-10PCS",
@@ -7168,9 +7168,9 @@
     ]
   },
   {
-    "materialCode": "1-000004878",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004878",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-圆形-反光杯-哑白-10PCS",
@@ -7227,9 +7227,9 @@
     ]
   },
   {
-    "materialCode": "1-000004879",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004879",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-圆形-反光杯-哑黑-10PCS",
@@ -7286,9 +7286,9 @@
     ]
   },
   {
-    "materialCode": "1-000004880",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004880",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-圆形-反光杯-亮金-10PCS",
@@ -7345,9 +7345,9 @@
     ]
   },
   {
-    "materialCode": "1-000004881",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004881",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-圆形-圆孔-10PCS",
@@ -7404,9 +7404,9 @@
     ]
   },
   {
-    "materialCode": "1-000004884",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004884",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-方形-反光杯-枪黑-10PCS",
@@ -7463,9 +7463,9 @@
     ]
   },
   {
-    "materialCode": "1-000004885",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004885",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-方形-反光杯-亮银-10PCS",
@@ -7522,9 +7522,9 @@
     ]
   },
   {
-    "materialCode": "1-000004886",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004886",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-方形-反光杯-哑白-10PCS",
@@ -7581,9 +7581,9 @@
     ]
   },
   {
-    "materialCode": "1-000004887",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004887",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-方形-反光杯-哑黑-10PCS",
@@ -7640,9 +7640,9 @@
     ]
   },
   {
-    "materialCode": "1-000004888",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004888",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-方形-反光杯-亮金-10PCS",
@@ -7699,9 +7699,9 @@
     ]
   },
   {
-    "materialCode": "1-000004889",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004889",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-55开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-55开孔-方形-方孔-10PCS",
@@ -7758,9 +7758,9 @@
     ]
   },
   {
-    "materialCode": "1-000004891",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004891",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-35开孔-36°-5w-深空灰",
@@ -7827,9 +7827,9 @@
     ]
   },
   {
-    "materialCode": "1-000004892",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004892",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯体模组-线下版-35开孔-60°-5w-深空灰",
@@ -7893,9 +7893,9 @@
     ]
   },
   {
-    "materialCode": "1-000004893",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004893",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-35开孔-圆形-反光杯-枪黑-10PCS",
@@ -7952,9 +7952,9 @@
     ]
   },
   {
-    "materialCode": "1-000004894",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004894",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-35开孔-圆形-反光杯-亮银-10PCS",
@@ -8011,9 +8011,9 @@
     ]
   },
   {
-    "materialCode": "1-000004895",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004895",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-35开孔-圆形-反光杯-哑白-10PCS",
@@ -8070,9 +8070,9 @@
     ]
   },
   {
-    "materialCode": "1-000004896",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004896",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-35开孔-圆形-反光杯-哑黑-10PCS",
@@ -8129,9 +8129,9 @@
     ]
   },
   {
-    "materialCode": "1-000004897",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000004897",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列嵌入式射灯-35开孔",
     "productSku": "YLP-S系列嵌入式射灯灯杯-线下版-35开孔-圆形-反光杯-亮金-10PCS",
@@ -8188,9 +8188,9 @@
     ]
   },
   {
-    "materialCode": "1-000004902",
-    "pid": 1509378,
-    "pcId": 0,
+    "skuCode": "1-000004902",
+    "capabilityPid": 1509378,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列情景开关",
     "productSku": "YLP-S系列情景开关-标准版-肤感玻璃-陶瓷白",
@@ -8236,9 +8236,9 @@
     ]
   },
   {
-    "materialCode": "1-000004903",
-    "pid": 1509378,
-    "pcId": 0,
+    "skuCode": "1-000004903",
+    "capabilityPid": 1509378,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列情景开关",
     "productSku": "YLP-S系列情景开关-标准版-肤感玻璃-晶墨灰",
@@ -8286,9 +8286,9 @@
     ]
   },
   {
-    "materialCode": "1-000004904",
-    "pid": 1509378,
-    "pcId": 0,
+    "skuCode": "1-000004904",
+    "capabilityPid": 1509378,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列情景开关",
     "productSku": "YLP-S系列情景开关-标准版-微晶石-陶瓷白",
@@ -8334,9 +8334,9 @@
     ]
   },
   {
-    "materialCode": "1-000004905",
-    "pid": 1509378,
-    "pcId": 0,
+    "skuCode": "1-000004905",
+    "capabilityPid": 1509378,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列情景开关",
     "productSku": "YLP-S系列情景开关-标准版-微晶石-晶墨灰",
@@ -8384,9 +8384,9 @@
     ]
   },
   {
-    "materialCode": "1-000004906",
-    "pid": 1509378,
-    "pcId": 0,
+    "skuCode": "1-000004906",
+    "capabilityPid": 1509378,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列情景开关",
     "productSku": "YLP-S系列情景开关-标准版-金属拉丝玻璃-云灰银",
@@ -8432,9 +8432,9 @@
     ]
   },
   {
-    "materialCode": "1-000004907",
-    "pid": 1574912,
-    "pcId": 0,
+    "skuCode": "1-000004907",
+    "capabilityPid": 1574912,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列墙面旋钮开关",
     "productSku": "YLP-S系列墙面旋钮开关-标准版-肤感玻璃-陶瓷白",
@@ -8483,9 +8483,9 @@
     ]
   },
   {
-    "materialCode": "1-000004908",
-    "pid": 1574912,
-    "pcId": 0,
+    "skuCode": "1-000004908",
+    "capabilityPid": 1574912,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列墙面旋钮开关",
     "productSku": "YLP-S系列墙面旋钮开关-标准版-肤感玻璃-晶墨灰",
@@ -8536,9 +8536,9 @@
     ]
   },
   {
-    "materialCode": "1-000004909",
-    "pid": 1574912,
-    "pcId": 0,
+    "skuCode": "1-000004909",
+    "capabilityPid": 1574912,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列墙面旋钮开关",
     "productSku": "YLP-S系列墙面旋钮开关-标准版-微晶石-陶瓷白",
@@ -8587,9 +8587,9 @@
     ]
   },
   {
-    "materialCode": "1-000004910",
-    "pid": 1574912,
-    "pcId": 0,
+    "skuCode": "1-000004910",
+    "capabilityPid": 1574912,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列墙面旋钮开关",
     "productSku": "YLP-S系列墙面旋钮开关-标准版-微晶石-晶墨灰",
@@ -8640,9 +8640,9 @@
     ]
   },
   {
-    "materialCode": "1-000004911",
-    "pid": 1574912,
-    "pcId": 0,
+    "skuCode": "1-000004911",
+    "capabilityPid": 1574912,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列墙面旋钮开关",
     "productSku": "YLP-S系列墙面旋钮开关-标准版-金属拉丝玻璃-云灰银",
@@ -8691,9 +8691,9 @@
     ]
   },
   {
-    "materialCode": "1-000004988",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004988",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-单键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-1开-零火-汉玉白-SD",
@@ -8737,9 +8737,9 @@
     ]
   },
   {
-    "materialCode": "1-000004989",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004989",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-单键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-1开-零火-丝墨青-SD",
@@ -8783,9 +8783,9 @@
     ]
   },
   {
-    "materialCode": "1-000004990",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004990",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-双键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-2开-零火-汉玉白-SD",
@@ -8829,9 +8829,9 @@
     ]
   },
   {
-    "materialCode": "1-000004991",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004991",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-双键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-2开-零火-丝墨青-SD",
@@ -8875,9 +8875,9 @@
     ]
   },
   {
-    "materialCode": "1-000004992",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004992",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-三键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-3开-零火-汉玉白-SD",
@@ -8921,9 +8921,9 @@
     ]
   },
   {
-    "materialCode": "1-000004993",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004993",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-三键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-3开-零火-丝墨青-SD",
@@ -8967,9 +8967,9 @@
     ]
   },
   {
-    "materialCode": "1-000004994",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004994",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-单键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-1开-零火-晶墨灰-SD",
@@ -9015,9 +9015,9 @@
     ]
   },
   {
-    "materialCode": "1-000004995",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004995",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-双键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-2开-零火-晶墨灰-SD",
@@ -9063,9 +9063,9 @@
     ]
   },
   {
-    "materialCode": "1-000004996",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000004996",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关-三键",
     "productSku": "YLP-E20智能开关-线下版-智能开关-3开-零火-晶墨灰-SD",
@@ -9111,9 +9111,9 @@
     ]
   },
   {
-    "materialCode": "1-000004997",
-    "pid": 8390663,
-    "pcId": 0,
+    "skuCode": "1-000004997",
+    "capabilityPid": 8390663,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20六键情景开关（零火版）",
     "productSku": "YLP-E20情景开关-标准版-六键-零火-汉玉白-SD",
@@ -9155,9 +9155,9 @@
     ]
   },
   {
-    "materialCode": "1-000004998",
-    "pid": 8390663,
-    "pcId": 0,
+    "skuCode": "1-000004998",
+    "capabilityPid": 8390663,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20六键情景开关（零火版）",
     "productSku": "YLP-E20情景开关-标准版-六键-零火-晶墨灰-SD",
@@ -9201,9 +9201,9 @@
     ]
   },
   {
-    "materialCode": "1-000004999",
-    "pid": 8390663,
-    "pcId": 0,
+    "skuCode": "1-000004999",
+    "capabilityPid": 8390663,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20六键情景开关（零火版）",
     "productSku": "YLP-E20情景开关-标准版-六键-零火-丝墨青-SD",
@@ -9245,9 +9245,9 @@
     ]
   },
   {
-    "materialCode": "1-000005000",
-    "pid": 8391427,
-    "pcId": 0,
+    "skuCode": "1-000005000",
+    "capabilityPid": 8391427,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20六键情景开关（贴装版）",
     "productSku": "YLP-E20情景开关-标准版-六键-贴装-汉玉白-SD",
@@ -9289,9 +9289,9 @@
     ]
   },
   {
-    "materialCode": "1-000005001",
-    "pid": 8391427,
-    "pcId": 0,
+    "skuCode": "1-000005001",
+    "capabilityPid": 8391427,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20六键情景开关（贴装版）",
     "productSku": "YLP-E20情景开关-标准版-六键-贴装-晶墨灰-SD",
@@ -9335,9 +9335,9 @@
     ]
   },
   {
-    "materialCode": "1-000005002",
-    "pid": 8391427,
-    "pcId": 0,
+    "skuCode": "1-000005002",
+    "capabilityPid": 8391427,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20六键情景开关（贴装版）",
     "productSku": "YLP-E20情景开关-标准版-六键-贴装-丝墨青-SD",
@@ -9379,9 +9379,9 @@
     ]
   },
   {
-    "materialCode": "1-000005004",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005004",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-60°-深空灰-V1",
@@ -9441,9 +9441,9 @@
     ]
   },
   {
-    "materialCode": "1-000005103",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005103",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E+系列嵌入式射灯",
     "productSku": "YLP-E+系列嵌入式射灯模组-75开孔-15°",
@@ -9498,9 +9498,9 @@
     ]
   },
   {
-    "materialCode": "1-000005104",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005104",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E+系列嵌入式射灯",
     "productSku": "YLP-E+系列嵌入式射灯模组-75开孔-24°",
@@ -9556,9 +9556,9 @@
     ]
   },
   {
-    "materialCode": "1-000005105",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005105",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E+系列嵌入式射灯",
     "productSku": "YLP-E+系列嵌入式射灯模组-75开孔-36°",
@@ -9615,9 +9615,9 @@
     ]
   },
   {
-    "materialCode": "1-000005106",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005106",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E+系列嵌入式射灯",
     "productSku": "YLP-E+系列嵌入式射灯模组-75开孔-60°",
@@ -9673,9 +9673,9 @@
     ]
   },
   {
-    "materialCode": "1-000005118",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005118",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装射灯",
     "productSku": "YLP-E系列明装射灯- 线下款-圆形-24°-黑色",
@@ -9734,9 +9734,9 @@
     ]
   },
   {
-    "materialCode": "1-000005119",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000005119",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装射灯",
     "productSku": "YLP-E系列明装射灯- 线下款-圆形-36°-黑色",
@@ -9798,9 +9798,9 @@
     ]
   },
   {
-    "materialCode": "1-000005149",
-    "pid": 198658,
-    "pcId": 4,
+    "skuCode": "1-000005149",
+    "capabilityPid": 198658,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S20 高压灯条电源",
     "productSku": "YLP-S20高压灯带电源-线下版-白色-TB",
@@ -9848,9 +9848,9 @@
     ]
   },
   {
-    "materialCode": "1-000005331",
-    "pid": 657408,
-    "pcId": 0,
+    "skuCode": "1-000005331",
+    "capabilityPid": 657408,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列VRF温控器",
     "productSku": "YLP-S系列VRF温控器-标准版-白色",
@@ -9892,9 +9892,9 @@
     ]
   },
   {
-    "materialCode": "1-000006001",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000006001",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-无边框款-官网展示用",
     "productSku": "YLP-E系列嵌入式射灯-无边框款-80开孔-24°-官网展示用",
@@ -9952,9 +9952,9 @@
     ]
   },
   {
-    "materialCode": "1-000006002",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000006002",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-无边框款-官网展示用",
     "productSku": "YLP-E系列嵌入式射灯-无边框款-80开孔-36°-官网展示用",
@@ -10015,9 +10015,9 @@
     ]
   },
   {
-    "materialCode": "1-000006003",
-    "pid": 198656,
-    "pcId": 4,
+    "skuCode": "1-000006003",
+    "capabilityPid": 198656,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-无边框款-官网展示用",
     "productSku": "YLP-E系列嵌入式射灯-无边框款-80开孔-60°-官网展示用",
@@ -10075,9 +10075,9 @@
     ]
   },
   {
-    "materialCode": "1-000006144",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006144",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列低压驱动",
     "productSku": "YLP-S系列低压灯带电源-线下版-60W",
@@ -10126,9 +10126,9 @@
     ]
   },
   {
-    "materialCode": "1-000006145",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006145",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列低压驱动",
     "productSku": "YLP-S系列低压灯带电源-线下版-150W",
@@ -10177,9 +10177,9 @@
     ]
   },
   {
-    "materialCode": "1-000006284",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006284",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-15w-圆形窄边框",
     "productSku": "S系列嵌入式射灯-75开孔-15w-圆形窄边框（仅用于官网展示）",
@@ -10237,9 +10237,9 @@
     ]
   },
   {
-    "materialCode": "1-000006285",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006285",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-15w-圆形无边框",
     "productSku": "S系列嵌入式射灯-75开孔-15w-圆形无边框（仅用于官网展示）",
@@ -10297,9 +10297,9 @@
     ]
   },
   {
-    "materialCode": "1-000006286",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006286",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-15w-方形窄边框",
     "productSku": "S系列嵌入式射灯-75开孔-15w-方形窄边框（仅用于官网展示）",
@@ -10357,9 +10357,9 @@
     ]
   },
   {
-    "materialCode": "1-000006287",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006287",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-15w-方形窄边框-双头",
     "productSku": "S系列嵌入式射灯-75开孔-15w-方形窄边框-双头（仅用于官网展示）",
@@ -10417,9 +10417,9 @@
     ]
   },
   {
-    "materialCode": "1-000006288",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006288",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-15w-方形无边框",
     "productSku": "S系列嵌入式射灯-75开孔-15w-方形无边框（仅用于官网展示）",
@@ -10477,9 +10477,9 @@
     ]
   },
   {
-    "materialCode": "1-000006289",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006289",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-15w-方形无边框-双头",
     "productSku": "S系列嵌入式射灯-75开孔-15w-方形无边框-双头（仅用于官网展示）",
@@ -10537,9 +10537,9 @@
     ]
   },
   {
-    "materialCode": "1-000006290",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006290",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-12w-圆形窄边框",
     "productSku": "S系列嵌入式射灯-75开孔-12w-圆形窄边框（仅用于官网展示）",
@@ -10597,9 +10597,9 @@
     ]
   },
   {
-    "materialCode": "1-000006291",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006291",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-12w-圆形无边框",
     "productSku": "S系列嵌入式射灯-75开孔-12w-圆形无边框（仅用于官网展示）",
@@ -10657,9 +10657,9 @@
     ]
   },
   {
-    "materialCode": "1-000006292",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006292",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-12w-方形窄边框",
     "productSku": "S系列嵌入式射灯-75开孔-12w-方形窄边框（仅用于官网展示）",
@@ -10717,9 +10717,9 @@
     ]
   },
   {
-    "materialCode": "1-000006293",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006293",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-12w-方形窄边框-双头",
     "productSku": "S系列嵌入式射灯-75开孔-12w-方形窄边框-双头（仅用于官网展示）",
@@ -10777,9 +10777,9 @@
     ]
   },
   {
-    "materialCode": "1-000006294",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006294",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-12w-方形无边框",
     "productSku": "S系列嵌入式射灯-75开孔-12w-方形无边框（仅用于官网展示）",
@@ -10837,9 +10837,9 @@
     ]
   },
   {
-    "materialCode": "1-000006295",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006295",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-75开孔-12w-方形无边框-双头",
     "productSku": "S系列嵌入式射灯-75开孔-12w-方形无边框-双头（仅用于官网展示）",
@@ -10897,9 +10897,9 @@
     ]
   },
   {
-    "materialCode": "1-000006296",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006296",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-55开孔-8w-圆形窄边框",
     "productSku": "S系列嵌入式射灯-55开孔-8w-圆形窄边框（仅用于官网展示）",
@@ -10957,9 +10957,9 @@
     ]
   },
   {
-    "materialCode": "1-000006297",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006297",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-55开孔-8w-圆形无边框",
     "productSku": "S系列嵌入式射灯-55开孔-8w-圆形无边框（仅用于官网展示）",
@@ -11017,9 +11017,9 @@
     ]
   },
   {
-    "materialCode": "1-000006298",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006298",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-55开孔-8w-方形窄边框",
     "productSku": "S系列嵌入式射灯-55开孔-8w-方形窄边框（仅用于官网展示）",
@@ -11077,9 +11077,9 @@
     ]
   },
   {
-    "materialCode": "1-000006299",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006299",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-55开孔-8w-方形窄边框-双头",
     "productSku": "S系列嵌入式射灯-55开孔-8w-方形窄边框-双头（仅用于官网展示）",
@@ -11137,9 +11137,9 @@
     ]
   },
   {
-    "materialCode": "1-000006300",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006300",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-55开孔-8w-方形无边框",
     "productSku": "S系列嵌入式射灯-55开孔-8w-方形无边框（仅用于官网展示）",
@@ -11197,9 +11197,9 @@
     ]
   },
   {
-    "materialCode": "1-000006301",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006301",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "S系列嵌入式射灯-55开孔-8w-方形无边框-双头",
     "productSku": "S系列嵌入式射灯-55开孔-8w-方形无边框-双头（仅用于官网展示）",
@@ -11257,9 +11257,9 @@
     ]
   },
   {
-    "materialCode": "1-000006388",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006388",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro D系列嵌入式筒灯-3寸",
     "productSku": "YLP-D系列嵌入式筒灯-线下版-75开孔-深空灰-CH-V1",
@@ -11320,9 +11320,9 @@
     ]
   },
   {
-    "materialCode": "1-000006389",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006389",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro D系列嵌入式射灯-3寸",
     "productSku": "YLP-D系列嵌入式射灯-线下版-75开孔-24°-深空灰-CH-V1",
@@ -11385,9 +11385,9 @@
     ]
   },
   {
-    "materialCode": "1-000006411",
-    "pid": 854028,
-    "pcId": 0,
+    "skuCode": "1-000006411",
+    "capabilityPid": 854028,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关（单零火版）-单键",
     "productSku": "YLP-E20智能开关-线下版-智能开关（单零火版）-1开-汉玉白",
@@ -11431,9 +11431,9 @@
     ]
   },
   {
-    "materialCode": "1-000006413",
-    "pid": 854028,
-    "pcId": 0,
+    "skuCode": "1-000006413",
+    "capabilityPid": 854028,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关（单零火版）-单键",
     "productSku": "YLP-E20智能开关-线下版-智能开关（单零火版）-1开-晶墨灰",
@@ -11479,9 +11479,9 @@
     ]
   },
   {
-    "materialCode": "1-000006414",
-    "pid": 854029,
-    "pcId": 0,
+    "skuCode": "1-000006414",
+    "capabilityPid": 854029,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关（单零火版）-双键",
     "productSku": "YLP-E20智能开关-线下版-智能开关（单零火版）-2开-汉玉白",
@@ -11525,9 +11525,9 @@
     ]
   },
   {
-    "materialCode": "1-000006416",
-    "pid": 854029,
-    "pcId": 0,
+    "skuCode": "1-000006416",
+    "capabilityPid": 854029,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关（单零火版）-双键",
     "productSku": "YLP-E20智能开关-线下版-智能开关（单零火版）-2开-晶墨灰",
@@ -11573,9 +11573,9 @@
     ]
   },
   {
-    "materialCode": "1-000006417",
-    "pid": 854030,
-    "pcId": 0,
+    "skuCode": "1-000006417",
+    "capabilityPid": 854030,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关（单零火版）-三键",
     "productSku": "YLP-E20智能开关-线下版-智能开关（单零火版）-3开-汉玉白",
@@ -11619,9 +11619,9 @@
     ]
   },
   {
-    "materialCode": "1-000006419",
-    "pid": 854030,
-    "pcId": 0,
+    "skuCode": "1-000006419",
+    "capabilityPid": 854030,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro E20 智能开关（单零火版）-三键",
     "productSku": "YLP-E20智能开关-线下版-智能开关（单零火版）-3开-晶墨灰",
@@ -11667,9 +11667,9 @@
     ]
   },
   {
-    "materialCode": "1-000006445",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006445",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸泛光灯-30cm",
     "productSku": "YLP-E系列嵌入式磁吸泛光灯-线下版-30cm-10W-黑色",
@@ -11722,9 +11722,9 @@
     ]
   },
   {
-    "materialCode": "1-000006446",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006446",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸泛光灯-60cm",
     "productSku": "YLP-E系列嵌入式磁吸泛光灯-线下版-60cm-20W-黑色",
@@ -11777,9 +11777,9 @@
     ]
   },
   {
-    "materialCode": "1-000006447",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006447",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸格栅灯-6头",
     "productSku": "YLP-E系列嵌入式磁吸格栅灯-线下版-6头-6W-黑色",
@@ -11839,9 +11839,9 @@
     ]
   },
   {
-    "materialCode": "1-000006448",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006448",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸格栅灯-12头",
     "productSku": "YLP-E系列嵌入式磁吸格栅灯-线下版-12头-12W-黑色",
@@ -11901,9 +11901,9 @@
     ]
   },
   {
-    "materialCode": "1-000006449",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006449",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸折叠射灯-6头",
     "productSku": "YLP-E系列嵌入式磁吸折叠射灯-线下版-6头-6W-黑色",
@@ -11962,9 +11962,9 @@
     ]
   },
   {
-    "materialCode": "1-000006450",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006450",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸折叠射灯-12头",
     "productSku": "YLP-E系列嵌入式磁吸折叠射灯-线下版-12头-12W-黑色",
@@ -12023,9 +12023,9 @@
     ]
   },
   {
-    "materialCode": "1-000006451",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006451",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸轨道射灯",
     "productSku": "YLP-E系列嵌入式磁吸轨道射灯-线下版-24°-12W-黑色",
@@ -12088,9 +12088,9 @@
     ]
   },
   {
-    "materialCode": "1-000006452",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006452",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式磁吸吊线灯",
     "productSku": "YLP-E系列嵌入式磁吸吊线灯-线下版-24°-12W-黑色",
@@ -12149,9 +12149,9 @@
     ]
   },
   {
-    "materialCode": "1-000006569",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006569",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-24°-深空灰-CH-V1",
@@ -12211,9 +12211,9 @@
     ]
   },
   {
-    "materialCode": "1-000006570",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006570",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-36°-深空灰-CH-V1",
@@ -12276,9 +12276,9 @@
     ]
   },
   {
-    "materialCode": "1-000006571",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006571",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列嵌入式射灯-3寸",
     "productSku": "YLP-E系列嵌入式射灯-线下版-3寸-60°-深空灰-CH-V1",
@@ -12338,9 +12338,9 @@
     ]
   },
   {
-    "materialCode": "1-000006686",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006686",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装射灯",
     "productSku": "YLP-E系列明装射灯- 线下款-圆形-24°-白色-V2",
@@ -12399,9 +12399,9 @@
     ]
   },
   {
-    "materialCode": "1-000006687",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006687",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装射灯",
     "productSku": "YLP-E系列明装射灯- 线下款-圆形-36°-白色-V2",
@@ -12463,9 +12463,9 @@
     ]
   },
   {
-    "materialCode": "1-000006688",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006688",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装射灯",
     "productSku": "YLP-E系列明装射灯- 线下款-圆形-24°-黑色-V2",
@@ -12524,9 +12524,9 @@
     ]
   },
   {
-    "materialCode": "1-000006689",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006689",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装射灯",
     "productSku": "YLP-E系列明装射灯- 线下款-圆形-36°-黑色-V2",
@@ -12588,9 +12588,9 @@
     ]
   },
   {
-    "materialCode": "1-000006690",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006690",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装筒灯",
     "productSku": "YLP-E系列明装筒灯- 线下款-圆形-白色-V2",
@@ -12647,9 +12647,9 @@
     ]
   },
   {
-    "materialCode": "1-000006691",
-    "pid": 198666,
-    "pcId": 4,
+    "skuCode": "1-000006691",
+    "capabilityPid": 198666,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro E系列明装筒灯",
     "productSku": "YLP-E系列明装筒灯- 线下款-圆形-黑色-V2",
@@ -12706,9 +12706,9 @@
     ]
   },
   {
-    "materialCode": "1-000006777",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000006777",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-单键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-1开-零火-东方既白（暖白）",
@@ -12754,9 +12754,9 @@
     ]
   },
   {
-    "materialCode": "1-000006778",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000006778",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-单键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-1开-零火-深云翻墨（墨灰）",
@@ -12802,9 +12802,9 @@
     ]
   },
   {
-    "materialCode": "1-000006779",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000006779",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-双键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-2开-零火-东方既白（暖白）",
@@ -12850,9 +12850,9 @@
     ]
   },
   {
-    "materialCode": "1-000006780",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000006780",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-双键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-2开-零火-深云翻墨（墨灰）",
@@ -12898,9 +12898,9 @@
     ]
   },
   {
-    "materialCode": "1-000006781",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000006781",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-三键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-3开-零火-东方既白（暖白）",
@@ -12946,9 +12946,9 @@
     ]
   },
   {
-    "materialCode": "1-000006782",
-    "pid": 854027,
-    "pcId": 0,
+    "skuCode": "1-000006782",
+    "capabilityPid": 854027,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-三键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-3开-零火-深云翻墨（墨灰）",
@@ -12994,9 +12994,9 @@
     ]
   },
   {
-    "materialCode": "1-000006783",
-    "pid": 8391428,
-    "pcId": 0,
+    "skuCode": "1-000006783",
+    "capabilityPid": 8391428,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列情景开关-四键",
     "productSku": "YLP-D系列四键情景开关-标准版-四键-贴装--东方既白（暖白）",
@@ -13040,9 +13040,9 @@
     ]
   },
   {
-    "materialCode": "1-000006784",
-    "pid": 8391428,
-    "pcId": 0,
+    "skuCode": "1-000006784",
+    "capabilityPid": 8391428,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列情景开关-四键",
     "productSku": "YLP-D系列四键情景开关-标准版-四键-贴装--深云翻墨（墨灰）",
@@ -13086,9 +13086,9 @@
     ]
   },
   {
-    "materialCode": "1-000006893",
-    "pid": 395267,
-    "pcId": 12,
+    "skuCode": "1-000006893",
+    "capabilityPid": 395267,
+    "productComponentId": 12,
     "connectType": -1,
     "productName": "Yeelight Pro E系列开合帘电机",
     "productSku": "YLP-E系列-开合帘电机-1.5N.m-60kg-52*77*105mm-白色",
@@ -13127,9 +13127,9 @@
     ]
   },
   {
-    "materialCode": "1-000006894",
-    "pid": 395266,
-    "pcId": 12,
+    "skuCode": "1-000006894",
+    "capabilityPid": 395266,
+    "productComponentId": 12,
     "connectType": -1,
     "productName": "Yeelight Pro E系列35卷帘电机",
     "productSku": "YLP-E系列-卷帘电机-交流-φ35-10N/m-白色",
@@ -13173,9 +13173,9 @@
     ]
   },
   {
-    "materialCode": "1-000007036",
-    "pid": 985091,
-    "pcId": 0,
+    "skuCode": "1-000007036",
+    "capabilityPid": 985091,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列风管机温控器",
     "productSku": "YLP-S系列风管机温控器-标准版黑色",
@@ -13217,9 +13217,9 @@
     ]
   },
   {
-    "materialCode": "1-000007114",
-    "pid": 198673,
-    "pcId": 4,
+    "skuCode": "1-000007114",
+    "capabilityPid": 198673,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列恒压DC模块",
     "productSku": "YLP-S系列恒压DC模块-288W-12/24V-CW-线下版",
@@ -13268,9 +13268,9 @@
     ]
   },
   {
-    "materialCode": "1-000007115",
-    "pid": 198673,
-    "pcId": 4,
+    "skuCode": "1-000007115",
+    "capabilityPid": 198673,
+    "productComponentId": 4,
     "connectType": -1,
     "productName": "Yeelight Pro S系列恒压DC模块",
     "productSku": "YLP-S系列恒压DC模块-288W-12/24V-RGBCW兼容-线下版",
@@ -13319,9 +13319,9 @@
     ]
   },
   {
-    "materialCode": "1-000007300",
-    "pid": 395266,
-    "pcId": 12,
+    "skuCode": "1-000007300",
+    "capabilityPid": 395266,
+    "productComponentId": 12,
     "connectType": -1,
     "productName": "Yeelight Pro E系列25卷帘电机",
     "productSku": "YLP-E系列-卷帘电机-直流-φ25-1.1N/m-白色",
@@ -13365,9 +13365,9 @@
     ]
   },
   {
-    "materialCode": "1-000007401",
-    "pid": 854037,
-    "pcId": 0,
+    "skuCode": "1-000007401",
+    "capabilityPid": 854037,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-四键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-4开-零火-东方既白（暖白）",
@@ -13413,9 +13413,9 @@
     ]
   },
   {
-    "materialCode": "1-000007402",
-    "pid": 854037,
-    "pcId": 0,
+    "skuCode": "1-000007402",
+    "capabilityPid": 854037,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro D系列智能开关-四键",
     "productSku": "YLP-D系列智能开关-线下版-智能开关-4开-零火-深云翻墨（墨灰）",
@@ -13461,9 +13461,9 @@
     ]
   },
   {
-    "materialCode": "1-000007561",
-    "pid": 657408,
-    "pcId": 0,
+    "skuCode": "1-000007561",
+    "capabilityPid": 657408,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列VRF温控器",
     "productSku": "YLP-S系列VRF温控器-标准版-白色-V1",
@@ -13505,9 +13505,9 @@
     ]
   },
   {
-    "materialCode": "1-000007647",
-    "pid": 9046018,
-    "pcId": 0,
+    "skuCode": "1-000007647",
+    "capabilityPid": 9046018,
+    "productComponentId": 0,
     "connectType": -1,
     "productName": "Yeelight Pro S系列人在传感器",
     "productSku": "YLP-S系列人在传感器-国内版-Mesh版-白色-吸顶",

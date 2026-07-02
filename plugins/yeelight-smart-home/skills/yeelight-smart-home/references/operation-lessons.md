@@ -7,9 +7,9 @@ Operation lessons are not user taste memory, cloud topology, diagnostics transcr
 ## Intent Routing
 
 - Use `operation.lesson.list` before a complex, previously failed, or parameter-heavy operation when a known lesson could avoid wasted turns.
-- Use `operation.lesson.record` after an actual operation attempt reveals a reusable lesson and the lesson is clear enough to summarize.
+- Use `operation.lesson.record` after a failed, blocked, unsupported, confusing, slow, or workaround-based actual operation attempt only when the cause is confirmed reusable Runtime behavior, a stable cloud boundary, a payload-shape rule, a fallback, or a fast path. This is not limited to lighting design. If the cause is a fixable CLI bug, stale Skill rule, unclear public contract, or capability-description problem, prefer fixing/reporting that issue instead of writing a user operation lesson.
 - Do not use operation lessons for normal user preferences. Use `memory.remember` for preferences such as ambience, product positioning, room purpose, or recommendation suppression.
-- Do not use operation lessons for a one-off current state result, full chat transcript, secret, token, raw API detail, or private account data.
+- Do not use operation lessons for a one-off current state result, full chat transcript, secret, token, Runtime internal request detail, or private account data.
 
 ## Lesson Types
 
@@ -39,10 +39,10 @@ Preferred request:
     "lesson": {
       "intent": "scene.update",
       "lessonType": "parameter_shape",
-      "symptom": "invalid_scene_update_payload when guessing details/params",
-      "cause": "acceptedFields lists details/params but does not define the nested action rows",
-      "recommendedPath": "Call scene.detail.get first, use editablePayload/updateShape, then read-modify-send the complete details list.",
-      "avoid": "Do not invent details/params from acceptedFields alone.",
+      "symptom": "invalid_scene_update_payload when guessing nested scene actions",
+      "cause": "acceptedFields lists top-level fields but does not define the nested action rows",
+      "recommendedPath": "Call scene.detail.get first, use editablePayload/updateShape, then read-modify-send the complete action list.",
+      "avoid": "Do not invent nested action rows from acceptedFields alone.",
       "fallbackIntent": "scene.create",
       "evidence": "Runtime returned invalid_scene_update_payload during update attempt.",
       "source": "runtime_response",
@@ -67,9 +67,9 @@ Optional fields:
 - `cause`: why the issue happens, only if known.
 - `avoid`: what future agents should not do.
 - `parametersHint`: minimal payload-shape note or compact JSON hint.
-- `fallbackIntent`: semantic Runtime intent to try when the primary path is unavailable.
+- `fallbackIntent`: Runtime intent to try when the primary path is unavailable.
 - `evidence`: short, sanitized evidence such as an error code or result summary.
-- `source`: one of `ai_skill`, `runtime_response`, `source_review`, or another short objective source tag.
+- `source`: one of `ai_skill`, `runtime_response`, `validated_cli`, or another short objective source tag.
 - `confidence`: `low`, `medium`, or `high`. Use `high` only for actual Runtime behavior or source-backed code review, not guesses.
 - `status`: usually `confirmed`; use `candidate` only for a lesson that still needs more evidence, `deprecated` for a superseded path, and `rejected` for a bad lesson.
 - `stale`: set `true` when a newer Runtime response or code review shows the lesson should not guide normal execution.
@@ -97,7 +97,7 @@ Before a complex operation, query by intent or symptom:
 
 Useful filters:
 
-- `intent`: exact semantic intent such as `scene.update`, `lighting.design.import`, or `light.power.set`.
+- `intent`: exact Runtime intent such as `scene.update`, `lighting.design.import`, or `light.power.set`.
 - `lessonType`: one of the lesson types above.
 - `query`: text search across symptom, cause, recommended path, avoid, parameters hint, fallback, and evidence.
 - `status`: optional exact status filter: `candidate`, `confirmed`, `deprecated`, or `rejected`.
@@ -109,20 +109,37 @@ Useful filters:
 
 ## Trigger Policy
 
+After every non-successful or surprising attempt, run this check before the final answer:
+
+1. Is the cause a fixable CLI bug, stale Skill rule, unclear public contract, or capability-description problem? If yes, do not record a user lesson; use the corrected contract or report the bug.
+2. Did the attempt reveal a reusable way to avoid future failure, extra turns, wrong target resolution, bad payload shape, unsupported intent retry, or unreliable path that cannot be fixed in the current flow?
+3. Is the evidence from actual Runtime behavior, validated CLI behavior, or a Runtime response?
+4. Can the lesson be summarized without secrets, internal request headers, full transcripts, private unrelated data, or cloud topology snapshots?
+
+If answers 2-4 are yes and answer 1 is no, call `operation.lesson.record` before finalizing.
+
 Record a lesson when all are true:
 
 - The issue or path is reusable for future users or future turns.
-- The lesson was learned from actual Runtime use, a Runtime response, validated CLI behavior, or source-backed Skill development.
-- The lesson can be expressed without secrets, raw tokens, raw API headers, full transcripts, or private unrelated data.
+- The lesson was learned from actual Runtime use, a Runtime response, or validated CLI behavior.
+- The lesson can be expressed without secrets, tokens, internal request headers, full transcripts, or private unrelated data.
 - The lesson is more specific than the public reference text.
+
+Common must-record cases:
+
+- `clarification_required`, `blocked`, `not_supported`, or `error` exposes a reusable payload/field/target mistake.
+- An intent is unavailable and a known fallback should be used next time.
+- A direct user goal took multiple Runtime calls only because the target resolution path was unclear.
+- A new-home import accidentally used the current selected home or a named-home reference incorrectly.
+- A Runtime response proves a documented path is stale, incomplete, or misleading.
 
 Do not record:
 
 - Ordinary successful one-off commands.
 - User preferences or style choices.
 - Cloud topology snapshots such as current device lists or scene IDs.
-- Temporary dev data, transient request IDs, or full payload dumps.
-- Guesses that were not verified by Runtime behavior or source-backed analysis.
+- Temporary test data, transient request IDs, or full payload dumps.
+- Guesses that were not verified by Runtime behavior or validated CLI behavior.
 
 ## Applying Lessons
 
@@ -137,6 +154,17 @@ Do not record:
 ## Boundaries
 
 - Runtime stores caller-structured lessons only. It does not infer subjective experience from user utterances.
-- Operation lessons may be profile-global when no `houseId` is supplied. If the lesson depends on a specific home, include `houseId`.
+- Operation lessons may be profile-global when no `houseId` is supplied. Prefer profile-global lessons for reusable capability behavior, payload shapes, fastest paths, unsupported-intent fallbacks, and general resource-resolution patterns.
+- Include `houseId` only when the lesson depends on one home's current topology, naming conflict, device capability, scene content, automation content, or other house-specific state. Do not attach reusable lessons to disposable test homes; otherwise future agents in normal homes may not find them.
 - Querying with a house context can return both house-specific and profile-global lessons.
 - Operation lessons must never replace Runtime execution, validation, or write verification.
+
+## Known Runtime Boundaries
+
+Keep only stable cloud/runtime limits here. If Runtime already returns a public `clarification`, `partialState`, `editablePayload`, `updateShape`, or safe fallback, use that contract instead of recording another operation lesson.
+
+- Imported design automations can be enabled, disabled, listed, and inspected, but `automation.update` can return backend `403 禁止访问` for an automation created by `lighting.design.import` even when the same complete rule shape succeeds for an automation created through `automation.create`. For an imported design automation edit, report the backend refusal and prefer creating a replacement live automation with `automation.create`; only delete or disable the imported rule after the user explicitly confirms the persistent change.
+- After a partial design-slot import, treat residual slots, groups, and scenes as planning metadata until Runtime proves they are valid execution resources. A readable `scene.detail.get` or `editablePayload` is not proof that `scene.update`, `scene.execute`, or `scene.test` will work.
+- `scene.test` or `scene.execute` can return backend business code `1611` with message `当前情景无有效网关` in homes without an effective gateway, even when `scene.detail.get` returns a readable action list. Treat Runtime `safeToRetry=false` as final for the same payload; report that the scene needs a valid executable gateway/home instead of retrying or changing sibling scene intents.
+- `home.sort.configure` accepts public sort items such as `items[].entityType` plus `items[].id`/`targetId` and Runtime translates them before writing. Dev cloud can still return backend `500 服务器内部错误` for the actual sort write after validation. When this happens, report the backend failure and do not retry equivalent payloads with internal numeric sort fields.
+- For direct light control, `state.query` is the reliable live read. If `light.power.set`, `light.brightness.set`, `light.color_temperature.set`, or `light.color.set` reaches Runtime but returns a backend business error, report the execution failure and do not retry sibling light intents or fall back to a legacy behavior-execution path.

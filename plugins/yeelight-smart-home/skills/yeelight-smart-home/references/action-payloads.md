@@ -1,23 +1,17 @@
 # Action Payloads
 
-Use this file only as a compatibility index. The payload contract has been split into smaller references so the AI can load the narrowest file.
+Use this file only as a routing index. The payload contract has been split into smaller references so the AI can load the narrowest file.
 
 ## Load These Instead
 
-- Common action row, target type semantics, light params, property key vocabulary, and contract lookup: `references/payload-shapes.md`.
-- Scene create/update recipe conversion and HouseMeta scene rows: `references/scene-recipes.md`.
-- Automation conditions, repeat rules, actions, and HouseMeta automation rows: `references/automation-recipes.md`.
-- Full HouseMeta import structure and short-key compatibility: `references/housemeta-import.md`.
+- Common action row, target type rules, light parameters, property vocabulary, and contract lookup: `references/payload-shapes.md`.
+- Scene create/update recipe conversion and lighting-design scene rows: `references/scene-recipes.md`.
+- Automation conditions, repeat rules, actions, and lighting-design automation rows: `references/automation-recipes.md`.
+- Full lighting design import structure: `references/lighting-design-import.md`.
 
 ## Rule
 
-Before guessing `details`, `params`, `actions`, `items`, `operations`, `buttonEvents`, or HouseMeta JSON, call local contract lookup:
-
-```text
-yeelight-home intent schema --intent <intent> --json
-```
-
-or use Runtime intent:
+Before guessing nested action, condition, item, operation, button-event, or lighting design JSON, use Runtime intent lookup:
 
 ```json
 {

@@ -1,0 +1,8 @@
+9f89b6b0469b1d8cd6970811d1bcdc8150e5ef0592bc2f476372db455d47dddb  channel-matrix.json
+2382fecd9dfd03b961efc365e7f54aad12b7a77a534d3b2ab9c09de0c9e75daa  release-manifest.json
+d25f9af669c7c19b7c87c64c7d6c538e49ecf2e40a0e142a932a4b74a7333571  release-notes.md
+04f20887dafc14e9323b338cd192df340d63091cf19da199f28561e1359feeeb  yeelight-smart-home-agent-skill-v0.1.7.zip
+b123789c8b04174aa78e2cb4b6742e3a81a649adef81533eb9f0d00e9e61e68e  yeelight-smart-home-claude-skill-v0.1.7.zip
+6cef50209f546d52ac3d25eafc2b5c5df592d5696687d2acaed02eda70ad91a7  yeelight-smart-home-codex-plugin-v0.1.7.zip
+2ded7448c425ac72c370399ee90e954caed8afe0c6e6cdfb447b4a7808601580  yeelight-smart-home-copilot-skill-v0.1.7.zip
+5e466c9be57dc633c98a596da56284859a11ffebef645968f4969a62906976c4  yeelight-smart-home-release-v0.1.7.tar.gz

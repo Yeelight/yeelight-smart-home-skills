@@ -22,25 +22,27 @@ Convert mood words before `scene.create`, `scene.update`, or `lighting.design.im
 
 - Keep scene names meaningful and at most 14 Chinese characters when possible.
 - If a duplicate name is required in the same home, append a small sequence instead of inventing an unrelated name.
-- For `scene.update`, call `scene.detail.get` first when possible and resend complete `details[]`.
-- Use `references/payload-shapes.md` for row shape, type ids, light params, and read-modify-write rules.
+- For `scene.update`, call `scene.detail.get` first when possible and resend the complete `actions[]`.
+- Use `references/payload-shapes.md` for action row shape, light parameters, and read-modify-write rules.
 
-## HouseMeta Import Scenes
+## Lighting Design Import Scenes
 
-In `lighting.design.import`, scene `details[]` target imported resources by `typeId + tempId`, not cloud `resId`.
+In `lighting.design.import`, scenes use `actions[]` with `targetType`, `targetKey`, and `set`. The `targetKey` must refer to a room, device slot, group, scene, or home key from the same import model.
 
 ```json
 {
-  "tempId": "sc1",
+  "key": "living-home",
   "name": "客厅回家模式",
-  "details": [
+  "actions": [
     {
-      "typeId": 4,
-      "tempId": "gp1",
-      "resName": "客厅格栅灯组",
+      "targetType": "group",
+      "targetKey": "living-grille-group",
+      "targetName": "客厅格栅灯组",
       "rank": 0,
-      "params": {
-        "set": {"p": true, "l": 70, "ct": 3500}
+      "set": {
+        "power": true,
+        "brightness": 70,
+        "colorTemperature": 3500
       }
     }
   ]

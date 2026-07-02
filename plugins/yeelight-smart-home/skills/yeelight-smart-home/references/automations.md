@@ -4,18 +4,19 @@ Use this reference for automation rules and schedules.
 
 ## Intent Routing
 
-- Use `automation.create` when the user wants a new persistent rule. Runtime validates, creates the automation, and verifies it through the automation list when supported. It needs a complete rule payload: name, active window, repeat rule, condition `params`, and `actions[]`.
-- When the user imports a full lighting design that includes simple scheduled design intent such as "主卧每天 9 点亮起来", route to `lighting.design.import` if it is part of the requested HouseMeta topology and can target imported `tempId` resources. For a standalone automation or later edit, use `automation.create` or `automation.update`.
+- Use `automation.create` when the user wants a new persistent rule. Runtime validates, creates the automation, and verifies it through the automation list when supported. It needs a complete rule payload: name, active window, repeat rule, `trigger` or `conditions`, and `actions[]`.
+- When the user imports a full lighting design that includes simple scheduled design intent such as "主卧每天 9 点亮起来", route to `lighting.design.import` if it is part of the requested design topology and can target keys from that design. For a standalone automation or later edit, use `automation.create` or `automation.update`.
 - Use `automation.supported.list` or `automation.supported.v2.list` when the user asks what automation conditions/actions are supported or when a future automation write needs source-backed capability evidence.
 - Use `automation.list` when the user asks for all saved automations in one home or when a follow-up update/delete/toggle needs a complete home-level automation candidate list.
 - Use `automation.list.page` when the user asks to browse, count, or review saved automations with pagination.
 - Use `automation.detail.get` when the user asks to inspect one existing automation's conditions, schedule, actions, repeated rules, or impact before an update.
-- Use `schedule_job.list` when the user asks for saved timed jobs, scheduled actions, or legacy schedule-task style rules in one home.
+- Use `schedule_job.list` when the user asks for saved timed jobs or scheduled action rules in one home.
 - Use `automation.rule.list` when the user asks for automation rule details or rule-level impact evidence.
 - Use `automation.update` for changing conditions, time windows, actions, or names. It requires a complete rule payload and must not be used as a partial patch.
-- Use `automation.enable` and `automation.disable` only when the user asks to toggle an existing automation. Runtime validates and executes the semantic request directly and verifies the saved automation status after execution.
-- Use `automation.delete` only when the user explicitly asks to delete one automation. Runtime must validate and execute the semantic request directly, re-check the automation, and verify removal after execution.
+- Use `automation.enable` and `automation.disable` only when the user asks to toggle an existing automation. Runtime validates and executes the Runtime request directly and verifies the saved automation status after execution.
+- Use `automation.delete` only when the user explicitly asks to delete one automation. Runtime must validate and execute the Runtime request directly, re-check the automation, and verify removal after execution.
 - Use `automation.batch_delete` only when the user explicitly asks to delete multiple automations. Runtime caps one request at 20 automations, resolves each target by id or unique name, and verifies every automation disappeared from `entity.list`.
+- For `automation.batch_delete`, use `names` or `items[]` rows such as `{"name":"主卧9点开灯"}` or `{"automationId":"..."}`. Do not send `automationNames[]`.
 - Use `automation.explain` for "why", "what does this rule do", or rule audit requests.
 - Use `automation.capabilities` when the user asks what automation creation, update, toggle, diagnosis, or delete capabilities are currently available in this Runtime.
 
@@ -53,12 +54,12 @@ Use this reference for automation rules and schedules.
 
 - Missing devices, sensors, events, actions, or time details should become the smallest clarification question.
 - Never invent sensors, events, actions, gateway behavior, or background execution results.
-- Treat new or changed automations as persistent configuration. If the user already asked for the change, call the semantic Runtime intent directly; for destructive or broad changes, confirm in chat first.
+- Treat new or changed automations as persistent configuration. If the user already asked for the change, call the Runtime intent directly; for destructive or broad changes, confirm in chat first.
 - Treat `automation.capabilities` as policy evidence, not as proof that every named automation action can be executed.
 - Do not put status changes inside `automation.update`; use `automation.enable` or `automation.disable` for existing automation state.
 - For safety, a newly planned automation should not be described as enabled or running unless Runtime says so. Status values are Runtime evidence, not wording to infer manually.
 - Automation condition candidates include presence, motion, contact, illuminance, button, knob, time window, duration, and threshold only after Runtime validates the entity and event.
-- Automation action vocabulary may include executing a scene, room/area on-off, brightness or color-temperature adjustment, light power/brightness/color-temperature/RGB, curtain position, and multi-channel switch state. Keep these as planning words; Runtime validates actual support.
+- Current Runtime automation action rows accept existing `device`, `group`, `meshGroup`, or `scene` targets. For a room-wide or area-wide lighting result, first create or reuse a scene that represents the room/area effect, then create the automation to execute that scene. Keep room/area action wording as planning language until Runtime exposes it in `intent.explain`.
 - Timing words such as delayed execution, delayed off, duration, repeat window, and active time range are allowed only as parameters for Runtime planning.
 - Dynamic light flow, curtain motor action, audio playback, panel action, and air-conditioning mode are product-specific; do not claim support unless Runtime returns it.
 - If Runtime blocks automation creation or update, keep the proposal as non-applied guidance and explain the returned reason.
@@ -71,16 +72,17 @@ For follow-ups such as "把回家开灯自动化改到 18 点" or "主卧每天 
 2. Call `automation.detail.get`.
 3. Prefer the returned `editablePayload` when Runtime provides it. Otherwise use the returned detail as the source of the complete rule.
 4. Preserve the full condition object and full `actions[]` list unless the user explicitly asked to replace them.
-5. Modify only the intended fields: schedule conditions inside `params`, active window, repeat rule, action `set` object inside `params`, or name.
+5. Modify only the intended fields: `trigger` or `conditions`, active window, repeat rule, action `set` object, or name.
 6. Send `automation.update` with the complete rule payload.
 
-`automation.create` and `automation.update` both require a complete rule shape. For create, omit `automationId`; for update, include it and preserve all existing conditions/actions unless the user explicitly asked to replace them.
+`automation.create` and `automation.update` both require a complete rule shape. For create, omit `automationId`; for update, use `automationId` when already known, otherwise use a unique `automationName` or `currentName`; preserve all existing conditions/actions unless the user explicitly asked to replace them.
 
-`automation.detail.get` should return `editablePayload` and `updateShape` when Runtime can read enough cloud detail. Treat `editablePayload` as the safest source for update requests. If it contains JSON-string fields that Runtime parsed into objects, keep them as objects in the next SkillRequest; Runtime will compact them for cloud write.
+`automation.detail.get` should return `editablePayload` and `updateShape` when Runtime can read enough detail. Treat `editablePayload` as the safest source for update requests. If it contains nested objects, keep them as objects in the next SkillRequest.
 
-`automation.create` requires the same complete shape as update except `automationId` is omitted. `automation.update` includes `automationId` and resends the full rule payload. Load `references/action-payloads.md` for condition params, action rows, light params, repeat types, and complete create/update examples. Key reminders:
+`automation.create` requires the same complete shape as update except `automationId` is omitted. `automation.update` uses `automationId` or a unique `automationName/currentName` and resends the full rule payload. Load `references/action-payloads.md` for condition fields, action rows, light parameters, repeat types, and complete create/update examples. Key reminders:
 
 - The common daily schedule condition is an and group with one alarm condition using `HH:mm:ss` clock format.
+- Include `rank` on every new automation action row so cloud validation has explicit action order, even when there is only one action.
 - Source-backed event, fact, or fact-change conditions must come from Runtime supported-list, detail, or clarification evidence.
 - Preserve nested condition groups and unknown product-specific action keys returned by `automation.detail.get`.
 - Status toggles do not belong in automation update.

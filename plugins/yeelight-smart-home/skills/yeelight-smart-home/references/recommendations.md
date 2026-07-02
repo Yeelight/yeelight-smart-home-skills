@@ -15,7 +15,7 @@ Use this reference for proactive suggestions and feedback.
 - Before presenting a proactive local recommendation, save the candidate with `recommendation.record`, then call `recommendation.list` and present the returned pending item.
 - Present at most one non-essential recommendation in a conversation.
 - Do not surface recommendations during troubleshooting, auth recovery, destructive-change confirmation, or error handling unless the user explicitly asks.
-- A recommendation may propose a scene, automation, lighting design, naming cleanup, favorite organization, repair, energy saving, capability discovery, or memory update, but any persistent change must go through semantic Runtime execution after any caller-side user confirmation that is needed.
+- A recommendation may propose a scene, automation, lighting design, naming cleanup, favorite organization, repair, energy saving, capability discovery, or memory update, but any persistent change must go through Runtime execution after any caller-side user confirmation that is needed.
 - `memory.remember` and `recommendation.list` do not materialize recommendations by themselves. If saved preferences imply a useful suggestion, the Skill must author a concise candidate and store it with `recommendation.record`.
 - If Runtime returns no recommendation, say there is no current local recommendation. Do not fill the gap with an unrecorded model-only recommendation.
 
@@ -36,12 +36,12 @@ Use this reference for proactive suggestions and feedback.
 
 - `type`: short category such as `scene`, `automation`, `lighting_design`, `favorite`, `cleanup`, `repair`, `memory`, or `capability_discovery`.
 - `explanation`: one short user-facing reason or benefit.
-- `evidence`: desensitized evidence such as saved memory id/type, operation lesson symptom, repeated correction summary, verified topology, or current user request. Do not store raw logs or full transcripts.
+- `evidence`: desensitized evidence such as saved memory id/type, operation lesson symptom, repeated correction summary, verified topology, or current user request. Do not store full logs or full transcripts.
 
 Recommended optional fields:
 
 - `source`: normally `ai_skill`; use `operation_lesson`, `memory`, `interaction_signal`, or `user_requested` only when that is the direct source.
-- `targetIntent`: semantic Runtime intent that would execute the suggested change, for example `scene.create`, `automation.create`, `lighting.design.import`, `favorite.add`, or `memory.remember`.
+- `targetIntent`: Runtime intent that would execute the suggested change, for example `scene.create`, `automation.create`, `lighting.design.import`, `favorite.add`, or `memory.remember`.
 - `scopeType` and `scopeRef`: `home`, `room`, `device`, `scene`, `automation`, or `profile` plus a short natural reference.
 - `priority`: small integer where higher means more useful.
 - `confidence`: `low`, `medium`, or `high`.
@@ -81,11 +81,12 @@ Example:
 - Do not show a recommendation during auth recovery, diagnostics, destructive-change confirmation, or high-risk confirmation.
 - If the current user task completed successfully and you can articulate one high-confidence useful next step, call `recommendation.record`, then `recommendation.list`, and present it as one optional next step.
 - If the user asks "有什么建议", inspect relevant saved memory or operation lessons when useful, record at most one concrete candidate if you have one, then call `recommendation.list` and summarize returned candidates in priority order.
-- If the suggestion would create or change cloud configuration, say it is a proposal and route the actual change through semantic Runtime execution.
+- If the suggestion would create or change cloud configuration, say it is a proposal and route the actual change through Runtime execution.
 
 ## Feedback And Suppression
 
 - Use `recommendation.feedback` for accepted, rejected, dismissed, cooldown, and permanent suppression outcomes.
+- For `recommendation.feedback`, use the concrete `recommendationId` returned by `recommendation.record` or `recommendation.list`. Do not try to identify a recommendation only by type, scope, or explanation text.
 - Respect rejection, cooldown, and permanent suppression decisions.
 - If the user says "do not suggest this again" or equivalent, treat it as permanent suppression until Runtime says it was restored.
 - Accepted recommendations must not be repeated as pending suggestions unless Runtime returns a new distinct item.
@@ -97,4 +98,4 @@ Example:
 - Explain the concrete pattern or benefit from the evidence you stored, for example saved preference, repeated correction, operation lesson, verified topology, invalid dependency, naming conflict, or unused capability.
 - Do not say only "I recommend an automation" or imply server-side AI recommendations. Make clear it is a local Skill-authored suggestion stored through Runtime.
 - If Runtime returns no recommendation, say there is no current suggestion rather than filling the gap with model guesses.
-- Good explanations mention the observed pattern, target scope, and user benefit, while avoiding raw logs, secrets, exact internal IDs, or full transcripts.
+- Good explanations mention the observed pattern, target scope, and user benefit, while avoiding full logs, secrets, exact internal IDs, or full transcripts.

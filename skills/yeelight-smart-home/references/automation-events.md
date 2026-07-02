@@ -34,10 +34,11 @@ Use this reference when creating, explaining, diagnosing, or planning automation
 
 - Human presence, motion, contact, illuminance, button, and knob events are valid candidates only after Runtime confirms the entity and capability.
 - Time windows, duration, threshold, target room, and action device must be explicit or returned as the smallest clarification question.
-- The following device words are not enough for an automation condition without a reviewed Runtime adapter: 温控器、全景屏、窗帘、开合帘、卷帘、梦幻帘、电机、电源、驱动、模块、模组。
+- The following device words are not enough for an automation condition unless Runtime confirms an installed entity and supported event/capability: 温控器、全景屏、窗帘、开合帘、卷帘、梦幻帘、电机、电源、驱动、模块、模组。
 - Normalize event wording to the canonical event list before planning. Examples: 人来/有人经过 -> 有人移动; 没人/无人 -> 无人移动; 门磁打开 -> 门窗已打开; 光线变暗 -> 照度下降至.
 - Conditions and actions are different. If an unsupported device appears as a condition, remove or downgrade only that condition; do not remove the same device when it is merely an action target and Runtime supports that action.
 - If a requested event implies missing hardware, never create a live sensor silently. For new lighting design imports, you may add a clearly labeled design slot or installer recommendation only when the user asked for design materialization; for real automation execution, ask for or rely on Runtime-verified existing sensor capability.
+- For full-home lighting design materialization, map missing trigger hardware before deciding rule feasibility: motion/presence/no-motion events imply a presence or motion sensor slot; door/window events imply a contact sensor slot; illuminance events imply an illuminance-capable sensor slot; button/knob gestures imply a control-surface slot. Keep these as design notes/recommendations unless the user explicitly asked to include future slots.
 - When multiple condition types appear together, keep trigger-like conditions (`alarm`, `event`, `fact_change`) in the trigger group and state checks (`fact`) in the fact group. Do not put `fact` rows into the trigger group.
 
 ## Automation Recipe Templates
@@ -84,7 +85,7 @@ Use these as planning patterns only. Runtime still validates target entities, ca
 
 ## Persistent Rule Policy
 
-- Creating or updating automation is persistent configuration and must go through semantic Runtime execution after caller-side user confirmation when needed.
+- Creating or updating automation is persistent configuration and must go through Runtime execution after caller-side user confirmation when needed.
 - Do not create a rule from an inferred habit, complaint, or one-time preference.
 - Do not auto-add real sensors or paired devices when a template needs missing hardware. For whole-home lighting design, missing lights may become design slots through lighting.design.import; missing triggers remain design metadata or recommendations until Runtime verifies real sensors.
 - Do not claim random timing, dynamic sunset, manual override recovery, air-conditioning control, audio playback, or panel/knob binding unless Runtime returns explicit support.
