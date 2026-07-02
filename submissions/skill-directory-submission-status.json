@@ -22,6 +22,7 @@
         "inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.1 and tags latest/yeelight/smart-home/lighting/agent-skill/codex/claude/copilot all pointing to 0.1.1",
         "clawhub install @yeelight/yeelight-smart-home --version 0.1.1 installed into a clean temporary directory and updated-reference hashes matched the release package",
         "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.7 after the GitHub skill release",
+        "clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7 installed into skills/@yeelight/yeelight-smart-home with SKILL.md hash 2acfb57278a488513002d7a84bdb56cef6d15d0fd6fc861fcdaf5192ee5f0890",
         "future GitHub Skill release workflow runs publish to ClawHub automatically through scripts/publish-clawhub-skill.mjs and the CLAWHUB_TOKEN repository secret"
       ],
       "remaining": [

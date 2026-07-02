@@ -24,7 +24,7 @@
       "status": "published-official-namespace-trust-review-pending",
       "version": "0.1.7",
       "securityScanStatus": "pending",
-      "installSmoke": "passed with clawhub inspect @yeelight/yeelight-smart-home returning latestVersion.version=0.1.7",
+      "installSmoke": "passed with clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7",
       "owner": {
         "handle": "yeelight",
         "displayName": "Yeelight",

@@ -28,6 +28,7 @@ Verification performed:
 - `clawhub skill publish ... --version 0.1.1 --owner yeelight` published version `0.1.1` from the official GitHub distribution repository.
 - `clawhub inspect @yeelight/yeelight-smart-home --json` now returns `latestVersion.version=0.1.7`, owner handle `yeelight`, and tags `latest`, `yeelight`, `smart-home`, `lighting`, `agent-skill`, `codex`, `claude`, and `copilot`.
 - `clawhub install @yeelight/yeelight-smart-home --version 0.1.1` installed into `/tmp/clawhub-yeelight-smart-home-011-smoke/skills/yeelight-smart-home`.
+- `clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7` installed into `skills/@yeelight/yeelight-smart-home`; installed `SKILL.md` hash: `2acfb57278a488513002d7a84bdb56cef6d15d0fd6fc861fcdaf5192ee5f0890`.
 - Installed-copy hashes for the two updated reference files matched the GitHub release package:
   - `references/memory-and-personalization.md`: `5f0d744dec3e45961d7da1d15b1cb324698e7b0c20d990e8209a6ea1e13bd06c`
   - `references/recommendations.md`: `2869582b421bce1493d3c14cf7b84e312970c986b67b29ca1ac990e7f0808243`
