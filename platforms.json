@@ -9,9 +9,9 @@
       "automation": "fully-automated",
       "releaseAsset": true,
       "status": "published",
-      "version": "0.1.8",
-      "releaseTag": "yeelight-skill-yeelight-smart-home-v0.1.8",
-      "releaseUrl": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.8"
+      "version": "0.1.9",
+      "releaseTag": "yeelight-skill-yeelight-smart-home-v0.1.9",
+      "releaseUrl": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.9"
     },
     {
       "id": "clawhub",
@@ -100,7 +100,9 @@
       "status": "published-approved-installable-functional-0.1.2",
       "rejectedVersion": "0.1.3",
       "rejectedVersionId": 121735,
-      "installSmoke": "passed via sh scripts/invoke.sh from SkillHub-installed 0.1.2 copy"
+      "installSmoke": "passed via sh scripts/invoke.sh from SkillHub-installed 0.1.2 copy",
+      "pendingCandidateVersion": "0.1.9",
+      "pendingCandidateStatus": "dry-run-and-runtime-smoke-passed-auth-required"
     },
     {
       "id": "cocoloop-molili",
@@ -119,7 +121,7 @@
       "automation": "repo-metadata",
       "metadataPath": ".github/plugin/marketplace.json",
       "status": "published-metadata",
-      "version": "0.1.8"
+      "version": "0.1.9"
     },
     {
       "id": "claude-code-plugin-marketplace",
@@ -128,7 +130,7 @@
       "automation": "repo-metadata",
       "metadataPath": ".claude-plugin/marketplace.json",
       "status": "published-metadata",
-      "version": "0.1.8"
+      "version": "0.1.9"
     },
     {
       "id": "claude-skill-zip",
@@ -136,8 +138,8 @@
       "region": "global",
       "automation": "artifact-ready",
       "status": "release-asset-ready",
-      "version": "0.1.8",
-      "assetPath": "releases/yeelight-smart-home/v0.1.8/yeelight-smart-home-claude-skill-v0.1.8.zip"
+      "version": "0.1.9",
+      "assetPath": "releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-claude-skill-v0.1.9.zip"
     },
     {
       "id": "dify-marketplace",
@@ -147,10 +149,10 @@
       "adapterPath": "adapters/yeelight-skill-bridge",
       "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/dify/README.md",
-      "packagePath": "submissions/dify/yeelight-smart-home-0.1.8.difypkg",
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.9.difypkg",
       "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
       "status": "marketplace-update-pr-open-precheck-passed",
-      "version": "0.1.8"
+      "version": "0.1.9"
     },
     {
       "id": "openai-gpt-store-apps-sdk",

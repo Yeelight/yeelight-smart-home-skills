@@ -212,10 +212,23 @@ Smoke result:
 
 0.1.3 attempted to document a shell-based invoke entrypoint for SkillHub installs because the SkillHub installer does not preserve the Unix executable bit for `scripts/invoke.sh`. It was rejected by content compliance and did not replace the public latest version. `skillhub install yeelight-smart-home-official` still installs the approved functional `0.1.2` release.
 
+0.1.9 candidate preparation:
+
+- Candidate directory: `/tmp/skillhub-yeelight-smart-home-official-0.1.9`.
+- SkillHub metadata uses the approved alternate slug `yeelight-smart-home-official`.
+- `skillhub publish ... --dry-run --json` passed with `slug=yeelight-smart-home-official` and `version=0.1.9`.
+- Candidate package contains 39 files, including `scripts/invoke`, `scripts/invoke.sh`, `scripts/invoke.ps1`, product selection assets, examples, schemas and references.
+- Referenced-file validation found 30 referenced files and no missing references.
+- JSON validation passed for all packaged JSON files.
+- Product alias smoke passed: `120 射灯` normalized to E20射灯 candidates.
+- Functional runtime smoke passed from `scripts/invoke`; `entity.list` returned `status=success` and 59 entities from the current dev sample home.
+- Formal publish is blocked by local SkillHub auth state: `auth whoami` returns `未登录。请先执行: skillhub login --key skh_xxx`.
+
 Required next action:
 
 - Ask SkillHub support/operator to transfer or release the canonical `yeelight-smart-home` slug to the official Yeelight publisher account.
 - Either keep `yeelight-smart-home-official` as the SkillHub-specific slug or republish under `yeelight-smart-home` after transfer.
+- Log in locally with a SkillHub token in the operator terminal, then publish the verified 0.1.9 candidate; do not paste the token into chat.
 
 Security note:
 

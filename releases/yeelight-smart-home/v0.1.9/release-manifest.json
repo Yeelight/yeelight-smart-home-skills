@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "yeelight-skill-release-v1",
+  "generatedAt": "2026-07-03T07:52:00.071Z",
+  "skillId": "yeelight-smart-home",
+  "skillVersion": "0.1.9",
+  "channel": "github-release",
+  "rootSha256": "5b6669003f1278ac4ef360fb8daa1dc463b3be65ce894fd4708317cfde774a53",
+  "runtime": {
+    "command": "yeelight-home invoke --stdin",
+    "minVersion": "0.1.18",
+    "bundled": false
+  },
+  "files": [
+    {
+      "path": "channel-matrix.json",
+      "size": 2020,
+      "sha256": "808ff1febc7879b5714ae3be7692fb4b7544a676c88c646d16d03e63ab9eecd1"
+    },
+    {
+      "path": "release-notes.md",
+      "size": 319,
+      "sha256": "a3c03566fb7cddc2033bcea7bb35b124e9cfca872260821beffa1d446eb0a105"
+    },
+    {
+      "path": "yeelight-smart-home-agent-skill-v0.1.9.zip",
+      "size": 154629,
+      "sha256": "9a7caedc10816d5d3af364c707ab5d2dbb28ae8ce9a0897e4984b9deb37d7161"
+    },
+    {
+      "path": "yeelight-smart-home-claude-skill-v0.1.9.zip",
+      "size": 155125,
+      "sha256": "92a60440f0f2c29dc4340738a46226e3e88abaf6d35f1ddac2b1faf4a7dd6b4e"
+    },
+    {
+      "path": "yeelight-smart-home-codex-plugin-v0.1.9.zip",
+      "size": 156420,
+      "sha256": "f30a4d15989850f1025884ab83a408fbf9ad517ecfe8b0edd7a52d8f258097a6"
+    },
+    {
+      "path": "yeelight-smart-home-copilot-skill-v0.1.9.zip",
+      "size": 155141,
+      "sha256": "b2502b004bd23aca7e2a0b5b7d3ee3891e9c106b479300f7618bab17c33302af"
+    },
+    {
+      "path": "yeelight-smart-home-release-v0.1.9.tar.gz",
+      "size": 590803,
+      "sha256": "4672976818e6f116afd45dd21cbd2ba36b1062c57aedeadc1e69c950813a7e63"
+    }
+  ]
+}

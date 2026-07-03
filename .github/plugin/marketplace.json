@@ -2,7 +2,7 @@
   "name": "yeelight-smart-home-skills",
   "metadata": {
     "description": "Yeelight Smart Home agent skills and plugins for Codex, GitHub Copilot, Claude, and Open Agent Skills consumers.",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "pluginRoot": "./plugins"
   },
   "owner": {
@@ -14,7 +14,7 @@
       "name": "yeelight-smart-home",
       "source": "yeelight-smart-home",
       "description": "Control, organize, diagnose, design and answer product questions for a Yeelight smart home through the local yeelight-home Runtime.",
-      "version": "0.1.8",
+      "version": "0.1.9",
       "author": {
         "name": "Yeelight"
       },
