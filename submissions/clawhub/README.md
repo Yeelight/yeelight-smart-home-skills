@@ -4,7 +4,7 @@ Status: published under the Yeelight publisher namespace. Future releases are
 published automatically by `.github/workflows/publish-skill.yml` after GitHub
 Release assets are created.
 
-Current version: `0.1.7`.
+Current version: `0.1.9`.
 
 Public page:
 
@@ -32,6 +32,8 @@ Verification performed:
 - Installed-copy hashes for the two updated reference files matched the GitHub release package:
   - `references/memory-and-personalization.md`: `5f0d744dec3e45961d7da1d15b1cb324698e7b0c20d990e8209a6ea1e13bd06c`
   - `references/recommendations.md`: `2869582b421bce1493d3c14cf7b84e312970c986b67b29ca1ac990e7f0808243`
+- GitHub workflow `28647580940` published GitHub Release and ClawHub `0.1.9` successfully.
+- `clawhub inspect @yeelight/yeelight-smart-home --json` returns `latestVersion.version=0.1.9` and moderation verdict `clean`.
 
 Remaining ClawHub platform work:
 

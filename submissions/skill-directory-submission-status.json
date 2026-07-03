@@ -24,7 +24,9 @@
         "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.7 after the GitHub skill release",
         "clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7 installed into skills/@yeelight/yeelight-smart-home with SKILL.md hash 2acfb57278a488513002d7a84bdb56cef6d15d0fd6fc861fcdaf5192ee5f0890",
         "future GitHub Skill release workflow runs publish to ClawHub automatically through scripts/publish-clawhub-skill.mjs and the CLAWHUB_TOKEN repository secret",
-        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.8 and moderation.verdict=clean after the 0.1.8 GitHub skill release"
+        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.8 and moderation.verdict=clean after the 0.1.8 GitHub skill release",
+        "GitHub workflow 28647580940 published GitHub Release and ClawHub v0.1.9 successfully",
+        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.9 and moderation.verdict=clean after the 0.1.9 GitHub skill release"
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
@@ -43,7 +45,8 @@
         "real install smoke passed with npx --yes skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home; SKILL.md installed under .agents/skills/yeelight-smart-home",
         "after the 0.1.1 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk",
         "installed-copy hashes for memory-and-personalization.md and recommendations.md matched the 0.1.1 release package",
-        "after the 0.1.8 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk; installed copy matched skills/yeelight-smart-home"
+        "after the 0.1.8 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk; installed copy matched skills/yeelight-smart-home",
+        "after the 0.1.9 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk; installed copy included scripts/invoke and matched skills/yeelight-smart-home"
       ]
     },
     {
