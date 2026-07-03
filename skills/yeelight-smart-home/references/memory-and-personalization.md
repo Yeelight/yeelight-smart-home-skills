@@ -17,6 +17,7 @@ Use this reference for local memory, preferences, and personalization.
 - Yeelight Runtime memory is the source of truth for Yeelight-domain preferences. Host memory such as WorkBuddy, Codex, or another assistant's generic memory file is only auxiliary and must not replace Runtime `memory.remember`.
 - If a user asks to remember a Yeelight lighting, product, room, scene, automation, recommendation, or home-design preference, save it through Runtime first. Only say "已记录/已保存" after Runtime returns `success` or `partial`.
 - If the host platform also wants to save a generic memory, write it only after Runtime succeeds and keep the response clear that the Yeelight Runtime memory was saved.
+- In hosts with their own memory tool, treat Yeelight-domain phrases such as "记住主卧偏暖", "以后儿童房夜里别太亮", "我不喜欢彩光动效", or "别再推荐这个自动化" as Runtime-memory requests, not host-memory-only requests. Calling only the host memory tool is an incomplete Skill execution.
 - Runtime is not the memory judge. It accepts structured `preferenceType` and `preferenceValue`, validates and stores them, merges exact same structured preferences, and returns the saved record. Deciding what should be remembered and how to split subjective wording happens before the Runtime call.
 - Runtime handles local memory storage and migration. Do not instruct users to inspect internal files; use `memory.list`, `memory.remember`, `memory.pause`, `memory.resume`, or `memory.forget`.
 

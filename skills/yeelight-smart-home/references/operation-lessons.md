@@ -7,7 +7,7 @@ Operation lessons are not user taste memory, cloud topology, diagnostics transcr
 ## Intent Routing
 
 - Use `operation.lesson.list` before a complex, previously failed, or parameter-heavy operation when a known lesson could avoid wasted turns.
-- Use `operation.lesson.record` after a failed, blocked, unsupported, confusing, slow, or workaround-based actual operation attempt only when the cause is confirmed reusable Runtime behavior, a stable cloud boundary, a payload-shape rule, a fallback, or a fast path. This is not limited to lighting design. If the cause is a fixable CLI bug, stale Skill rule, unclear public contract, or capability-description problem, prefer fixing/reporting that issue instead of writing a user operation lesson.
+- Use `operation.lesson.record` after a failed, blocked, unsupported, confusing, slow, or workaround-based actual operation attempt only when the cause is confirmed reusable Runtime behavior, a stable cloud boundary, a payload-shape rule, a fallback, or a fast path. This is not limited to lighting design. If the next attempt succeeds because the Skill changed target resolution, payload shape, fallback intent, or fast path, record the reusable lesson before the final user response. If the cause is a fixable CLI bug, stale Skill rule, unclear public contract, or capability-description problem, prefer fixing/reporting that issue instead of writing a user operation lesson.
 - Do not use operation lessons for normal user preferences. Use `memory.remember` for preferences such as ambience, product positioning, room purpose, or recommendation suppression.
 - Do not use operation lessons for a one-off current state result, full chat transcript, secret, token, Runtime internal request detail, or private account data.
 
@@ -116,7 +116,7 @@ After every non-successful or surprising attempt, run this check before the fina
 3. Is the evidence from actual Runtime behavior, validated CLI behavior, or a Runtime response?
 4. Can the lesson be summarized without secrets, internal request headers, full transcripts, private unrelated data, or cloud topology snapshots?
 
-If answers 2-4 are yes and answer 1 is no, call `operation.lesson.record` before finalizing.
+If answers 2-4 are yes and answer 1 is no, call `operation.lesson.record` before finalizing. Do not skip this just because the user goal eventually succeeded; the exact purpose of lessons is to prevent the next agent from repeating the failed path first.
 
 Record a lesson when all are true:
 
@@ -125,13 +125,32 @@ Record a lesson when all are true:
 - The lesson can be expressed without secrets, tokens, internal request headers, full transcripts, or private unrelated data.
 - The lesson is more specific than the public reference text.
 
+## Must-Consider Capture Matrix
+
+Use this matrix after any non-success, partial, surprising success, extra-turn workaround, or user-reported failed AI attempt. If the row matches and the evidence is from Runtime/CLI behavior, record a lesson before the final answer.
+
+| Observed pattern | Lesson type | Scope guidance | Record when |
+| --- | --- | --- | --- |
+| A request fails or asks clarification until the Skill adds a room, home, entity type, target qualifier, alias, or exact name. | `resource_resolution` | House-specific when it depends on current topology or naming; profile-global for a reusable resolver rule. | The added qualifier is what made the next attempt succeed or avoid ambiguity. |
+| A write fails because nested action lists, ordered item lists, room design blocks, condition blocks, object detail blocks, parameter objects, button events, or design slots were guessed. | `parameter_shape` | Usually profile-global unless one home's current scene/automation content is the cause. | `intent.explain`, `payloadShape`, `editablePayload`, `updateShape`, or a Runtime clarification reveals the correct shape. |
+| A read-modify-send flow is required before update, or detail read proves the object cannot safely be updated. | `parameter_shape` or `fallback` | House-specific if tied to one scene/automation/device; profile-global for a stable adapter rule. | The successful path uses detail/readback first, or switches to create/replace because update is not safe. |
+| An intent is blocked, unsupported, backend-refused, or returns `safeToRetry=false`, and another intent or manual/design-only path is the reliable answer. | `fallback` or `capability_gap` | Profile-global for stable Runtime/cloud boundary; house-specific when missing gateway/sensor/capability is local topology. | Retrying the same payload would waste turns or risk confusion. |
+| A write returns `partial`, write verification mismatch, or a post-write readback changes what the Skill should say or do next. | `failure_pattern` | House-specific if tied to live topology; profile-global if the verification rule is general. | Future agents need the verification/readback rule to avoid claiming too much. |
+| Product words, SKU names, series aliases, or product pedia terms were mistaken for installed devices, or the fix was to treat them as candidate products/design slots. | `resource_resolution` | Profile-global unless a specific home has a custom alias causing the confusion. | The boundary between installed device, future slot, and product knowledge affected the successful path. |
+| A missing dependency such as sensor, gateway, capability, room, area, or automation trigger changes execution into a design note, recommendation, or safe alternative. | `capability_gap` or `fallback` | House-specific when the dependency is missing only in this home. | The agent must not invent the dependency and should reuse the same safe alternative later. |
+| A high-risk action only becomes acceptable after dry-run, preview, explicit confirmation, or a different lower-risk lane. | `fast_path` or `failure_pattern` | Profile-global for safety-lane rules; house-specific if tied to one resource. | The safer flow is reusable and prevents accidental destructive or permission-sensitive action. |
+| A common user goal took extra calls because the agent preflighted with broad lists or used an over-complex path, then a direct intent succeeded. | `fast_path` | Profile-global. | The direct Runtime intent is confirmed and materially reduces turns without reducing safety. |
+| A current public reference exists but a real host agent still missed it due to ambiguous trigger wording. | Usually do not record; update Skill/reference wording. | N/A | Record only when there is also a concrete Runtime-backed symptom and a reusable path, not merely because a prompt was ignored. |
+
 Common must-record cases:
 
 - `clarification_required`, `blocked`, `not_supported`, or `error` exposes a reusable payload/field/target mistake.
+- A first attempt fails and a second attempt succeeds because the Skill switched to a different confirmed intent, payload shape, read-modify-send flow, target qualifier, or fallback path.
 - An intent is unavailable and a known fallback should be used next time.
 - A direct user goal took multiple Runtime calls only because the target resolution path was unclear.
 - A new-home import accidentally used the current selected home or a named-home reference incorrectly.
 - A Runtime response proves a documented path is stale, incomplete, or misleading.
+- A dependency gap, product-vs-installed-device confusion, safety-lane change, write-verification mismatch, or backend `safeToRetry=false` result changes the path future agents should use.
 
 Do not record:
 
@@ -140,6 +159,8 @@ Do not record:
 - Cloud topology snapshots such as current device lists or scene IDs.
 - Temporary test data, transient request IDs, or full payload dumps.
 - Guesses that were not verified by Runtime behavior or validated CLI behavior.
+
+When the failure is fixed by updating the CLI or Skill in the same development session, do not record that as a user operation lesson. Add or update tests/docs instead. When the behavior is a stable cloud/runtime boundary or a reusable fallback that remains true after the current fix, record the lesson.
 
 ## Applying Lessons
 

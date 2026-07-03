@@ -124,6 +124,5 @@ Use this dictionary to interpret Runtime evidence and user wording. It is not a 
 - For control, query or trust Runtime capability evidence before claiming support. For persistent writes, trust only direct Runtime execution results and write-after-read verification.
 - Persistent home, room, area, device, group, scene, automation, panel, knob, gateway and favorite changes must route through supported Runtime intents, with caller-side user confirmation for destructive or permission-sensitive operations.
 - Product schema reads can explain what a product type may support; they do not prove an installed device supports the same capability.
-- For component detail reads, put natural component words in the `componentName` or `name` field; use `id` only when Runtime or schema evidence already supplied the exact component id.
-- For unknown property or event language, preserve the user's natural words in the SkillRequest and let Runtime resolve or ask the smallest clarification.
+- For unknown component, property or event language, preserve the user's natural words in the SkillRequest target and let Runtime resolve or ask the smallest clarification.
 - When product knowledge and installed topology conflict, installed Runtime evidence wins for execution; product knowledge remains explanation only.
