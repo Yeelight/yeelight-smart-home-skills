@@ -24,6 +24,8 @@
         "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.7 after the GitHub skill release",
         "clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7 installed into skills/@yeelight/yeelight-smart-home with SKILL.md hash 2acfb57278a488513002d7a84bdb56cef6d15d0fd6fc861fcdaf5192ee5f0890",
         "future GitHub Skill release workflow runs publish to ClawHub automatically through scripts/publish-clawhub-skill.mjs and the CLAWHUB_TOKEN repository secret"
+        ,
+        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.8 and moderation.verdict=clean after the 0.1.8 GitHub skill release"
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
@@ -42,6 +44,8 @@
         "real install smoke passed with npx --yes skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home; SKILL.md installed under .agents/skills/yeelight-smart-home",
         "after the 0.1.1 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk",
         "installed-copy hashes for memory-and-personalization.md and recommendations.md matched the 0.1.1 release package"
+        ,
+        "after the 0.1.8 GitHub release, npx --yes skills add from GitHub main installed the current copy and reported Safe / 0 alerts / Low Risk; installed copy matched skills/yeelight-smart-home"
       ]
     },
     {
@@ -154,16 +158,20 @@
     },
     {
       "id": "dify-marketplace",
-      "status": "marketplace-pr-open-precheck-passed",
+      "status": "marketplace-update-pr-open-precheck-passed",
       "url": "https://github.com/langgenius/dify-plugins",
-      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2614",
-      "packagePath": "submissions/dify/yeelight-smart-home-0.1.0.difypkg",
+      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.8.difypkg",
+      "version": "0.1.8",
       "evidence": [
         "Dify CLI is available locally",
         "Dify Marketplace requires a .difypkg PR to langgenius/dify-plugins",
         "plugin source and PR body are prepared under submissions/dify",
         "PR #2614 opened from axdlee:yeelight-smart-home-0.1.0 with only yeelight/yeelight-smart-home/yeelight-smart-home-0.1.0.difypkg",
-        "GitHub Actions pre-check-plugin completed successfully"
+        "GitHub Actions pre-check-plugin completed successfully",
+        "0.1.8 package generated from manifest.yaml version 0.1.8 for a Marketplace update PR",
+        "PR #2643 opened from axdlee:yeelight-smart-home-0.1.8 with only yeelight/yeelight-smart-home/yeelight-smart-home-0.1.8.difypkg",
+        "GitHub Actions pre-check-plugin completed successfully for PR #2643"
       ],
       "remaining": [
         "deploy a public HTTPS bridge",

@@ -22,9 +22,9 @@
       "installCommand": "openclaw skills install @yeelight/yeelight-smart-home",
       "submissionPath": "submissions/clawhub/README.md",
       "status": "published-official-namespace-trust-review-pending",
-      "version": "0.1.7",
-      "securityScanStatus": "pending",
-      "installSmoke": "passed with clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7",
+      "version": "0.1.8",
+      "securityScanStatus": "clean",
+      "installSmoke": "latestVersion 0.1.8 verified with clawhub inspect @yeelight/yeelight-smart-home --json",
       "owner": {
         "handle": "yeelight",
         "displayName": "Yeelight",
@@ -40,8 +40,8 @@
       "installCommand": "npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home",
       "submissionPath": "submissions/skills-sh/README.md",
       "status": "published-indexed-installable",
-      "version": "0.1.1",
-      "installSmoke": "passed from GitHub main with safety assessments Safe / 0 alerts / Low Risk"
+      "version": "0.1.8",
+      "installSmoke": "passed from GitHub main after 0.1.8 release with safety assessments Safe / 0 alerts / Low Risk; installed copy matched skills/yeelight-smart-home"
     },
     {
       "id": "nanoskill",
@@ -147,9 +147,10 @@
       "adapterPath": "adapters/yeelight-skill-bridge",
       "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/dify/README.md",
-      "packagePath": "submissions/dify/yeelight-smart-home-0.1.0.difypkg",
-      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2614",
-      "status": "marketplace-pr-open-precheck-passed"
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.8.difypkg",
+      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
+      "status": "marketplace-update-pr-open-precheck-passed",
+      "version": "0.1.8"
     },
     {
       "id": "openai-gpt-store-apps-sdk",

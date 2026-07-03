@@ -4,18 +4,18 @@
 
 - **Author**: yeelight
 - **Plugin name**: yeelight-smart-home
-- **Version**: 0.1.0
+- **Version**: 0.1.8
 - **Source repository**: https://github.com/Yeelight/yeelight-smart-home-skills
 - **Contact**: support@yeelight.com
 
 ## Submission type
 
-- [x] New plugin
-- [ ] Version update
+- [ ] New plugin
+- [x] Version update
 
 ## What changed
 
-Adds the official Yeelight Smart Home Dify tool plugin. The plugin calls a configured Yeelight Skill bridge, which invokes the local `yeelight-home` runtime with `yeelight-home invoke --stdin`.
+Updates the official Yeelight Smart Home Dify tool plugin to align with the current Yeelight Smart Home Skill `0.1.8` and `yeelight-home` Runtime `0.1.18`. The plugin continues to call a configured Yeelight Skill bridge, which invokes the local `yeelight-home` runtime with `yeelight-home invoke --stdin`.
 
 ## Risk level
 
@@ -44,8 +44,8 @@ The plugin forwards user utterances, selected intent, optional request parameter
 ## Local validation
 
 ```sh
-dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.0.difypkg
-dify plugin checksum submissions/dify/yeelight-smart-home-0.1.0.difypkg
+dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.8.difypkg
+dify plugin checksum submissions/dify/yeelight-smart-home-0.1.8.difypkg
 node scripts/verify-publication-assets.mjs
 ```
 
