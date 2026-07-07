@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
@@ -45,10 +46,11 @@ if (!dryRun && !force && current.latestVersion === version) {
 }
 
 const changelog = readChangelog(skill, version);
+const publishPath = prepareClawHubSkillPath(skillPath);
 const publishArgs = [
   "skill",
   "publish",
-  skillPath,
+  publishPath,
   "--owner",
   owner,
   "--slug",
@@ -90,7 +92,51 @@ console.log(JSON.stringify({
   latestVersion: after.latestVersion || published.latestVersion || null,
   url: `https://clawhub.ai/${owner}/skills/${slug}`,
   publish: published,
+  packagePath: path.relative(root, publishPath),
 }, null, 2));
+
+function prepareClawHubSkillPath(sourceSkillPath) {
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "yeelight-clawhub-skill-"));
+  const target = path.join(tempRoot, skill);
+  fs.cpSync(sourceSkillPath, target, { recursive: true });
+  fs.rmSync(path.join(target, "scripts", "invoke"), { force: true });
+  rewriteExtensionlessInvokeReferences(target);
+  assertClawHubSafePackage(target);
+  return target;
+}
+
+function rewriteExtensionlessInvokeReferences(packageRoot) {
+  for (const file of listFiles(packageRoot)) {
+    if (!/\.(md|yaml|yml|json)$/i.test(file) && path.basename(file) !== "SKILL.md") continue;
+    const text = fs.readFileSync(file, "utf8");
+    const updated = text.replace(/scripts\/invoke(?![.A-Za-z0-9_-])/g, "scripts/invoke.sh");
+    if (updated !== text) fs.writeFileSync(file, updated, "utf8");
+  }
+}
+
+function assertClawHubSafePackage(packageRoot) {
+  const forbidden = path.join(packageRoot, "scripts", "invoke");
+  if (fs.existsSync(forbidden)) {
+    fail("ClawHub package still contains forbidden scripts/invoke");
+  }
+  const skillText = fs.readFileSync(path.join(packageRoot, "SKILL.md"), "utf8");
+  if (/scripts\/invoke(?![.A-Za-z0-9_-])/.test(skillText)) {
+    fail("ClawHub package SKILL.md still references extensionless scripts/invoke");
+  }
+  if (!fs.existsSync(path.join(packageRoot, "scripts", "invoke.sh"))) {
+    fail("ClawHub package is missing scripts/invoke.sh fallback wrapper");
+  }
+}
+
+function listFiles(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  return entries.flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(fullPath);
+    if (entry.isFile()) return [fullPath];
+    return [];
+  });
+}
 
 function flag(name) {
   const equal = args.find((item) => item.startsWith(`${name}=`));
