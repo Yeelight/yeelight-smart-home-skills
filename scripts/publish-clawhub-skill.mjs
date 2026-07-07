@@ -17,6 +17,7 @@ const sourceRef = flag("--source-ref") || `yeelight-skill-${skill}-v${version}`;
 const sourcePath = flag("--source-path") || `skills/${skill}`;
 const dryRun = hasFlag("--dry-run");
 const force = hasFlag("--force");
+const noSource = hasFlag("--no-source");
 const skillPath = path.join(root, sourcePath);
 
 if (!fs.existsSync(path.join(skillPath, "SKILL.md"))) {
@@ -47,53 +48,173 @@ if (!dryRun && !force && current.latestVersion === version) {
 
 const changelog = readChangelog(skill, version);
 const publishPath = prepareClawHubSkillPath(skillPath);
-const publishArgs = [
-  "skill",
-  "publish",
-  publishPath,
-  "--owner",
-  owner,
-  "--slug",
-  slug,
-  "--name",
-  name,
-  "--version",
-  version,
-  "--changelog",
-  changelog,
-  "--tags",
-  "latest,yeelight,smart-home,lighting,agent-skill,codex,claude,copilot",
-  "--topics",
-  "yeelight,smart-home,lighting,home-automation,agent-skill",
-  "--source-repo",
-  sourceRepo,
-  "--source-commit",
-  sourceCommit,
-  "--source-ref",
-  sourceRef,
-  "--source-path",
-  sourcePath,
-  "--json",
-];
-if (dryRun) publishArgs.push("--dry-run");
+const attempts = buildPublishAttempts();
+const attemptResults = [];
+let lastFailure = null;
 
-const published = runJSON("clawhub", publishArgs);
-const after = inspectCurrent({ owner, slug });
-if (!dryRun && after.latestVersion !== version) {
-  fail(`ClawHub publish completed but latest version is ${after.latestVersion || "(unknown)"}, expected ${version}`);
+for (const attempt of attempts) {
+  const publishArgs = buildPublishArgs(attempt);
+  const published = runPublishCli(publishArgs);
+  const after = inspectCurrent({ owner, slug });
+  const attemptResult = summarizeAttempt({ attempt, published, after });
+  attemptResults.push(attemptResult);
+
+  if (published.ok) {
+    if (!dryRun && after.latestVersion !== version) {
+      lastFailure = `ClawHub publish completed in ${attempt.label} mode but latest version is ${after.latestVersion || "(unknown)"}, expected ${version}`;
+      if (!shouldTryNextAttempt(attempt, published.detail)) break;
+      continue;
+    }
+    printSuccess({
+      status: dryRun ? "dry-run" : "published",
+      latestVersion: after.latestVersion || published.json?.latestVersion || null,
+      publish: published.json,
+      attemptResults,
+    });
+    process.exit(0);
+  }
+
+  lastFailure = `${attempt.label} mode failed: ${published.detail}`;
+  if (!dryRun && after.latestVersion === version) {
+    printSuccess({
+      status: "published-cli-response-schema-drift",
+      latestVersion: after.latestVersion,
+      publish: published.json,
+      attemptResults,
+    });
+    process.exit(0);
+  }
+
+  if (!shouldTryNextAttempt(attempt, published.detail)) break;
 }
 
-console.log(JSON.stringify({
-  ok: true,
-  status: dryRun ? "dry-run" : "published",
-  owner,
-  slug,
-  version,
-  latestVersion: after.latestVersion || published.latestVersion || null,
-  url: `https://clawhub.ai/${owner}/skills/${slug}`,
-  publish: published,
-  packagePath: path.relative(root, publishPath),
-}, null, 2));
+fail(lastFailure || "ClawHub publish failed");
+
+function buildPublishAttempts() {
+  const full = {
+    label: "full",
+    includeSource: !noSource,
+    includeTopics: true,
+    tags: "latest,yeelight,smart-home,lighting,agent-skill,codex,claude,copilot",
+  };
+  if (dryRun || noSource) return [full];
+  return [
+    full,
+    {
+      label: "without-source",
+      includeSource: false,
+      includeTopics: true,
+      tags: full.tags,
+    },
+    {
+      label: "minimal",
+      includeSource: false,
+      includeTopics: false,
+      tags: "latest",
+    },
+  ];
+}
+
+function buildPublishArgs({ includeSource, includeTopics, tags }) {
+  const commandArgs = [
+    "skill",
+    "publish",
+    publishPath,
+    "--owner",
+    owner,
+    "--slug",
+    slug,
+    "--name",
+    name,
+    "--version",
+    version,
+    "--changelog",
+    changelog,
+    "--tags",
+    tags,
+  ];
+  if (includeTopics) {
+    commandArgs.push("--topics", "yeelight,smart-home,lighting,home-automation,agent-skill");
+  }
+  if (includeSource) {
+    commandArgs.push(
+      "--source-repo",
+      sourceRepo,
+      "--source-commit",
+      sourceCommit,
+      "--source-ref",
+      sourceRef,
+      "--source-path",
+      sourcePath,
+    );
+  }
+  commandArgs.push("--json");
+  if (dryRun) commandArgs.push("--dry-run");
+  return commandArgs;
+}
+
+function runPublishCli(commandArgs) {
+  const result = spawnSync("clawhub", commandArgs, {
+    cwd: root,
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+    maxBuffer: 10 * 1024 * 1024,
+  });
+  const detail = `${result.stderr || ""}${result.stdout || ""}`.trim();
+  if ((result.status ?? 1) !== 0) {
+    return {
+      ok: false,
+      detail: `${redactedArgs(["clawhub", ...commandArgs]).join(" ")} failed: ${redact(detail, process.env.CLAWHUB_TOKEN || "")}`,
+      json: parseOptionalJSON(result.stdout),
+    };
+  }
+  const json = parseOptionalJSON(result.stdout);
+  if (!json) {
+    return {
+      ok: false,
+      detail: `${redactedArgs(["clawhub", ...commandArgs]).join(" ")} returned non-JSON: ${detail}`,
+      json: null,
+    };
+  }
+  return { ok: true, detail: "", json };
+}
+
+function parseOptionalJSON(text) {
+  try {
+    return JSON.parse(text || "{}");
+  } catch {
+    return null;
+  }
+}
+
+function summarizeAttempt({ attempt, published, after }) {
+  return {
+    label: attempt.label,
+    ok: published.ok,
+    latestVersion: after.latestVersion || "",
+    detail: published.ok ? "" : published.detail.slice(0, 600),
+  };
+}
+
+function shouldTryNextAttempt(attempt, detail) {
+  if (dryRun || attempt.label === "minimal") return false;
+  return /API response|invalid value|source|topic|tag|skillId|versionId/i.test(detail);
+}
+
+function printSuccess({ status, latestVersion, publish, attemptResults }) {
+  console.log(JSON.stringify({
+    ok: true,
+    status,
+    owner,
+    slug,
+    version,
+    latestVersion,
+    url: `https://clawhub.ai/${owner}/skills/${slug}`,
+    publish,
+    attempts: attemptResults,
+    packagePath: path.relative(root, publishPath),
+  }, null, 2));
+}
 
 function prepareClawHubSkillPath(sourceSkillPath) {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), "yeelight-clawhub-skill-"));
@@ -194,15 +315,6 @@ function inspectCurrent({ owner: ownerHandle, slug: skillSlug }) {
 
 function git(commandArgs) {
   return run("git", commandArgs).trim();
-}
-
-function runJSON(command, commandArgs) {
-  const output = run(command, commandArgs);
-  try {
-    return JSON.parse(output);
-  } catch (error) {
-    fail(`${command} ${redactedArgs(commandArgs).join(" ")} returned non-JSON: ${error.message}\n${output}`);
-  }
 }
 
 function run(command, commandArgs, options = {}) {
