@@ -1,0 +1,303 @@
+{
+  "ok": true,
+  "skillId": "yeelight-smart-home",
+  "version": "0.1.10",
+  "dryRun": true,
+  "generatedAt": "2026-07-07T10:20:50.505Z",
+  "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10",
+  "stageRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/stage/yeelight-smart-home",
+  "selectedFiles": 39,
+  "gates": [
+    {
+      "name": "agent_skills_format",
+      "ok": true,
+      "status": "ok",
+      "skillName": "yeelight-smart-home",
+      "description": "Control, organize, diagnose, design, personalize, and answer product knowledge questions for a Yeelight smart home. Use for Yeelight homes, rooms, areas, gateways, devices, groups, scenes, automations, lighting moods, preferences, local memory, recommendations, product manuals, FAQ, SKU lookup, and product pedia consultation. Requires the locally installed yeelight-home CLI runtime and must use only yeelight-home invoke --stdin.",
+      "checks": [
+        {
+          "id": "frontmatter.name",
+          "ok": true,
+          "detail": "yeelight-smart-home"
+        },
+        {
+          "id": "frontmatter.name_matches_dir",
+          "ok": true,
+          "detail": "yeelight-smart-home vs yeelight-smart-home"
+        },
+        {
+          "id": "frontmatter.name_format",
+          "ok": true,
+          "detail": "yeelight-smart-home"
+        },
+        {
+          "id": "frontmatter.description",
+          "ok": true,
+          "detail": ""
+        },
+        {
+          "id": "frontmatter.description_length",
+          "ok": true,
+          "detail": "432"
+        },
+        {
+          "id": "skill_md_line_count",
+          "ok": true,
+          "detail": "107"
+        }
+      ]
+    },
+    {
+      "name": "referenced_files",
+      "ok": true,
+      "status": "ok",
+      "checked": 29,
+      "missing": []
+    },
+    {
+      "name": "sensitive_text_scan",
+      "ok": true,
+      "status": "ok",
+      "filesScanned": 39,
+      "violations": []
+    },
+    {
+      "name": "skill_structure_validate",
+      "ok": true,
+      "status": "ok",
+      "command": "node tools/skill-structure-validate.js",
+      "exitCode": 0,
+      "durationMs": 38,
+      "stdout": "skill structure validation ok",
+      "stderr": ""
+    },
+    {
+      "name": "skill_contract_eval",
+      "ok": true,
+      "status": "ok",
+      "command": "node tools/skill-contract-eval.js",
+      "exitCode": 0,
+      "durationMs": 36,
+      "stdout": "skill contract eval ok",
+      "stderr": ""
+    },
+    {
+      "name": "skill_domain_catalog_validate",
+      "ok": true,
+      "status": "ok",
+      "command": "node tools/skill-domain-catalog-validate.js",
+      "exitCode": 0,
+      "durationMs": 22,
+      "stdout": "skill domain catalog validation ok",
+      "stderr": ""
+    },
+    {
+      "name": "skill_reference_intent_validate",
+      "ok": true,
+      "status": "ok",
+      "command": "node tools/skill-reference-intent-validate.js",
+      "exitCode": 0,
+      "durationMs": 24,
+      "stdout": "skill reference intent validation ok (156 referenced intents)",
+      "stderr": ""
+    },
+    {
+      "name": "contract_fixture_validate",
+      "ok": true,
+      "status": "ok",
+      "command": "sh tools/contract-fixture-validate.sh",
+      "exitCode": 0,
+      "durationMs": 210,
+      "stdout": "contract fixture validation ok",
+      "stderr": ""
+    },
+    {
+      "name": "host_wrapper_smoke",
+      "ok": true,
+      "status": "ok",
+      "command": "node tools/host-wrapper-smoke.js",
+      "exitCode": 0,
+      "durationMs": 448,
+      "stdout": "host wrapper smoke ok",
+      "stderr": ""
+    },
+    {
+      "name": "package_manifest",
+      "ok": true,
+      "status": "ok",
+      "path": "dist/skill-release/yeelight-smart-home/0.1.10/package-manifest.json",
+      "rootSha256": "85c6589b32badcde07f98553be61cb7d76fc749f93f503958343bf4a929a44de",
+      "files": 39
+    },
+    {
+      "name": "channel_agent-skills-open",
+      "ok": true,
+      "status": "generated",
+      "id": "agent-skills-open",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/agent-skills-open/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-agent-skill-v0.1.10.zip",
+        "agent-skills-open/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "name": "channel_codex-plugin",
+      "ok": true,
+      "status": "generated",
+      "id": "codex-plugin",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/codex-plugin/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-codex-plugin-v0.1.10.zip",
+        "codex-plugin/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "name": "channel_copilot-gh-skill",
+      "ok": true,
+      "status": "generated",
+      "id": "copilot-gh-skill",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/copilot-gh-skill/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-copilot-skill-v0.1.10.zip",
+        "copilot-gh-skill/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "name": "channel_claude-skill-zip",
+      "ok": true,
+      "status": "generated",
+      "id": "claude-skill-zip",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/claude-skill-zip/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-claude-skill-v0.1.10.zip",
+        "claude-skill-zip/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "name": "channel_internal-curated-marketplace",
+      "ok": true,
+      "status": "generated",
+      "id": "internal-curated-marketplace",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/internal-curated-marketplace",
+      "artifacts": [
+        "channels/internal-curated-marketplace/yeelight-skill-marketplace.json",
+        "channels/internal-curated-marketplace/.agents/plugins/marketplace.json",
+        "channels/internal-curated-marketplace/release-manifest.json"
+      ]
+    },
+    {
+      "name": "channel_github-release",
+      "ok": true,
+      "status": "generated",
+      "id": "github-release",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/github-release",
+      "artifacts": [
+        "channels/github-release/yeelight-smart-home-agent-skill-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-claude-skill-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-codex-plugin-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-copilot-skill-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-release-v0.1.10.tar.gz",
+        "channels/github-release/checksums.txt",
+        "channels/github-release/release-notes.md",
+        "channels/github-release/channel-matrix.json",
+        "channels/github-release/release-manifest.json"
+      ]
+    }
+  ],
+  "channels": [
+    {
+      "id": "agent-skills-open",
+      "ok": true,
+      "status": "generated",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/agent-skills-open/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-agent-skill-v0.1.10.zip",
+        "agent-skills-open/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "id": "codex-plugin",
+      "ok": true,
+      "status": "generated",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/codex-plugin/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-codex-plugin-v0.1.10.zip",
+        "codex-plugin/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "id": "copilot-gh-skill",
+      "ok": true,
+      "status": "generated",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/copilot-gh-skill/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-copilot-skill-v0.1.10.zip",
+        "copilot-gh-skill/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "id": "claude-skill-zip",
+      "ok": true,
+      "status": "generated",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/claude-skill-zip/yeelight-smart-home",
+      "artifacts": [
+        "../artifacts/yeelight-smart-home-claude-skill-v0.1.10.zip",
+        "claude-skill-zip/yeelight-smart-home/release-manifest.json"
+      ]
+    },
+    {
+      "id": "internal-curated-marketplace",
+      "ok": true,
+      "status": "generated",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/internal-curated-marketplace",
+      "artifacts": [
+        "channels/internal-curated-marketplace/yeelight-skill-marketplace.json",
+        "channels/internal-curated-marketplace/.agents/plugins/marketplace.json",
+        "channels/internal-curated-marketplace/release-manifest.json"
+      ]
+    },
+    {
+      "id": "github-release",
+      "ok": true,
+      "status": "generated",
+      "outputRoot": "/private/var/folders/ms/pqb6ndzn299fk2mjs8bx_dxm0000gn/T/ysmh-release.mPbhgL/yeelight-smart-home/dist/skill-release/yeelight-smart-home/0.1.10/channels/github-release",
+      "artifacts": [
+        "channels/github-release/yeelight-smart-home-agent-skill-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-claude-skill-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-codex-plugin-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-copilot-skill-v0.1.10.zip",
+        "channels/github-release/yeelight-smart-home-release-v0.1.10.tar.gz",
+        "channels/github-release/checksums.txt",
+        "channels/github-release/release-notes.md",
+        "channels/github-release/channel-matrix.json",
+        "channels/github-release/release-manifest.json"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "external_public_marketplace_submission",
+      "reason": "third-party public submission is a manual-review follow-up after Yeelight-controlled release evidence is stable"
+    },
+    {
+      "name": "git_tag_push",
+      "reason": "requires explicit maintainer consent"
+    },
+    {
+      "name": "github_release_upload",
+      "reason": "dry-run generates GitHub Release-ready files but does not upload"
+    },
+    {
+      "name": "global_install",
+      "reason": "global package installation changes host state"
+    },
+    {
+      "name": "live_production_smoke",
+      "reason": "live cloud calls require explicit credentials and operator consent"
+    },
+    {
+      "name": "guarded_write_cycle",
+      "reason": "write cycle requires explicit --allow-live and --allow-write outside generic dry-run"
+    }
+  ]
+}

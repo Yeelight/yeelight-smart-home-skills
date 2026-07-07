@@ -8,7 +8,7 @@ Official public release repository for Yeelight Smart Home agent skills. The def
 
 | Skill | Version | Runtime | Packages |
 | --- | --- | --- | --- |
-| `yeelight-smart-home` | `0.1.9` | `yeelight-home >= 0.1.7` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
+| `yeelight-smart-home` | `0.1.10` | `yeelight-home >= 0.1.7` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
 
 ## What This Skill Does
 
@@ -19,10 +19,10 @@ It is intentionally packaged as a Skill, not as a bundled runtime. The Skill con
 ## Release
 
 - Repository: https://github.com/Yeelight/yeelight-smart-home-skills
-- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.9
-- Release evidence: `releases/yeelight-smart-home/v0.1.9/`
-- Checksums: `releases/yeelight-smart-home/v0.1.9/checksums.txt`
-- Validation summary: `releases/yeelight-smart-home/v0.1.9/validation-summary.json`
+- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.10
+- Release evidence: `releases/yeelight-smart-home/v0.1.10/`
+- Checksums: `releases/yeelight-smart-home/v0.1.10/checksums.txt`
+- Validation summary: `releases/yeelight-smart-home/v0.1.10/validation-summary.json`
 
 ## Install
 
@@ -61,7 +61,7 @@ npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill ye
 Install from this repository's marketplace metadata, or download:
 
 ```text
-releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-codex-plugin-v0.1.9.zip
+releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-codex-plugin-v0.1.10.zip
 ```
 
 ### Claude Skill ZIP
@@ -69,7 +69,7 @@ releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-codex-plugin-v0.1.9.zip
 Download and upload:
 
 ```text
-releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-claude-skill-v0.1.9.zip
+releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-claude-skill-v0.1.10.zip
 ```
 
 ### GitHub Copilot Agent Skill
@@ -77,7 +77,7 @@ releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-claude-skill-v0.1.9.zip
 Use:
 
 ```text
-releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-copilot-skill-v0.1.9.zip
+releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-copilot-skill-v0.1.10.zip
 ```
 
 ### Open Agent Skills
@@ -85,7 +85,7 @@ releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-copilot-skill-v0.1.9.zip
 Use:
 
 ```text
-releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-agent-skill-v0.1.9.zip
+releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-agent-skill-v0.1.10.zip
 ```
 
 ### LobeHub Skills
@@ -152,14 +152,14 @@ Do not treat review-pending platforms as published until the installed-copy or d
 Verify the release checksums:
 
 ```sh
-cd releases/yeelight-smart-home/v0.1.9
+cd releases/yeelight-smart-home/v0.1.10
 shasum -a 256 -c checksums.txt
 ```
 
 Run the full publication asset check:
 
 ```sh
-node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.9
+node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.10
 ```
 
 The publication check validates JSON metadata, bilingual README links, package checksums, platform submission kits, Dify package structure, Node script syntax, and bridge health/invoke/MCP smoke tests.
