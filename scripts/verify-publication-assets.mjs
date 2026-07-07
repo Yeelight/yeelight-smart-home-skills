@@ -28,6 +28,7 @@ async function main() {
   checkBilingualReadme();
   checkJSON("skill_request_schema", path.join(root, "skills", skill, "assets", "schemas", "skill-request.schema.json"));
   checkJSON("skill_response_schema", path.join(root, "skills", skill, "assets", "schemas", "skill-response.schema.json"));
+  checkClawHubSkillPackage();
   checkFile("bridge_server", path.join(bridgeDir, "server.mjs"));
   checkFile("bridge_readme", path.join(bridgeDir, "README.md"));
   checkFile("bridge_privacy", path.join(bridgeDir, "privacy.md"));
@@ -53,6 +54,25 @@ function checkJSON(name, file) {
 
 function checkFile(name, file) {
   checks.push(check(name, fs.existsSync(file), { file: rel(file) }));
+}
+
+function checkClawHubSkillPackage() {
+  const packageRoot = path.join(root, "skills-clawhub", skill);
+  const skillFile = path.join(packageRoot, "SKILL.md");
+  checkFile("clawhub_skill_package", skillFile);
+  checks.push(check("clawhub_excludes_extensionless_invoke", !fs.existsSync(path.join(packageRoot, "scripts", "invoke")), {
+    file: rel(path.join(packageRoot, "scripts", "invoke")),
+  }));
+  checks.push(check("clawhub_has_invoke_sh", fs.existsSync(path.join(packageRoot, "scripts", "invoke.sh")), {
+    file: rel(path.join(packageRoot, "scripts", "invoke.sh")),
+  }));
+  const offenders = fs.existsSync(packageRoot)
+    ? listFiles(packageRoot)
+      .filter((file) => /\.(md|yaml|yml|json)$/i.test(file) || path.basename(file) === "SKILL.md")
+      .filter((file) => /scripts\/invoke(?![.A-Za-z0-9_-])/.test(readIfExists(file)))
+      .map(rel)
+    : [];
+  checks.push(check("clawhub_rewrites_extensionless_invoke_refs", offenders.length === 0, { offenders }));
 }
 
 function checkBilingualReadme() {
@@ -351,6 +371,15 @@ function tail(text) {
 
 function readIfExists(file) {
   return fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
+}
+
+function listFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(fullPath);
+    if (entry.isFile()) return [fullPath];
+    return [];
+  });
 }
 
 function flag(name) {

@@ -90,4 +90,4 @@ jobs:
             --source-repo "Yeelight/yeelight-smart-home-skills" \
             --source-commit "${{ github.sha }}" \
             --source-ref "yeelight-skill-${SKILL_ID}-v${VERSION}" \
-            --source-path "skills/${SKILL_ID}"
+            --source-path "skills-clawhub/${SKILL_ID}"

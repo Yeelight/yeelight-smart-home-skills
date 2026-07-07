@@ -32,6 +32,9 @@ clean(path.join(root, "plugins", skill));
 copyDir(pluginSource, path.join(root, "plugins", skill));
 clean(path.join(root, "skills", skill));
 copyDir(stageSource, path.join(root, "skills", skill));
+clean(path.join(root, "skills-clawhub", skill));
+copyDir(stageSource, path.join(root, "skills-clawhub", skill));
+prepareClawHubSkillDirectory(path.join(root, "skills-clawhub", skill));
 writeMarketplaceFiles({ skill, version });
 writeReadme({ skill, version, releaseTag, skillhubSlug });
 writeStatusFiles({ skill, version, releaseTag });
@@ -174,6 +177,26 @@ function copyDir(source, target) {
 function copyFile(source, target) {
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.copyFileSync(source, target);
+}
+function prepareClawHubSkillDirectory(skillRoot) {
+  fs.rmSync(path.join(skillRoot, "scripts", "invoke"), { force: true });
+  rewriteExtensionlessInvokeReferences(skillRoot);
+}
+function rewriteExtensionlessInvokeReferences(skillRoot) {
+  for (const file of listFiles(skillRoot)) {
+    if (!/\.(md|yaml|yml|json)$/i.test(file) && path.basename(file) !== "SKILL.md") continue;
+    const text = fs.readFileSync(file, "utf8");
+    const updated = text.replace(/scripts\/invoke(?![.A-Za-z0-9_-])/g, "scripts/invoke.sh");
+    if (updated !== text) fs.writeFileSync(file, updated, "utf8");
+  }
+}
+function listFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(fullPath);
+    if (entry.isFile()) return [fullPath];
+    return [];
+  });
 }
 function writeJSON(file, value) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
