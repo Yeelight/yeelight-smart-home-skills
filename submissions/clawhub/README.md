@@ -1,10 +1,13 @@
 # ClawHub Publication Record
 
-Status: published under the Yeelight publisher namespace. Future releases are
-published automatically by `.github/workflows/publish-skill.yml` after GitHub
-Release assets are created.
+Status: optional / blocked for the current release. ClawHub remains published
+under the Yeelight publisher namespace at `0.1.9`, but the `0.1.10` publish is
+blocked by an upstream ClawHub API response schema error. Future releases attempt
+ClawHub publication from `.github/workflows/publish-skill.yml` after GitHub
+Release assets are created, but ClawHub failures are non-blocking.
 
-Current version: `0.1.9`.
+Current ClawHub version: `0.1.9`.
+Current GitHub Release version: `0.1.10`.
 
 Public page:
 
@@ -34,9 +37,14 @@ Verification performed:
   - `references/recommendations.md`: `2869582b421bce1493d3c14cf7b84e312970c986b67b29ca1ac990e7f0808243`
 - GitHub workflow `28647580940` published GitHub Release and ClawHub `0.1.9` successfully.
 - `clawhub inspect @yeelight/yeelight-smart-home --json` returns `latestVersion.version=0.1.9` and moderation verdict `clean`.
+- The `0.1.10` ClawHub-safe package excludes extensionless `scripts/invoke`, keeps `scripts/invoke.sh`, and passes local publication asset verification.
+- GitHub workflow `28861378981` published GitHub Release `0.1.10` successfully, but ClawHub still failed with `API response: skillId: invalid value; versionId: invalid value`, including the minimal metadata retry.
+- `clawhub inspect @yeelight/yeelight-smart-home --json` still returns `latestVersion.version=0.1.9` and moderation verdict `clean` after the failed `0.1.10` attempts.
 
 Remaining ClawHub platform work:
 
+- Treat ClawHub as optional and non-release-blocking until the upstream publish
+  API or CLI response schema issue is resolved.
 - Publisher trust/official status is not complete yet (`trusted: false` when the publisher namespace was created).
 - ClawHub asynchronous scans may lag immediately after a publish; use `clawhub inspect @yeelight/yeelight-smart-home --json` for version confirmation and `clawhub skill verify @yeelight/yeelight-smart-home --json` after scans settle.
 - Submit a ClawHub namespace claim from an official Yeelight-owned account or after explicit public-claim approval if a trusted/official badge is required.

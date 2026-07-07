@@ -31,19 +31,19 @@
 如果你使用的是可以执行本地终端命令的 AI 助手，可以直接把下面这一句话发给它：
 
 ```text
-请从 Yeelight 官方 GitHub Release 或已支持的包管理渠道，为我的系统安装 yeelight-home CLI，然后从 Yeelight 官方 Skill Release、ClawHub 或这个 GitHub 仓库安装 Yeelight Smart Home Skill。安装后用 `yeelight-home doctor --json` 验证 CLI，并引导我执行 `yeelight-home auth login --qr`；不要要求我把 token、密码或 cookie 粘贴到聊天里。
+请从 Yeelight 官方 GitHub Release 或已支持的包管理渠道，为我的系统安装 yeelight-home CLI，然后从 Yeelight 官方 Skill GitHub Release 或这个 GitHub 仓库安装最新版 Yeelight Smart Home Skill。安装后用 `yeelight-home doctor --json` 验证 CLI，并引导我执行 `yeelight-home auth login --qr`；不要要求我把 token、密码或 cookie 粘贴到聊天里。
 ```
 
 ### ClawHub / OpenClaw
 
-该 Skill 已发布到 Yeelight 官方 publisher namespace：
+该 Skill 仍可从 Yeelight 官方 publisher namespace 安装，但这个渠道当前是可选且滞后的 `0.1.9`。最新版 `0.1.10` 请使用 GitHub Release。
 
 ```sh
 openclaw skills install @yeelight/yeelight-smart-home
 ```
 
 - ClawHub 页面：https://clawhub.ai/yeelight/skills/yeelight-smart-home
-- 状态：已发布且可安装。`@yeelight` publisher namespace 已生效；ClawHub 平台信任/官方认证仍在等待审核。
+- 状态：`0.1.10` 可选阻塞。ClawHub 安全包已排除无扩展名的 `scripts/invoke`，但 ClawHub 仍返回 `skillId/versionId invalid value`；GitHub Release 是当前最新版事实渠道。
 
 ### skills.sh
 
@@ -141,7 +141,8 @@ Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感
 
 当前状态分类：
 
-- 已发布且可安装：GitHub Release、ClawHub、skills.sh。
+- 最新版已发布且可安装：GitHub Release、skills.sh。
+- 可选且滞后：ClawHub 仍可安装 `0.1.9`，但不阻断 `0.1.10` 及后续版本发布。
 - 已提交或等待审核：LobeHub、NanoSkill、Molili/CocoLoop、Dify Marketplace。
 - Adapter kit 已准备好，等待控制台审核：OpenAI GPT Store / Apps SDK、Coze、百炼、元器、千帆、火山方舟。
 

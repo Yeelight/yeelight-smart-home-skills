@@ -67,6 +67,7 @@ jobs:
       - validate
       - github-release
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -74,7 +75,7 @@ jobs:
           node-version: "22"
       - name: Install ClawHub CLI
         run: npm install -g clawhub@latest
-      - name: Publish Skill to ClawHub
+      - name: Publish Skill to ClawHub (optional)
         env:
           CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
           SKILL_ID: ${{ inputs.skill_id }}

@@ -5,8 +5,6 @@ This repository is the canonical GitHub distribution center for Yeelight Smart H
 ## Automated Now
 
 - GitHub Release assets.
-- ClawHub skill publication under `@yeelight/yeelight-smart-home` from the same
-  release workflow, after GitHub Release assets are created.
 - skills.sh GitHub-indexed installation for `yeelight/yeelight-smart-home-skills`.
 - LobeHub first-listing request kit and post-listing CLI ownership/version workflow.
 - GitHub Copilot-compatible marketplace metadata at `.github/plugin/marketplace.json`.
@@ -20,10 +18,10 @@ This repository is the canonical GitHub distribution center for Yeelight Smart H
 
 These directories can consume the repository or skill folder directly:
 
-- ClawHub: published at `https://clawhub.ai/yeelight/skills/yeelight-smart-home`; install with `openclaw skills install @yeelight/yeelight-smart-home`.
+- ClawHub: optional/stale channel at `https://clawhub.ai/yeelight/skills/yeelight-smart-home`; current ClawHub latest is `0.1.9`. Use GitHub Release for `0.1.10`.
 - skills.sh: indexed from GitHub at `https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home`; install with `npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home`.
 
-ClawHub currently shows the Yeelight publisher namespace but the publisher itself is not platform-trusted yet. Submit a ClawHub namespace claim or sign in with an official Yeelight-owned ClawHub/GitHub account when a platform-level official/trusted badge is required.
+ClawHub currently shows the Yeelight publisher namespace but the publisher itself is not platform-trusted yet. The `0.1.10` publish is also blocked by an upstream ClawHub API response schema error (`skillId/versionId invalid value`) even after using the ClawHub-safe package that excludes extensionless `scripts/invoke`. Submit a ClawHub namespace claim or sign in with an official Yeelight-owned ClawHub/GitHub account when a platform-level official/trusted badge is required, but keep ClawHub non-release-blocking until the upstream publish issue is resolved.
 
 ## LobeHub Skills
 
@@ -93,8 +91,10 @@ Use this flow for every future `yeelight-smart-home/skill/<skill-id>` package.
 2. Run the generic source release builder and verifier for that skill.
 3. Publish or refresh this public GitHub distribution repository from the generated release output.
 4. Run `node scripts/verify-publication-assets.mjs` from this repository.
-5. Ensure repository secret `CLAWHUB_TOKEN` is configured; `publish-skill.yml`
-   publishes `skills/<skill-id>` to ClawHub after the GitHub Release job.
+5. Ensure repository secret `CLAWHUB_TOKEN` is configured if ClawHub should be
+   attempted; `publish-skill.yml` attempts the ClawHub-safe package from
+   `skills-clawhub/<skill-id>` after the GitHub Release job, but this channel is
+   optional and non-release-blocking.
 6. Update `platforms.json` and `submissions/skill-directory-submission-status.json` with platform-specific status and evidence.
 7. For native Skill directories, run platform install smoke from the installed copy, not only package smoke.
 8. For bridge-based platforms, verify `/health`, `/openapi.json`, authenticated `/invoke`, and `/mcp` with the deployed bridge.

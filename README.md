@@ -31,19 +31,19 @@ It is intentionally packaged as a Skill, not as a bundled runtime. The Skill con
 If you use a local AI assistant that can run terminal commands, paste this single request:
 
 ```text
-Install the official yeelight-home CLI for my operating system from Yeelight's GitHub Release or supported package manager, then install the Yeelight Smart Home Skill from the official Yeelight Skill release, ClawHub, or this GitHub repository. Verify the CLI with `yeelight-home doctor --json`, and guide me through `yeelight-home auth login --qr`; do not ask me to paste tokens, passwords, or cookies into chat.
+Install the official yeelight-home CLI for my operating system from Yeelight's GitHub Release or supported package manager, then install the latest Yeelight Smart Home Skill from the official Yeelight Skill GitHub Release or this GitHub repository. Verify the CLI with `yeelight-home doctor --json`, and guide me through `yeelight-home auth login --qr`; do not ask me to paste tokens, passwords, or cookies into chat.
 ```
 
 ### ClawHub / OpenClaw
 
-The Skill is published under the official Yeelight publisher namespace:
+The Skill remains available under the official Yeelight publisher namespace, but this channel is currently optional and stale at `0.1.9`. Use GitHub Release for the latest `0.1.10` package.
 
 ```sh
 openclaw skills install @yeelight/yeelight-smart-home
 ```
 
 - ClawHub page: https://clawhub.ai/yeelight/skills/yeelight-smart-home
-- Status: published and installable. The `@yeelight` publisher namespace is active; ClawHub platform trust/official review is still pending.
+- Status: optional / blocked for `0.1.10`. The ClawHub-safe package excludes extensionless `scripts/invoke`, but ClawHub still returns `skillId/versionId invalid value`; GitHub Release remains the canonical latest channel.
 
 ### skills.sh
 
@@ -141,7 +141,8 @@ The bridge calls only `yeelight-home invoke --stdin`; the runtime remains respon
 
 Current status classes include:
 
-- Published and installable: GitHub Release, ClawHub, skills.sh.
+- Published and installable for latest release: GitHub Release, skills.sh.
+- Optional/stale: ClawHub remains installable at `0.1.9` but does not block `0.1.10` or later releases.
 - Submitted or awaiting marketplace review: LobeHub, NanoSkill, Molili/CocoLoop, Dify Marketplace.
 - Adapter kit ready for console review: OpenAI GPT Store / Apps SDK, Coze, Bailian, Yuanqi, Qianfan, Volcano Ark.
 

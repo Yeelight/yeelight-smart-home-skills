@@ -9,9 +9,13 @@
   "platforms": [
     {
       "id": "clawhub",
-      "status": "published-official-namespace-trust-review-pending",
+      "status": "blocked-optional-upstream-publish-schema",
       "url": "https://clawhub.ai/yeelight/skills/yeelight-smart-home",
       "installCommand": "openclaw skills install @yeelight/yeelight-smart-home",
+      "optional": true,
+      "releaseBlocking": false,
+      "version": "0.1.9",
+      "targetVersion": "0.1.10",
       "evidence": [
         "publisher create yeelight returned ok with trusted=false",
         "transfer request returned: Transferred yeelight-smart-home to @yeelight",
@@ -23,13 +27,16 @@
         "clawhub install @yeelight/yeelight-smart-home --version 0.1.1 installed into a clean temporary directory and updated-reference hashes matched the release package",
         "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.7 after the GitHub skill release",
         "clawhub --workdir <tmp> --dir skills --no-input install @yeelight/yeelight-smart-home --version 0.1.7 installed into skills/@yeelight/yeelight-smart-home with SKILL.md hash 2acfb57278a488513002d7a84bdb56cef6d15d0fd6fc861fcdaf5192ee5f0890",
-        "future GitHub Skill release workflow runs publish to ClawHub automatically through scripts/publish-clawhub-skill.mjs and the CLAWHUB_TOKEN repository secret",
+        "future GitHub Skill release workflow runs attempt ClawHub publish as an optional non-blocking channel through scripts/publish-clawhub-skill.mjs and the CLAWHUB_TOKEN repository secret",
         "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.8 and moderation.verdict=clean after the 0.1.8 GitHub skill release",
         "GitHub workflow 28647580940 published GitHub Release and ClawHub v0.1.9 successfully",
-        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.9 and moderation.verdict=clean after the 0.1.9 GitHub skill release"
+        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.9 and moderation.verdict=clean after the 0.1.9 GitHub skill release",
+        "0.1.10 ClawHub publish from the ClawHub-safe package excluded scripts/invoke and still failed with API response skillId/versionId invalid value, including the minimal metadata retry",
+        "GitHub workflow 28861378981 published GitHub Release v0.1.10 successfully while ClawHub remained at latestVersion.version=0.1.9"
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
+        "ClawHub upstream API or CLI response schema must accept the 0.1.10 publish before this optional channel can be advanced",
         "ClawHub mirror and third-party directory pages can lag behind the ClawHub registry latestVersion"
       ]
     },
