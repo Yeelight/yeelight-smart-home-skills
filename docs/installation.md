@@ -60,11 +60,7 @@ Install only the Skill you need, or run both commands.
 
 ### OpenClaw / ClawHub
 
-The optional ClawHub channel currently covers the direct-control Skill:
-
-```sh
-openclaw skills install @yeelight/yeelight-smart-home
-```
+ClawHub currently assigns MIT-0 to every published Skill version and cannot represent this project's Apache-2.0 license. It is not an official distribution channel for these Skills until it supports the required SPDX license. Use the official GitHub repository through a supported repository-based installer.
 
 ### Manual installation
 

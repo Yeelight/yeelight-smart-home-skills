@@ -48,11 +48,7 @@ npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill ye
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
 ```
 
-OpenClaw users can install the direct-control Skill from the optional ClawHub channel:
-
-```sh
-openclaw skills install @yeelight/yeelight-smart-home
-```
+ClawHub currently assigns MIT-0 to every published Skill version and cannot represent this project's Apache-2.0 license. It is therefore not an official distribution channel for these Skills. OpenClaw users should install from the official GitHub repository with a supported repository-based installer.
 
 See [Installation](docs/installation.md) for other operating systems, manual installation, upgrades, and verification.
 
