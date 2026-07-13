@@ -2,6 +2,22 @@
 
 [简体中文](installation.zh-CN.md)
 
+## Install With One Sentence
+
+Use one prompt per Skill. The AI must use official sources, verify the Runtime and Skill discovery, and stop instead of guessing when the local host is unsupported.
+
+### `yeelight-smart-home`
+
+```text
+Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-smart-home` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, restart or refresh my agent host and verify that it discovers `yeelight-smart-home`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
+```
+
+### `yeelight-pro-app-builder`
+
+```text
+Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-pro-app-builder` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, verify Node.js 22 or later, restart or refresh my agent host and verify that it discovers `yeelight-pro-app-builder`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
+```
+
 ## 1. Install Yeelight Home
 
 Both Skills require the local `yeelight-home` Runtime.
@@ -25,10 +41,10 @@ Download the package for your operating system from [Yeelight Home Releases](htt
 Verify the Runtime and sign in without sharing credentials with an AI assistant:
 
 ```sh
-yeelight-home --version
+yeelight-home version --json
 yeelight-home doctor --json
-yeelight-home auth login --qr
 yeelight-home auth status --json
+yeelight-home auth login --qr
 ```
 
 ## 2. Install The Skills
@@ -64,6 +80,8 @@ Consult your host documentation for its Skill directory. Common hosts can also d
 
 Restart the agent host after installation, then ask it to identify the installed Skill before requesting a device operation.
 
+Ask the host to report the exact discovered Skill id. For example: "List installed Skills and confirm whether `yeelight-smart-home` is available" or "List installed Skills and confirm whether `yeelight-pro-app-builder` is available." Do not accept a generic success message without host discovery evidence.
+
 For direct control, verify the Runtime separately:
 
 ```sh
@@ -79,6 +97,15 @@ node --version
 ## Upgrade
 
 Repeat the skills.sh installation command to refresh the installed copy. Upgrade the Runtime independently with the package manager used during installation.
+
+After an upgrade, rerun `yeelight-home version --json`, `yeelight-home doctor --json`, and the host discovery check for the selected Skill.
+
+## Troubleshooting
+
+- Runtime not found: confirm that `yeelight-home version --json` works in the same environment that starts the agent host.
+- Authentication required: run `yeelight-home auth login --qr` locally, then check `yeelight-home auth status --json`; never relay the QR result through chat.
+- Skill not discovered: repeat the install for the exact Skill id, restart or refresh the host, and inspect the host's configured Skill directory.
+- Unsupported host or marketplace: use the skills.sh or manual repository path when the host supports standard Agent Skills; otherwise stop and report the unsupported integration.
 
 ## Security
 
