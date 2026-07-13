@@ -1,6 +1,6 @@
 # Dify Marketplace Submission Kit
 
-Status: `.difypkg` package ready; Marketplace update PR for `0.1.9` is open and the Dify pre-check has passed.
+Status: `0.1.11` `.difypkg` package ready; Marketplace update PR pending submission. The previous `0.1.9` update was merged after its Dify pre-check passed.
 
 Marketplace PR:
 
@@ -16,9 +16,9 @@ PR state:
 - File list contained only `yeelight/yeelight-smart-home/yeelight-smart-home-0.1.0.difypkg`.
 - GitHub Actions `pre-check-plugin` completed successfully.
 
-Update PR state:
+Previous update PR state:
 
-- Open.
+- Merged.
 - Originally submitted from `axdlee:yeelight-smart-home-0.1.8`, then updated to package version `0.1.9` after the Skill release packaging fix for the `scripts/invoke` wrapper.
 - File list contains only `yeelight/yeelight-smart-home/yeelight-smart-home-0.1.9.difypkg`.
 - GitHub Actions `pre-check-plugin` completed successfully for the `0.1.9` update.
@@ -26,19 +26,19 @@ Update PR state:
 Current update target:
 
 ```text
-yeelight/yeelight-smart-home/yeelight-smart-home-0.1.9.difypkg
+yeelight/yeelight-smart-home/yeelight-smart-home-0.1.11.difypkg
 ```
 
 Current release assets:
 
-- `../../releases/yeelight-smart-home/v0.1.9/yeelight-smart-home-agent-skill-v0.1.9.zip`
-- `../../releases/yeelight-smart-home/v0.1.9/checksums.txt`
+- `../../releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-agent-skill-v0.1.11.zip`
+- `../../releases/yeelight-smart-home/v0.1.11/checksums.txt`
 
 Dify Marketplace does not consume the Agent Skill ZIP directly. This repository now includes a Dify tool plugin package that calls the Yeelight bridge:
 
 ```text
 plugin/
-yeelight-smart-home-0.1.9.difypkg
+yeelight-smart-home-0.1.11.difypkg
 ```
 
 Recommended runtime deployment path:
@@ -50,11 +50,11 @@ Recommended runtime deployment path:
 3. Package locally:
 
    ```sh
-   dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.9.difypkg
-   dify plugin checksum submissions/dify/yeelight-smart-home-0.1.9.difypkg
+   dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.11.difypkg
+   dify plugin checksum submissions/dify/yeelight-smart-home-0.1.11.difypkg
    ```
 
-4. Wait for Dify Marketplace maintainer review and merge of PR #2643.
+4. Submit the `0.1.11` Marketplace update PR and wait for Dify maintainer review.
 
 Required credentials/material:
 

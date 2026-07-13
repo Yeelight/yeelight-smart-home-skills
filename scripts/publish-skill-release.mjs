@@ -18,9 +18,12 @@ const sourceRoot = path.resolve(source);
 const githubReleaseRoot = path.join(sourceRoot, "channels", "github-release");
 const pluginSource = path.join(sourceRoot, "channels", "codex-plugin", skill);
 const stageSource = path.join(sourceRoot, "stage", skill);
-for (const required of [githubReleaseRoot, pluginSource, stageSource]) {
+const packageManifestPath = path.join(sourceRoot, "package-manifest.json");
+for (const required of [githubReleaseRoot, pluginSource, stageSource, packageManifestPath]) {
   if (!fs.existsSync(required)) fail(`missing required source path: ${required}`);
 }
+const packageManifest = JSON.parse(fs.readFileSync(packageManifestPath, "utf8"));
+const runtimeMinVersion = packageManifest.runtime?.minVersion || "0.1.7";
 
 const versionDir = path.join(root, "releases", skill, `v${version}`);
 clean(versionDir);
@@ -36,7 +39,7 @@ clean(path.join(root, "skills-clawhub", skill));
 copyDir(stageSource, path.join(root, "skills-clawhub", skill));
 prepareClawHubSkillDirectory(path.join(root, "skills-clawhub", skill));
 writeMarketplaceFiles({ skill, version });
-writeReadme({ skill, version, releaseTag, skillhubSlug });
+writeReadme({ skill, version, releaseTag, skillhubSlug, runtimeMinVersion });
 writeStatusFiles({ skill, version, releaseTag });
 run("python3", ["-m", "json.tool", ".github/plugin/marketplace.json"], { stdout: "ignore" });
 run("python3", ["-m", "json.tool", ".claude-plugin/marketplace.json"], { stdout: "ignore" });
@@ -88,7 +91,7 @@ function writeMarketplaceFiles({ skill, version }) {
   });
 }
 
-function writeReadme({ skill, version, releaseTag, skillhubSlug }) {
+function writeReadme({ skill, version, releaseTag, skillhubSlug, runtimeMinVersion }) {
   const repositoryUrl = "https://github.com/Yeelight/yeelight-smart-home-skills";
   const repositoryInstallUrl = "https://github.com/yeelight/yeelight-smart-home-skills";
   const releaseUrl = `${repositoryUrl}/releases/tag/${releaseTag}`;
@@ -98,6 +101,7 @@ function writeReadme({ skill, version, releaseTag, skillhubSlug }) {
     releasePath: `releases/${skill}/v${version}`,
     releaseTag,
     releaseUrl,
+    runtimeMinVersion,
     skill,
     skillTitle: titleFromSlug(skill),
     skillhubSlug,
@@ -145,6 +149,10 @@ function writeStatusFiles({ skill, version, releaseTag }) {
       if (platform.id === "claude-code-plugin-marketplace") {
         platform.version = version;
       }
+      if (platform.id === "clawhub") {
+        platform.targetVersion = version;
+        platform.blocker = `The previous 0.1.10 publish returned the ClawHub skillId/versionId invalid value schema error even from the safe package. GitHub Release remains the canonical ${version} channel while ClawHub stays optional.`;
+      }
     }
     return value;
   });
@@ -156,6 +164,16 @@ function writeStatusFiles({ skill, version, releaseTag }) {
       repository: "https://github.com/Yeelight/yeelight-smart-home-skills",
       release: releaseUrl,
     };
+    for (const platform of value.platforms || []) {
+      if (platform.id === "clawhub") {
+        platform.targetVersion = version;
+        platform.remaining = [
+          "ClawHub publisher trust/official review",
+          `ClawHub upstream API or CLI response schema must accept the ${version} publish before this optional channel can be advanced`,
+          "ClawHub mirror and third-party directory pages can lag behind the ClawHub registry latestVersion",
+        ];
+      }
+    }
     return value;
   });
 }

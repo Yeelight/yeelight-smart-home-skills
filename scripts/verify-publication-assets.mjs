@@ -84,6 +84,11 @@ function checkBilingualReadme() {
   checkFile("readme_zh_cn", readmeZh);
   const en = readIfExists(readme);
   const zh = readIfExists(readmeZh);
+  const packageManifestPath = path.join(releaseDir, "package-manifest.json");
+  const packageManifest = fs.existsSync(packageManifestPath)
+    ? JSON.parse(fs.readFileSync(packageManifestPath, "utf8"))
+    : null;
+  const runtimeMinVersion = packageManifest?.runtime?.minVersion || "";
   checks.push(check("readme_en_links_zh_cn", en.includes("[简体中文](README.zh-CN.md)"), { file: rel(readme) }));
   checks.push(check("readme_zh_cn_links_en", zh.includes("[English](README.md)"), { file: rel(readmeZh) }));
   checks.push(check("readme_en_mentions_version", en.includes(`\`${version}\``) && en.includes(releaseUrl) && en.includes(releasePath), {
@@ -98,6 +103,12 @@ function checkBilingualReadme() {
   }));
   checks.push(check("readme_en_default_language", en.startsWith("# Yeelight Smart Home Skills\n\nEnglish | [简体中文]"), {
     file: rel(readme),
+  }));
+  checks.push(check("readme_runtime_min_version", Boolean(runtimeMinVersion)
+    && en.includes(`yeelight-home >= ${runtimeMinVersion}`)
+    && zh.includes(`yeelight-home >= ${runtimeMinVersion}`), {
+    packageManifest: rel(packageManifestPath),
+    runtimeMinVersion,
   }));
 }
 

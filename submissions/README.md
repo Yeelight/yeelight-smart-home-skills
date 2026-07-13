@@ -38,7 +38,7 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 - Privacy policy URL.
 - Logo and screenshots when required by the platform.
 - Test prompts and expected responses.
-- A runtime host with `yeelight-home >= 0.1.7` installed and authenticated.
+- A runtime host with `yeelight-home >= 0.1.20` installed and authenticated.
 - For LobeHub first listing, submit the GitHub repository URL through the web `请求收录` form; after collection, use `lhm skill claim` and `lhm skill publish` for ownership and later versions.
 
 Do not submit with a local URL, placeholder domain, missing privacy policy, or unauthenticated bridge.

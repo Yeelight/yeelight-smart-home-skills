@@ -4,7 +4,7 @@
 
 - **Author**: yeelight
 - **Plugin name**: yeelight-smart-home
-- **Version**: 0.1.9
+- **Version**: 0.1.11
 - **Source repository**: https://github.com/Yeelight/yeelight-smart-home-skills
 - **Contact**: support@yeelight.com
 
@@ -15,7 +15,7 @@
 
 ## What changed
 
-Updates the official Yeelight Smart Home Dify tool plugin to align with the current Yeelight Smart Home Skill `0.1.9` and `yeelight-home` Runtime `0.1.18`. This Skill package release fixes the Agent packaging wrapper so distributed packages include the `scripts/invoke` entrypoint referenced by the Skill rules. The Dify plugin continues to call a configured Yeelight Skill bridge, which invokes the local `yeelight-home` runtime with `yeelight-home invoke --stdin`.
+Updates the official Yeelight Smart Home Dify tool plugin to align with Yeelight Smart Home Skill `0.1.11` and `yeelight-home` Runtime `0.1.20`. The release adds the latest device-property, node-scoped control, group membership, state/detail, and scene execution contracts while preserving the existing secure bridge boundary. The Dify plugin continues to call a configured Yeelight Skill bridge, which invokes the local `yeelight-home` runtime with `yeelight-home invoke --stdin`.
 
 ## Risk level
 
@@ -44,8 +44,8 @@ The plugin forwards user utterances, selected intent, optional request parameter
 ## Local validation
 
 ```sh
-dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.9.difypkg
-dify plugin checksum submissions/dify/yeelight-smart-home-0.1.9.difypkg
+dify plugin package submissions/dify/plugin -o submissions/dify/yeelight-smart-home-0.1.11.difypkg
+dify plugin checksum submissions/dify/yeelight-smart-home-0.1.11.difypkg
 node scripts/verify-publication-assets.mjs
 ```
 

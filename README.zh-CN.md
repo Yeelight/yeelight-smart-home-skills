@@ -8,7 +8,7 @@
 
 | Skill | Version | Runtime | Packages |
 | --- | --- | --- | --- |
-| `yeelight-smart-home` | `0.1.10` | `yeelight-home >= 0.1.7` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
+| `yeelight-smart-home` | `0.1.11` | `yeelight-home >= 0.1.20` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
 
 ## 这个 Skill 能做什么
 
@@ -19,10 +19,10 @@
 ## 发布信息
 
 - 仓库：https://github.com/Yeelight/yeelight-smart-home-skills
-- 最新 Release：https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.10
-- 发布证据：`releases/yeelight-smart-home/v0.1.10/`
-- 校验和：`releases/yeelight-smart-home/v0.1.10/checksums.txt`
-- 验证摘要：`releases/yeelight-smart-home/v0.1.10/validation-summary.json`
+- 最新 Release：https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.11
+- 发布证据：`releases/yeelight-smart-home/v0.1.11/`
+- 校验和：`releases/yeelight-smart-home/v0.1.11/checksums.txt`
+- 验证摘要：`releases/yeelight-smart-home/v0.1.11/validation-summary.json`
 
 ## 安装方式
 
@@ -36,14 +36,14 @@
 
 ### ClawHub / OpenClaw
 
-该 Skill 仍可从 Yeelight 官方 publisher namespace 安装，但这个渠道当前是可选且滞后的 `0.1.9`。最新版 `0.1.10` 请使用 GitHub Release。
+该 Skill 仍可从 Yeelight 官方 publisher namespace 安装，但这个渠道当前是可选且滞后的 `0.1.9`。最新版 `0.1.11` 请使用 GitHub Release。
 
 ```sh
 openclaw skills install @yeelight/yeelight-smart-home
 ```
 
 - ClawHub 页面：https://clawhub.ai/yeelight/skills/yeelight-smart-home
-- 状态：`0.1.10` 可选阻塞。ClawHub 安全包已排除无扩展名的 `scripts/invoke`，但 ClawHub 仍返回 `skillId/versionId invalid value`；GitHub Release 是当前最新版事实渠道。
+- 状态：`0.1.11` 可选阻塞。ClawHub 安全包已排除无扩展名的 `scripts/invoke`，但 ClawHub 仍返回 `skillId/versionId invalid value`；GitHub Release 是当前最新版事实渠道。
 
 ### skills.sh
 
@@ -61,7 +61,7 @@ npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill ye
 可以通过本仓库 marketplace metadata 安装，也可以下载：
 
 ```text
-releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-codex-plugin-v0.1.10.zip
+releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-codex-plugin-v0.1.11.zip
 ```
 
 ### Claude Skill ZIP
@@ -69,7 +69,7 @@ releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-codex-plugin-v0.1.10.zi
 下载并上传：
 
 ```text
-releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-claude-skill-v0.1.10.zip
+releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-claude-skill-v0.1.11.zip
 ```
 
 ### GitHub Copilot Agent Skill
@@ -77,7 +77,7 @@ releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-claude-skill-v0.1.10.zi
 使用：
 
 ```text
-releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-copilot-skill-v0.1.10.zip
+releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-copilot-skill-v0.1.11.zip
 ```
 
 ### Open Agent Skills
@@ -85,7 +85,7 @@ releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-copilot-skill-v0.1.10.z
 使用：
 
 ```text
-releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-agent-skill-v0.1.10.zip
+releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-agent-skill-v0.1.11.zip
 ```
 
 ### LobeHub Skills
@@ -142,7 +142,7 @@ Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感
 当前状态分类：
 
 - 最新版已发布且可安装：GitHub Release、skills.sh。
-- 可选且滞后：ClawHub 仍可安装 `0.1.9`，但不阻断 `0.1.10` 及后续版本发布。
+- 可选且滞后：ClawHub 仍可安装 `0.1.9`，但不阻断 `0.1.11` 及后续版本发布。
 - 已提交或等待审核：LobeHub、NanoSkill、Molili/CocoLoop、Dify Marketplace。
 - Adapter kit 已准备好，等待控制台审核：OpenAI GPT Store / Apps SDK、Coze、百炼、元器、千帆、火山方舟。
 
@@ -153,14 +153,14 @@ Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感
 校验 Release 文件：
 
 ```sh
-cd releases/yeelight-smart-home/v0.1.10
+cd releases/yeelight-smart-home/v0.1.11
 shasum -a 256 -c checksums.txt
 ```
 
 运行完整发布资产检查：
 
 ```sh
-node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.10
+node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.11
 ```
 
 该检查会覆盖 JSON 元数据、双语 README 互链、包校验和、各平台提审材料、Dify 包结构、Node 脚本语法，以及 bridge 的 health/invoke/MCP smoke。

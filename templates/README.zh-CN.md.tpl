@@ -8,7 +8,7 @@
 
 | Skill | Version | Runtime | Packages |
 | --- | --- | --- | --- |
-| `{{skill}}` | `{{version}}` | `yeelight-home >= 0.1.7` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
+| `{{skill}}` | `{{version}}` | `yeelight-home >= {{runtimeMinVersion}}` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
 
 ## 这个 Skill 能做什么
 

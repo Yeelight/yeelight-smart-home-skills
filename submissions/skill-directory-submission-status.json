@@ -2,9 +2,9 @@
   "schemaVersion": "yeelight-skill-directory-submission-status-v1",
   "skill": {
     "id": "yeelight-smart-home",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "repository": "https://github.com/Yeelight/yeelight-smart-home-skills",
-    "release": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.10"
+    "release": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.11"
   },
   "platforms": [
     {
@@ -15,7 +15,7 @@
       "optional": true,
       "releaseBlocking": false,
       "version": "0.1.9",
-      "targetVersion": "0.1.10",
+      "targetVersion": "0.1.11",
       "evidence": [
         "publisher create yeelight returned ok with trusted=false",
         "transfer request returned: Transferred yeelight-smart-home to @yeelight",
@@ -36,7 +36,7 @@
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
-        "ClawHub upstream API or CLI response schema must accept the 0.1.10 publish before this optional channel can be advanced",
+        "ClawHub upstream API or CLI response schema must accept the 0.1.11 publish before this optional channel can be advanced",
         "ClawHub mirror and third-party directory pages can lag behind the ClawHub registry latestVersion"
       ]
     },
@@ -175,11 +175,11 @@
     },
     {
       "id": "dify-marketplace",
-      "status": "marketplace-update-pr-open-precheck-passed",
+      "status": "package-ready-update-pr-pending",
       "url": "https://github.com/langgenius/dify-plugins",
-      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
-      "packagePath": "submissions/dify/yeelight-smart-home-0.1.9.difypkg",
-      "version": "0.1.9",
+      "previousPullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.11.difypkg",
+      "version": "0.1.11",
       "evidence": [
         "Dify CLI is available locally",
         "Dify Marketplace requires a .difypkg PR to langgenius/dify-plugins",
@@ -190,11 +190,15 @@
         "PR #2643 opened from axdlee:yeelight-smart-home-0.1.8 with only yeelight/yeelight-smart-home/yeelight-smart-home-0.1.8.difypkg",
         "0.1.9 package generated from manifest.yaml version 0.1.9 after the Skill package wrapper fix",
         "PR #2643 was updated to contain only yeelight/yeelight-smart-home/yeelight-smart-home-0.1.9.difypkg",
-        "GitHub Actions pre-check-plugin completed successfully for the PR #2643 0.1.9 update"
+        "GitHub Actions pre-check-plugin completed successfully for the PR #2643 0.1.9 update",
+        "PR #2643 was merged on 2026-07-07",
+        "0.1.11 package generated from manifest.yaml version 0.1.11 with Dify CLI 0.2.0",
+        "0.1.11 package checksum is c04f7fdd054acc390103fee2083ddbb50acbb2821d2b9f548a2ef0c24a3bb9cf"
       ],
       "remaining": [
         "deploy a public HTTPS bridge",
-        "wait for Dify Marketplace maintainer review and merge"
+        "submit the 0.1.11 Dify Marketplace update PR",
+        "wait for Dify Marketplace pre-check and maintainer review"
       ]
     }
   ]

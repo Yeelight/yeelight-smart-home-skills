@@ -1,13 +1,13 @@
 # ClawHub Publication Record
 
 Status: optional / blocked for the current release. ClawHub remains published
-under the Yeelight publisher namespace at `0.1.9`, but the `0.1.10` publish is
+under the Yeelight publisher namespace at `0.1.9`, while newer publish attempts are
 blocked by an upstream ClawHub API response schema error. Future releases attempt
 ClawHub publication from `.github/workflows/publish-skill.yml` after GitHub
 Release assets are created, but ClawHub failures are non-blocking.
 
 Current ClawHub version: `0.1.9`.
-Current GitHub Release version: `0.1.10`.
+Current GitHub Release target version: `0.1.11`.
 
 Public page:
 

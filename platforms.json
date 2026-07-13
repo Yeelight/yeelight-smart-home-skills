@@ -9,9 +9,9 @@
       "automation": "fully-automated",
       "releaseAsset": true,
       "status": "published",
-      "version": "0.1.10",
-      "releaseTag": "yeelight-skill-yeelight-smart-home-v0.1.10",
-      "releaseUrl": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.10"
+      "version": "0.1.11",
+      "releaseTag": "yeelight-skill-yeelight-smart-home-v0.1.11",
+      "releaseUrl": "https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.11"
     },
     {
       "id": "clawhub",
@@ -25,10 +25,10 @@
       "optional": true,
       "releaseBlocking": false,
       "version": "0.1.9",
-      "targetVersion": "0.1.10",
+      "targetVersion": "0.1.11",
       "securityScanStatus": "clean",
       "installSmoke": "latestVersion 0.1.9 verified with clawhub inspect @yeelight/yeelight-smart-home --json; moderation verdict clean",
-      "blocker": "0.1.10 publish returns ClawHub API response schema error: skillId/versionId invalid value, even from the ClawHub-safe package without scripts/invoke and with minimal metadata. GitHub Release remains the canonical 0.1.10 channel.",
+      "blocker": "The previous 0.1.10 publish returned the ClawHub skillId/versionId invalid value schema error even from the safe package. GitHub Release remains the canonical 0.1.11 channel while ClawHub stays optional.",
       "owner": {
         "handle": "yeelight",
         "displayName": "Yeelight",
@@ -125,7 +125,7 @@
       "automation": "repo-metadata",
       "metadataPath": ".github/plugin/marketplace.json",
       "status": "published-metadata",
-      "version": "0.1.10"
+      "version": "0.1.11"
     },
     {
       "id": "claude-code-plugin-marketplace",
@@ -134,7 +134,7 @@
       "automation": "repo-metadata",
       "metadataPath": ".claude-plugin/marketplace.json",
       "status": "published-metadata",
-      "version": "0.1.10"
+      "version": "0.1.11"
     },
     {
       "id": "claude-skill-zip",
@@ -142,8 +142,8 @@
       "region": "global",
       "automation": "artifact-ready",
       "status": "release-asset-ready",
-      "version": "0.1.10",
-      "assetPath": "releases/yeelight-smart-home/v0.1.10/yeelight-smart-home-claude-skill-v0.1.10.zip"
+      "version": "0.1.11",
+      "assetPath": "releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-claude-skill-v0.1.11.zip"
     },
     {
       "id": "dify-marketplace",
@@ -153,10 +153,10 @@
       "adapterPath": "adapters/yeelight-skill-bridge",
       "openApiPath": "adapters/yeelight-skill-bridge/openapi.json",
       "submissionPath": "submissions/dify/README.md",
-      "packagePath": "submissions/dify/yeelight-smart-home-0.1.9.difypkg",
-      "pullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
-      "status": "marketplace-update-pr-open-precheck-passed",
-      "version": "0.1.9"
+      "packagePath": "submissions/dify/yeelight-smart-home-0.1.11.difypkg",
+      "previousPullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
+      "status": "package-ready-update-pr-pending",
+      "version": "0.1.11"
     },
     {
       "id": "openai-gpt-store-apps-sdk",
