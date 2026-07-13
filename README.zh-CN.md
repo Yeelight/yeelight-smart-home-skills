@@ -142,7 +142,7 @@ Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感
 当前状态分类：
 
 - 最新版已发布且可安装：GitHub Release、skills.sh。
-- 可选且滞后：ClawHub 仍可安装 `0.1.9`，但不阻断 `0.1.11` 及后续版本发布。
+- 已发布但保持可选：ClawHub 已发布 `0.1.11`，且继续不阻断主发布流程。
 - 已提交或等待审核：LobeHub、NanoSkill、Molili/CocoLoop、Dify Marketplace。
 - Adapter kit 已准备好，等待控制台审核：OpenAI GPT Store / Apps SDK、Coze、百炼、元器、千帆、火山方舟。
 

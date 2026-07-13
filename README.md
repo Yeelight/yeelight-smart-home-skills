@@ -142,7 +142,7 @@ The bridge calls only `yeelight-home invoke --stdin`; the runtime remains respon
 Current status classes include:
 
 - Published and installable for latest release: GitHub Release, skills.sh.
-- Optional/stale: ClawHub remains installable at `0.1.9` but does not block `0.1.11` or later releases.
+- Published but optional: ClawHub has `0.1.11` and remains non-release-blocking.
 - Submitted or awaiting marketplace review: LobeHub, NanoSkill, Molili/CocoLoop, Dify Marketplace.
 - Adapter kit ready for console review: OpenAI GPT Store / Apps SDK, Coze, Bailian, Yuanqi, Qianfan, Volcano Ark.
 

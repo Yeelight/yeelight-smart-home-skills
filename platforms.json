@@ -21,14 +21,14 @@
       "url": "https://clawhub.ai/yeelight/skills/yeelight-smart-home",
       "installCommand": "openclaw skills install @yeelight/yeelight-smart-home",
       "submissionPath": "submissions/clawhub/README.md",
-      "status": "blocked-optional-upstream-publish-schema",
+      "status": "published-optional-non-blocking",
       "optional": true,
       "releaseBlocking": false,
-      "version": "0.1.9",
+      "version": "0.1.11",
       "targetVersion": "0.1.11",
       "securityScanStatus": "clean",
-      "installSmoke": "latestVersion 0.1.9 verified with clawhub inspect @yeelight/yeelight-smart-home --json; moderation verdict clean",
-      "blocker": "The previous 0.1.10 publish returned the ClawHub skillId/versionId invalid value schema error even from the safe package. GitHub Release remains the canonical 0.1.11 channel while ClawHub stays optional.",
+      "installSmoke": "latestVersion 0.1.11 verified with clawhub inspect @yeelight/yeelight-smart-home --json; moderation verdict clean",
+      "releasePolicy": "GitHub Release remains canonical and ClawHub stays optional/non-blocking even when publication succeeds.",
       "owner": {
         "handle": "yeelight",
         "displayName": "Yeelight",
@@ -155,7 +155,8 @@
       "submissionPath": "submissions/dify/README.md",
       "packagePath": "submissions/dify/yeelight-smart-home-0.1.11.difypkg",
       "previousPullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
-      "status": "package-ready-update-pr-pending",
+      "currentPullRequest": "https://github.com/langgenius/dify-plugins/pull/2694",
+      "status": "update-pr-open-precheck-passed",
       "version": "0.1.11"
     },
     {

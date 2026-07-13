@@ -1,12 +1,13 @@
 # Dify Marketplace Submission Kit
 
-Status: `0.1.11` `.difypkg` package ready; Marketplace update PR pending submission. The previous `0.1.9` update was merged after its Dify pre-check passed.
+Status: `0.1.11` Marketplace update PR open; Dify `pre-check-plugin` passed and maintainer review is pending. The previous `0.1.9` update was merged after its Dify pre-check passed.
 
 Marketplace PR:
 
 ```text
 https://github.com/langgenius/dify-plugins/pull/2614
 https://github.com/langgenius/dify-plugins/pull/2643
+https://github.com/langgenius/dify-plugins/pull/2694
 ```
 
 PR state:
@@ -22,6 +23,13 @@ Previous update PR state:
 - Originally submitted from `axdlee:yeelight-smart-home-0.1.8`, then updated to package version `0.1.9` after the Skill release packaging fix for the `scripts/invoke` wrapper.
 - File list contains only `yeelight/yeelight-smart-home/yeelight-smart-home-0.1.9.difypkg`.
 - GitHub Actions `pre-check-plugin` completed successfully for the `0.1.9` update.
+
+Current update PR state:
+
+- Open as PR `#2694` from `axdlee:codex/yeelight-smart-home-0.1.11`.
+- File list contains only `yeelight/yeelight-smart-home/yeelight-smart-home-0.1.11.difypkg`.
+- GitHub Actions `pre-check-plugin` and risk-label checks completed successfully.
+- Awaiting Dify maintainer review.
 
 Current update target:
 
@@ -54,7 +62,7 @@ Recommended runtime deployment path:
    dify plugin checksum submissions/dify/yeelight-smart-home-0.1.11.difypkg
    ```
 
-4. Submit the `0.1.11` Marketplace update PR and wait for Dify maintainer review.
+4. Track PR `#2694` and wait for Dify maintainer review.
 
 Required credentials/material:
 

@@ -18,10 +18,10 @@ This repository is the canonical GitHub distribution center for Yeelight Smart H
 
 These directories can consume the repository or skill folder directly:
 
-- ClawHub: optional/stale channel at `https://clawhub.ai/yeelight/skills/yeelight-smart-home`; current ClawHub latest is `0.1.9`. Use GitHub Release for `0.1.10`.
+- ClawHub: published optional channel at `https://clawhub.ai/yeelight/skills/yeelight-smart-home`; current ClawHub latest is `0.1.11`. GitHub Release remains the canonical release source.
 - skills.sh: indexed from GitHub at `https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home`; install with `npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home`.
 
-ClawHub currently shows the Yeelight publisher namespace but the publisher itself is not platform-trusted yet. The `0.1.10` publish is also blocked by an upstream ClawHub API response schema error (`skillId/versionId invalid value`) even after using the ClawHub-safe package that excludes extensionless `scripts/invoke`. Submit a ClawHub namespace claim or sign in with an official Yeelight-owned ClawHub/GitHub account when a platform-level official/trusted badge is required, but keep ClawHub non-release-blocking until the upstream publish issue is resolved.
+ClawHub currently shows the Yeelight publisher namespace but the publisher itself is not platform-trusted yet. The `0.1.11` ClawHub-safe package published successfully after the earlier `0.1.10` schema failure. Submit a ClawHub namespace claim or sign in with an official Yeelight-owned ClawHub/GitHub account when a platform-level official/trusted badge is required. Keep ClawHub non-release-blocking so an optional directory cannot hold up GitHub Release or Dify.
 
 ## LobeHub Skills
 

@@ -23,7 +23,7 @@ For platforms that do not consume Agent Skill ZIP packages directly, use the bri
 | LobeHub Skills | GitHub repository | First-listing request form is ready; real browser reached the `请求收录 Skill` modal, but Cloudflare human verification must be completed before submit |
 | Tencent SkillHub | Skill folder payload | Original `yeelight-smart-home` slug is owned by another user; alternate slug `yeelight-smart-home-official` v0.1.2 is approved, both security scans passed, and real installed-copy runtime smoke passed |
 | Molili / CocoLoop Skill | GitHub repository / Skill folder | Official Yeelight email submitted to known operator contacts; awaiting publisher route |
-| Dify Marketplace | `.difypkg` + PR body | PR [langgenius/dify-plugins#2614](https://github.com/langgenius/dify-plugins/pull/2614) is open; `pre-check-plugin` passed; awaiting review |
+| Dify Marketplace | `.difypkg` + PR body | Update PR [langgenius/dify-plugins#2694](https://github.com/langgenius/dify-plugins/pull/2694) is open; `pre-check-plugin` passed; awaiting review |
 | OpenAI GPT Store / Apps SDK | MCP endpoint + OpenAPI schema | Requires public HTTPS deployment and dashboard review |
 | Coze / 扣子 | OpenAPI schema | Requires console import, auth config, validation and publish |
 | 阿里云百炼 | OpenAPI/MCP bridge | Requires workspace setup, plugin/MCP test and app publish |

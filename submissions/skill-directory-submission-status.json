@@ -9,12 +9,12 @@
   "platforms": [
     {
       "id": "clawhub",
-      "status": "blocked-optional-upstream-publish-schema",
+      "status": "published-optional-non-blocking",
       "url": "https://clawhub.ai/yeelight/skills/yeelight-smart-home",
       "installCommand": "openclaw skills install @yeelight/yeelight-smart-home",
       "optional": true,
       "releaseBlocking": false,
-      "version": "0.1.9",
+      "version": "0.1.11",
       "targetVersion": "0.1.11",
       "evidence": [
         "publisher create yeelight returned ok with trusted=false",
@@ -32,11 +32,12 @@
         "GitHub workflow 28647580940 published GitHub Release and ClawHub v0.1.9 successfully",
         "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.9 and moderation.verdict=clean after the 0.1.9 GitHub skill release",
         "0.1.10 ClawHub publish from the ClawHub-safe package excluded scripts/invoke and still failed with API response skillId/versionId invalid value, including the minimal metadata retry",
-        "GitHub workflow 28861378981 published GitHub Release v0.1.10 successfully while ClawHub remained at latestVersion.version=0.1.9"
+        "GitHub workflow 28861378981 published GitHub Release v0.1.10 successfully while ClawHub remained at latestVersion.version=0.1.9",
+        "GitHub workflow 29218839331 published ClawHub v0.1.11 successfully from the ClawHub-safe package",
+        "clawhub inspect @yeelight/yeelight-smart-home returned latestVersion.version=0.1.11 and moderation.verdict=clean"
       ],
       "remaining": [
         "ClawHub publisher trust/official review",
-        "ClawHub upstream API or CLI response schema must accept the 0.1.11 publish before this optional channel can be advanced",
         "ClawHub mirror and third-party directory pages can lag behind the ClawHub registry latestVersion"
       ]
     },
@@ -175,9 +176,10 @@
     },
     {
       "id": "dify-marketplace",
-      "status": "package-ready-update-pr-pending",
+      "status": "update-pr-open-precheck-passed",
       "url": "https://github.com/langgenius/dify-plugins",
       "previousPullRequest": "https://github.com/langgenius/dify-plugins/pull/2643",
+      "currentPullRequest": "https://github.com/langgenius/dify-plugins/pull/2694",
       "packagePath": "submissions/dify/yeelight-smart-home-0.1.11.difypkg",
       "version": "0.1.11",
       "evidence": [
@@ -193,12 +195,13 @@
         "GitHub Actions pre-check-plugin completed successfully for the PR #2643 0.1.9 update",
         "PR #2643 was merged on 2026-07-07",
         "0.1.11 package generated from manifest.yaml version 0.1.11 with Dify CLI 0.2.0",
-        "0.1.11 package checksum is c04f7fdd054acc390103fee2083ddbb50acbb2821d2b9f548a2ef0c24a3bb9cf"
+        "0.1.11 package checksum is c04f7fdd054acc390103fee2083ddbb50acbb2821d2b9f548a2ef0c24a3bb9cf",
+        "PR #2694 opened from axdlee:codex/yeelight-smart-home-0.1.11 with only yeelight/yeelight-smart-home/yeelight-smart-home-0.1.11.difypkg",
+        "GitHub Actions pre-check-plugin and apply-risk-label completed successfully for PR #2694"
       ],
       "remaining": [
         "deploy a public HTTPS bridge",
-        "submit the 0.1.11 Dify Marketplace update PR",
-        "wait for Dify Marketplace pre-check and maintainer review"
+        "wait for Dify Marketplace maintainer review"
       ]
     }
   ]
