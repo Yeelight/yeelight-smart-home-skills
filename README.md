@@ -2,176 +2,70 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Official public release repository for Yeelight Smart Home agent skills. The default documentation is English; the Chinese version is maintained side by side for Chinese users and reviewers.
+Official Yeelight agent Skills for controlling a smart home and generating tailored smart-home applications. This repository contains the installable Skill source. Versioned archives belong in [GitHub Releases](https://github.com/Yeelight/yeelight-smart-home-skills/releases), not in the Git tree.
 
-## Published Skills
+## Skills
 
-| Skill | Version | Runtime | Packages |
+| Skill | What it provides | Use it when | Runtime |
 | --- | --- | --- | --- |
-| `yeelight-smart-home` | `0.1.11` | `yeelight-home >= 0.1.20` | Agent Skill ZIP, Codex Plugin ZIP, Claude Skill ZIP, Copilot Skill ZIP |
+| [`yeelight-smart-home`](skills/yeelight-smart-home/) | Natural-language control, query, diagnostics, organization, scenes, automations, lighting design, product knowledge, memory, and recommendations | You want an AI agent to operate or help design a Yeelight home | `yeelight-home >= 0.1.20` |
+| [`yeelight-pro-app-builder`](skills/yeelight-pro-app-builder/) | Generates a modular, local Yeelight application from one request and proven Runtime capabilities | You want a focused mobile, tablet, wall-panel, or desktop control application | `yeelight-home >= 0.1.19` |
 
-## What This Skill Does
-
-`yeelight-smart-home` lets compatible agent platforms control, organize, diagnose, design, and answer product questions for a Yeelight smart home through the local `yeelight-home` Runtime.
-
-It is intentionally packaged as a Skill, not as a bundled runtime. The Skill contains the instructions, schemas, catalogs, references, package manifests, and platform adapters required for agent distribution. The actual device access, account authentication, policy checks, and write confirmation gates stay inside the separately installed runtime.
-
-## Release
-
-- Repository: https://github.com/Yeelight/yeelight-smart-home-skills
-- Latest release: https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.11
-- Release evidence: `releases/yeelight-smart-home/v0.1.11/`
-- Checksums: `releases/yeelight-smart-home/v0.1.11/checksums.txt`
-- Validation summary: `releases/yeelight-smart-home/v0.1.11/validation-summary.json`
+Both Skills use the separately installed [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime. They do not embed account credentials or bypass Runtime policy and confirmation checks.
 
 ## Install
 
-### One-Sentence AI Install
+Install the Runtime first:
 
-If you use a local AI assistant that can run terminal commands, paste this single request:
-
-```text
-Install the official yeelight-home CLI for my operating system from Yeelight's GitHub Release or supported package manager, then install the latest Yeelight Smart Home Skill from the official Yeelight Skill GitHub Release or this GitHub repository. Verify the CLI with `yeelight-home doctor --json`, and guide me through `yeelight-home auth login --qr`; do not ask me to paste tokens, passwords, or cookies into chat.
+```sh
+brew install Yeelight/tap/yeelight-home
+yeelight-home doctor --json
+yeelight-home auth login --qr
 ```
 
-### ClawHub / OpenClaw
+Then install one or both Skills with skills.sh:
 
-The Skill remains available under the official Yeelight publisher namespace, but this channel is currently optional and stale at `0.1.9`. Use GitHub Release for the latest `0.1.11` package.
+```sh
+npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
+npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
+```
+
+OpenClaw users can install the direct-control Skill from the optional ClawHub channel:
 
 ```sh
 openclaw skills install @yeelight/yeelight-smart-home
 ```
 
-- ClawHub page: https://clawhub.ai/yeelight/skills/yeelight-smart-home
-- Status: optional / blocked for `0.1.11`. The ClawHub-safe package excludes extensionless `scripts/invoke`, but ClawHub still returns `skillId/versionId invalid value`; GitHub Release remains the canonical latest channel.
+See [Installation](docs/installation.md) for other operating systems, manual installation, upgrades, and verification.
 
-### skills.sh
+## Use
 
-The repository is indexed by skills.sh:
-
-```sh
-npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
-```
-
-- skills.sh page: https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home
-- Status: indexed and installable, with visible security audit pass badges.
-
-### Codex / Agent Plugin
-
-Install from this repository's marketplace metadata, or download:
+After installation, ask your agent naturally:
 
 ```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-codex-plugin-v0.1.11.zip
+Use yeelight-smart-home to list the lights in my living room and show their current state.
 ```
-
-### Claude Skill ZIP
-
-Download and upload:
 
 ```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-claude-skill-v0.1.11.zip
+Use yeelight-smart-home to design a relaxing evening lighting scene. Preview the plan before making persistent changes.
 ```
-
-### GitHub Copilot Agent Skill
-
-Use:
 
 ```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-copilot-skill-v0.1.11.zip
+Use yeelight-pro-app-builder to generate a compact mobile app for living-room lights and curtains, with a bright green theme.
 ```
 
-### Open Agent Skills
+See [Usage](docs/usage.md) for common workflows, safety behavior, troubleshooting, and Builder output validation.
 
-Use:
+## Yeelight AI Capability Matrix
 
-```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-agent-skill-v0.1.11.zip
-```
+| Project | Role | Core capability | GitHub |
+| --- | --- | --- | --- |
+| Yeelight CLI | General AI command line | Authentication, API access, MCP client, and automation-friendly commands | [Yeelight/yeelight-cli](https://github.com/Yeelight/yeelight-cli) |
+| Yeelight Metadata MCP | Metadata discovery MCP server | Product, capability, task, and action metadata | [Yeelight/yeelight-metadata-mcp](https://github.com/Yeelight/yeelight-metadata-mcp) |
+| Yeelight IoT MCP | Device-control MCP server | MCP-native access to Yeelight IoT services | [Yeelight/yeelight-iot-mcp](https://github.com/Yeelight/yeelight-iot-mcp) |
+| Yeelight Home | Local smart-home Runtime CLI | Authentication, query, control, diagnostics, policy, and structured invocation | [Yeelight/yeelight-home](https://github.com/Yeelight/yeelight-home) |
+| Yeelight Smart Home Skills | Agent Skills | Direct smart-home operation and modular app generation | [Yeelight/yeelight-smart-home-skills](https://github.com/Yeelight/yeelight-smart-home-skills) |
 
-### LobeHub Skills
+## License
 
-The first listing uses the web request form:
-
-```text
-https://lobehub.com/zh/skills
-```
-
-Click `请求收录` and submit:
-
-```text
-https://github.com/Yeelight/yeelight-smart-home-skills
-```
-
-After LobeHub collects the repository, use `@lobehub/market-cli` to claim ownership and publish later versions.
-
-### Review Or Console-Based Platforms
-
-Platforms such as Dify Marketplace, OpenAI GPT Store / Apps SDK, Coze, Bailian, Yuanqi, Qianfan, Volcano Ark, NanoSkill, and Molili/CocoLoop have platform-specific review, console, PR, or email flows. The reusable submission kits are tracked under `submissions/`.
-
-## Runtime Dependency
-
-This Skill depends on the separately installed `yeelight-home` runtime and invokes it through:
-
-```sh
-yeelight-home invoke --stdin
-```
-
-The runtime is not bundled in this repository. Do not publish runtime binaries, source code, local workspace paths, raw internal docs, credentials, or API tokens as part of a Skill package.
-
-## Bridge Adapter
-
-Platforms that cannot install Skill ZIPs directly should use:
-
-```text
-adapters/yeelight-skill-bridge/
-```
-
-The bridge exposes:
-
-- `GET /health`
-- `GET /openapi.json`
-- `POST /invoke`
-- `POST /mcp`
-
-The bridge calls only `yeelight-home invoke --stdin`; the runtime remains responsible for authentication, policy enforcement, sensitive action confirmation, and device access.
-
-## Platform Status
-
-`platforms.json` is the source of truth for current marketplace status. `submissions/skill-directory-submission-status.json` keeps evidence and remaining work for each third-party marketplace.
-
-Current status classes include:
-
-- Published and installable for latest release: GitHub Release, skills.sh.
-- Published but optional: ClawHub has `0.1.11` and remains non-release-blocking.
-- Submitted or awaiting marketplace review: LobeHub, NanoSkill, Molili/CocoLoop, Dify Marketplace.
-- Adapter kit ready for console review: OpenAI GPT Store / Apps SDK, Coze, Bailian, Yuanqi, Qianfan, Volcano Ark.
-
-Do not treat review-pending platforms as published until the installed-copy or deployed-endpoint smoke test passes.
-
-## Verify
-
-Verify the release checksums:
-
-```sh
-cd releases/yeelight-smart-home/v0.1.11
-shasum -a 256 -c checksums.txt
-```
-
-Run the full publication asset check:
-
-```sh
-node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.11
-```
-
-The publication check validates JSON metadata, bilingual README links, package checksums, platform submission kits, Dify package structure, Node script syntax, and bridge health/invoke/MCP smoke tests.
-
-## Reusable Release Flow
-
-For later Yeelight skills or new versions:
-
-1. Build and verify from the source repository's generic Skill release pipeline.
-2. Refresh this public distribution repository with `scripts/publish-skill-release.mjs`.
-3. Run `node scripts/verify-publication-assets.mjs --skill <skill-id> --version <x.y.z>`.
-4. Publish native Skill directories through platform CLI/form flows.
-5. Publish API/MCP-only platforms through the bridge adapter.
-6. Record the final installed-copy or deployed-endpoint smoke evidence in `platforms.json` and `submissions/skill-directory-submission-status.json`.
+Repository-maintained code and both Skills are licensed under the [Apache License 2.0](LICENSE). Third-party components retain their own licenses and notices.

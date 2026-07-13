@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "targets": [
+    {
+      "id": "mobile",
+      "formFactor": "mobile",
+      "navigation": "bottom-tabs",
+      "viewport": { "width": 375, "height": 812 },
+      "inputMode": "touch",
+      "defaultDensity": "touch",
+      "productProfile": "daily-home"
+    },
+    {
+      "id": "tablet",
+      "formFactor": "tablet",
+      "navigation": "adaptive-rail",
+      "viewport": { "width": 768, "height": 1024 },
+      "inputMode": "touch",
+      "defaultDensity": "comfortable",
+      "productProfile": "daily-home"
+    },
+    {
+      "id": "desktop",
+      "formFactor": "desktop",
+      "navigation": "sidebar",
+      "viewport": { "width": 1440, "height": 1000 },
+      "inputMode": "pointer",
+      "defaultDensity": "comfortable",
+      "productProfile": "whole-home"
+    },
+    {
+      "id": "wall",
+      "formFactor": "wall",
+      "navigation": "touch-rail",
+      "viewport": { "width": 1280, "height": 800 },
+      "inputMode": "touch",
+      "defaultDensity": "touch",
+      "productProfile": "wall-control"
+    },
+    {
+      "id": "installer",
+      "formFactor": "desktop",
+      "navigation": "sidebar",
+      "viewport": { "width": 1440, "height": 900 },
+      "inputMode": "pointer",
+      "defaultDensity": "compact",
+      "productProfile": "installer"
+    }
+  ]
+}

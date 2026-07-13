@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "modules": [
+    {
+      "id": "home.space-summary",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": [],
+      "requiredIntents": ["entity.list"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["overview"],
+      "tests": ["contract", "browser", "live-read", "empty-room"]
+    },
+    {
+      "id": "room.device-management",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": [],
+      "requiredIntents": ["entity.list", "device.rename", "device.move"],
+      "optionalIntents": ["state.query"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["devices"],
+      "tests": ["contract", "browser", "preview-only", "dialog", "failure-state"]
+    },
+    {
+      "id": "home.lighting-summary",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["light"],
+      "requiredIntents": [],
+      "optionalIntents": ["state.query"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["overview"],
+      "tests": ["contract", "browser", "live-read"]
+    },
+    {
+      "id": "room.lighting-control",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["light"],
+      "requiredIntents": ["light.power.set"],
+      "optionalIntents": ["light.brightness.set", "light.color_temperature.set", "light.color.set"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["lights"],
+      "tests": ["contract", "browser", "preview-only", "offline-state"]
+    },
+    {
+      "id": "device.curtain-control",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["curtain"],
+      "requiredIntents": ["state.query", "device.property.set"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["curtains"],
+      "tests": ["contract", "browser", "preview-only", "write-restore", "offline-state", "failure-state"]
+    },
+    {
+      "id": "device.switch-control",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["switch-relay"],
+      "requiredIntents": ["state.query", "device.property.set"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["switches"],
+      "tests": ["contract", "browser", "preview-only", "keyboard", "write-restore", "read-after-write", "readonly-state", "offline-state", "failure-state"]
+    },
+    {
+      "id": "device.climate-control",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["climate"],
+      "requiredIntents": ["state.query", "device.property.set"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["climate"],
+      "tests": ["contract", "browser", "preview-only", "temperature-boundary", "mode-enum", "fan-enum", "write-restore", "read-after-write", "offline-state", "failure-state"]
+    },
+    {
+      "id": "sensor.environment",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["sensor"],
+      "requiredIntents": ["state.query"],
+      "optionalIntents": ["sensor.event.list"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["environment"],
+      "tests": ["contract", "browser", "live-read", "read-only", "event-definition", "missing-reading", "offline-state", "state-failure", "event-failure", "retry-focus", "history-boundary"]
+    },
+    {
+      "id": "scene.launcher",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": [],
+      "requiredIntents": ["scene.list", "scene.execute"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["scenes"],
+      "tests": ["contract", "browser", "preview-only", "execute", "execute-failure", "list-failure", "retry", "bridge-allowlist", "strict-api-body"]
+    },
+    {
+      "id": "automation.manager",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": [],
+      "requiredIntents": ["automation.list", "automation.enable", "automation.disable"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["automations"],
+      "tests": ["contract", "browser", "preview-only", "keyboard", "enable-disable-restore", "read-after-write", "write-failure", "list-failure", "retry", "bridge-allowlist", "strict-api-body"]
+    },
+    {
+      "id": "group.manager",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["group"],
+      "requiredIntents": ["group.list", "group.detail.get", "group.members.update"],
+      "optionalIntents": [],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["groups"],
+      "tests": ["contract", "browser", "preview-only", "dialog", "keyboard", "member-add-restore", "read-after-write", "write-failure", "detail-failure", "list-failure", "retry", "bridge-allowlist", "strict-delta-body"]
+    },
+    {
+      "id": "gateway.overview",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["gateway"],
+      "requiredIntents": ["gateway.list", "gateway.detail.get", "gateway.stats.list", "gateway.thread.get"],
+      "optionalIntents": ["gateway.scene_relation.list", "diagnose.gateway", "gateway.configure", "gateway.delete"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["gateways"],
+      "tests": ["contract", "browser", "live-read", "offline", "list-failure", "detail-failure", "stats-failure", "thread-failure", "retry", "bridge-allowlist", "no-fabricated-metrics", "read-only"]
+    },
+    {
+      "id": "panel.manager",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["panel-screen", "knob"],
+      "requiredIntents": ["panel.list", "panel.get", "panel.button.type.get", "knob.get"],
+      "optionalIntents": ["panel.button.configure", "panel.button_event.update", "panel.button_event.batch_update", "panel.button_event.reset", "panel.click", "knob.configure", "knob.reset"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["panels"],
+      "tests": ["contract", "browser", "live-read", "preview-only", "dialog", "keyboard", "alias-write-restore", "read-after-write", "write-failure", "list-failure", "detail-failure", "knob-failure", "terminal-knob-readonly", "bridge-allowlist", "strict-api-body"]
+    },
+    {
+      "id": "installer.maintenance",
+      "version": "1.0.0",
+      "status": "implemented",
+      "deviceFamilies": ["gateway", "panel-screen", "knob"],
+      "requiredIntents": ["gateway.list", "gateway.detail.get", "gateway.stats.list", "gateway.thread.get", "gateway.scene_relation.list", "diagnose.gateway", "panel.list", "panel.get", "panel.button.type.get", "knob.get"],
+      "optionalIntents": ["gateway.configure", "gateway.delete", "panel.button.configure", "panel.button_event.update", "panel.button_event.batch_update", "panel.button_event.reset", "panel.click", "knob.configure", "knob.reset"],
+      "formFactors": ["desktop", "tablet", "mobile", "wall"],
+      "routes": ["maintenance", "issues", "diagnostics"],
+      "tests": ["contract", "browser", "fresh-generation", "production-build", "offline", "partial-failure", "version-mismatch", "matter-relationship", "dali-relationship", "bridge-allowlist", "sensitive-data-scan"]
+    }
+  ]
+}

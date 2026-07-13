@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/pro-app-builder/capability-profile.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogVersion", "source", "runtimeVersion", "capabilities"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "enum": [1] },
+    "catalogVersion": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "minLength": 1 },
+    "runtimeVersion": { "type": "string", "minLength": 1 },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capabilityId", "intent", "status", "evidence"],
+        "properties": {
+          "capabilityId": { "type": "string", "minLength": 1 },
+          "intent": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["read-proven", "preview-proven", "write-proven", "read-only", "unsupported", "version-mismatch"] },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "probeId", "exitCode"],
+              "properties": {
+                "type": { "type": "string", "minLength": 1 },
+                "schemaDigest": { "type": "string", "minLength": 1 },
+                "probeId": { "type": "string", "minLength": 1 },
+                "exitCode": { "type": "integer" },
+                "command": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                "previewOnly": { "type": "boolean" },
+                "previewStateUnchanged": { "type": "boolean" },
+                "writeRestored": { "type": "boolean" },
+                "before": {},
+                "after": {},
+                "restored": {}
+              }
+            }
+          },
+          "error": { "type": "string" }
+        }
+      }
+    }
+  }
+}

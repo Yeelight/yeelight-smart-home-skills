@@ -1,0 +1,50 @@
+name: Validate Skills
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate public source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            README.md README.zh-CN.md LICENSE \
+            docs/installation.md docs/installation.zh-CN.md \
+            docs/usage.md docs/usage.zh-CN.md \
+            skills/yeelight-smart-home/SKILL.md \
+            skills/yeelight-pro-app-builder/SKILL.md; do
+            test -f "$file"
+          done
+
+          for entry in adapters releases scripts skills-clawhub submissions templates platforms.json; do
+            test ! -e "$entry"
+          done
+
+          python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-smart-home/LICENSE").read_bytes()'
+          python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-pro-app-builder/LICENSE").read_bytes()'
+
+          if rg -n 'Proprietar[y]|gitlab[.]yeelight[.]com|/Users/[^/]+/' README.md README.zh-CN.md docs skills; then
+            echo "Forbidden public content found" >&2
+            exit 1
+          fi
+
+          while IFS= read -r -d '' file; do
+            python3 -m json.tool "$file" >/dev/null
+          done < <(find skills -type f -name '*.json' -print0)
+
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+          done < <(find skills -type f -name '*.mjs' -print0)

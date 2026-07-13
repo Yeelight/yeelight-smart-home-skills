@@ -1,0 +1,78 @@
+{
+  "deviceOverlays": [
+    {
+      "deviceId": "992900",
+      "model": "YL-GW-PRO-01",
+      "firmwareVersion": "2.8.4",
+      "supportedBridgeType": ["thread", "ble-mesh", "matter"],
+      "configs": [
+        { "propId": "thread", "value": "enabled" },
+        { "propId": "bleMesh", "value": "enabled" },
+        { "propId": "matter", "value": "enabled" }
+      ],
+      "gatewayStats": { "deviceCount": 31, "roomCount": 11 },
+      "threadInfo": { "role": "border-router", "networkName": "Yeelight Home", "channel": 20, "childCount": 5 },
+      "editable": true,
+      "capabilityStatus": "write-proven"
+    },
+    {
+      "deviceId": "992901",
+      "model": "YL-GW-EDGE-01",
+      "firmwareVersion": "1.4.2",
+      "supportedBridgeType": ["thread", "matter"],
+      "configs": [
+        { "propId": "thread", "value": "degraded" },
+        { "propId": "matter", "value": "enabled" }
+      ],
+      "gatewayStats": { "deviceCount": 5, "roomCount": 3 },
+      "threadInfo": { "role": "border-router", "networkName": "Yeelight Outdoor", "channel": 15, "childCount": 2 },
+      "readOnly": true,
+      "capabilityStatus": "read-only"
+    },
+    {
+      "deviceId": "992902",
+      "model": "YL-DALI-GW-01",
+      "firmwareVersion": "3.1.0",
+      "supportedBridgeType": ["dali"],
+      "configs": [{ "propId": "dali", "value": "enabled" }],
+      "gatewayStats": { "deviceCount": 2, "roomCount": 2 },
+      "threadInfo": {},
+      "editable": true,
+      "capabilityStatus": "write-proven"
+    },
+    { "deviceId": "992501", "editable": true, "capabilityStatus": "write-proven" },
+    { "deviceId": "992502", "readOnly": true, "capabilityStatus": "read-only" },
+    { "deviceId": "992601", "editable": true, "capabilityStatus": "write-proven" },
+    { "deviceId": "992602", "readOnly": true, "capabilityStatus": "read-only" }
+  ],
+  "gatewaySceneRelations": {
+    "992900": ["994001", "994002", "994003", "994005"],
+    "992901": ["994007"],
+    "992902": ["994001", "994004"]
+  },
+  "gatewayDiagnostics": {
+    "992900": {
+      "health": "healthy",
+      "summary": "主网关运行正常",
+      "checks": [
+        { "id": "connectivity", "status": "healthy" },
+        { "id": "thread", "status": "healthy" },
+        { "id": "firmware", "status": "healthy", "currentVersion": "2.8.4" }
+      ]
+    },
+    "992901": {
+      "health": "degraded",
+      "summary": "户外网关离线，Thread 网络不可达",
+      "checks": [
+        { "id": "connectivity", "status": "offline" },
+        { "id": "thread", "status": "degraded" },
+        { "id": "firmware", "status": "version-mismatch", "currentVersion": "1.4.2", "recommendedVersion": "1.5.0" }
+      ]
+    }
+  },
+  "protocolRelationships": [
+    { "gatewayId": "992900", "protocol": "matter", "deviceIds": ["992801", "992802"], "roomIds": ["991010"] },
+    { "gatewayId": "992902", "protocol": "dali", "deviceIds": ["992010", "992011"], "roomIds": ["991001", "991002"] }
+  ],
+  "panelClickCounts": { "992501": 0, "992502": 0 }
+}

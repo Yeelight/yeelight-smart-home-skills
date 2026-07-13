@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "densities": [
+    { "id": "comfortable", "controlMinHeight": 44, "componentGap": 12, "sectionGap": 24, "shellGutter": 20 },
+    { "id": "compact", "controlMinHeight": 36, "componentGap": 8, "sectionGap": 20, "shellGutter": 16 },
+    { "id": "touch", "controlMinHeight": 48, "componentGap": 16, "sectionGap": 28, "shellGutter": 18 }
+  ]
+}

@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "id": "comprehensive",
+  "title": "Yeelight PRO 全能力样板家庭",
+  "home": {
+    "id": "990001",
+    "name": "Yeelight PRO 全能力样板家庭"
+  },
+  "areas": [
+    { "id": "990101", "name": "公共区域" },
+    { "id": "990102", "name": "休息区域" },
+    { "id": "990103", "name": "服务区域" }
+  ],
+  "rooms": [
+    { "id": "991001", "name": "客厅", "areaId": "990101" },
+    { "id": "991002", "name": "餐厅", "areaId": "990101" },
+    { "id": "991003", "name": "主卧", "areaId": "990102" },
+    { "id": "991004", "name": "书房", "areaId": "990102" },
+    { "id": "991005", "name": "厨房", "areaId": "990103" },
+    { "id": "991006", "name": "卫生间", "areaId": "990103" },
+    { "id": "991007", "name": "玄关", "areaId": "990101" },
+    { "id": "991008", "name": "阳台", "areaId": "990103" }
+  ],
+  "devices": [
+    {
+      "id": "992001",
+      "family": "light",
+      "name": "light-客厅全光谱吸顶灯-992001-01",
+      "alias": "客厅主灯",
+      "roomId": "991001",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009001",
+      "category": "light",
+      "typeName": "全光谱吸顶灯",
+      "online": true,
+      "properties": { "p": true, "l": 72, "ct": 3800, "c": 16764006, "o": true },
+      "schemaProperties": ["p", "l", "ct", "c", "o"]
+    },
+    {
+      "id": "992002",
+      "family": "light",
+      "name": "light-餐厅吊灯-992002-01",
+      "alias": "餐厅吊灯",
+      "roomId": "991002",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009002",
+      "category": "light",
+      "typeName": "色温吊灯",
+      "online": true,
+      "properties": { "p": false, "l": 45, "ct": 3000, "o": true },
+      "schemaProperties": ["p", "l", "ct", "o"]
+    },
+    {
+      "id": "992003",
+      "family": "light",
+      "name": "light-书房灯带-992003-01",
+      "alias": "书房灯带",
+      "roomId": "991004",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009003",
+      "category": "light",
+      "typeName": "彩光灯带",
+      "online": false,
+      "properties": { "p": false, "l": 30, "ct": 4200, "c": 8454143, "o": false },
+      "schemaProperties": ["p", "l", "ct", "c", "o"]
+    },
+    {
+      "id": "992101",
+      "family": "curtain",
+      "name": "curtain-客厅电动窗帘-992101-01",
+      "alias": "客厅窗帘",
+      "roomId": "991001",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009101",
+      "category": "curtain",
+      "typeName": "电动开合帘",
+      "online": true,
+      "properties": { "position": 65, "targetPosition": 65, "runState": "stopped", "o": true },
+      "schemaProperties": ["position", "targetPosition", "runState", "o"]
+    },
+    {
+      "id": "992201",
+      "family": "switch-relay",
+      "name": "switch-厨房双路继电器-992201-01",
+      "alias": "厨房双路开关",
+      "roomId": "991005",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009201",
+      "category": "switch",
+      "typeName": "双路继电器",
+      "online": true,
+      "properties": { "0-sp": true, "1-sp": true, "2-sp": false, "ch_num": 2, "o": true },
+      "schemaProperties": ["0-sp", "1-sp", "2-sp", "ch_num", "o"]
+    },
+    {
+      "id": "992301",
+      "family": "climate",
+      "name": "climate-主卧空调温控器-992301-01",
+      "alias": "主卧空调温控器",
+      "roomId": "991003",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009301",
+      "category": "climate",
+      "typeName": "空调温控器",
+      "online": true,
+      "properties": { "acp": true, "acm": 8, "actt": 24, "acf": 2, "acct": 23, "aco": true },
+      "schemaProperties": ["acp", "acm", "actt", "acf", "acct", "aco"]
+    },
+    {
+      "id": "992401",
+      "family": "sensor",
+      "name": "sensor-客厅温湿度传感器-992401-01",
+      "alias": "客厅温湿度",
+      "roomId": "991001",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009401",
+      "category": "sensor",
+      "typeName": "温湿度传感器",
+      "online": true,
+      "properties": { "t": 24, "h": 48, "bl": 86, "o": true },
+      "schemaProperties": ["t", "h", "bl", "o"]
+    },
+    {
+      "id": "992402",
+      "family": "sensor",
+      "name": "sensor-玄关人体照度传感器-992402-01",
+      "alias": "玄关人体传感器",
+      "roomId": "991007",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009402",
+      "category": "sensor",
+      "typeName": "人体照度传感器",
+      "online": true,
+      "properties": { "oc": false, "luminance": 126, "bl": 74, "o": true },
+      "schemaProperties": ["oc", "luminance", "bl", "o"]
+    },
+    {
+      "id": "992900",
+      "family": "gateway",
+      "name": "gateway-全屋智能中枢-992900-01",
+      "alias": "全屋智能中枢",
+      "roomId": "991007",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009900",
+      "category": "gateway",
+      "typeName": "智能网关",
+      "online": true,
+      "model": "YL-GW-PRO-01",
+      "firmwareVersion": "2.8.4",
+      "supportedBridgeType": ["thread", "ble-mesh"],
+      "configs": [{ "propId": "thread", "value": "enabled" }, { "propId": "bleMesh", "value": "enabled" }],
+      "gatewayStats": { "deviceCount": 11, "roomCount": 7 },
+      "threadInfo": { "role": "border-router", "networkName": "Yeelight Home", "channel": 20, "childCount": 3 },
+      "properties": { "online": true, "subDeviceCount": 11, "signalQuality": 92 },
+      "schemaProperties": ["online", "subDeviceCount", "signalQuality"]
+    },
+    {
+      "id": "992501",
+      "family": "panel-screen",
+      "name": "panel-客厅智能屏面板-992501-01",
+      "alias": "客厅智能面板",
+      "roomId": "991001",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009501",
+      "category": "panel",
+      "typeName": "智能屏面板",
+      "online": true,
+      "panelDetail": {
+        "id": "992501",
+        "did": "992501",
+        "name": "客厅智能面板",
+        "alias": "客厅智能面板",
+        "roomId": "991001",
+        "gatewayDeviceId": "992900",
+        "typeName": "智能屏面板",
+        "online": true,
+        "valid": 1
+      },
+      "panelButtons": {
+        "click": [
+          {
+            "id": "992501-button-1",
+            "buttonId": "1",
+            "deviceId": "992501",
+            "name": "第一键",
+            "alias": "回家",
+            "keyValue": 1,
+            "index": 1,
+            "resId": "993001",
+            "resType": 4,
+            "visible": 1,
+            "icon": 0,
+            "sort": 1,
+            "type": 2,
+            "extend": "",
+            "valid": 1,
+            "buttonEvents": [{ "id": "992501-event-1", "name": "单击", "alias": "回家", "type": 1, "resId": "993001", "resType": 4, "valid": 1 }]
+          },
+          {
+            "id": "992501-button-2",
+            "buttonId": "2",
+            "deviceId": "992501",
+            "name": "第二键",
+            "alias": "观影",
+            "keyValue": 2,
+            "index": 2,
+            "resId": "993002",
+            "resType": 4,
+            "visible": 1,
+            "icon": 0,
+            "sort": 2,
+            "type": 2,
+            "extend": "",
+            "valid": 1,
+            "buttonEvents": [{ "id": "992501-event-2", "name": "单击", "alias": "观影", "type": 1, "resId": "993002", "resType": 4, "valid": 1 }]
+          }
+        ]
+      },
+      "properties": { "screenBrightness": 65, "page": "home", "temperature": 24.1, "o": true },
+      "schemaProperties": ["screenBrightness", "page", "temperature", "o"]
+    },
+    {
+      "id": "992601",
+      "family": "knob",
+      "name": "knob-书房智能旋钮-992601-01",
+      "alias": "书房旋钮",
+      "roomId": "991004",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009601",
+      "category": "knob",
+      "typeName": "智能旋钮",
+      "online": true,
+      "knobSingle": { "id": "992601", "did": "992601", "name": "书房旋钮", "configType": "multi", "valid": 1 },
+      "knobMulti": {
+        "id": "992601",
+        "did": "992601",
+        "name": "书房旋钮",
+        "details": [
+          { "id": "992601-detail-1", "index": 1, "configType": "device", "mode": "brightness", "alias": "主灯亮度", "resId": "992003", "typeId": 2, "property": "b", "sensitivity": 5 },
+          { "id": "992601-detail-2", "index": 2, "configType": "scene", "mode": "scene", "alias": "晚安情景", "resId": "994003", "typeId": 6, "sensitivity": 1 }
+        ]
+      },
+      "properties": { "rotationStep": 5, "pressAction": "toggle", "targetDeviceId": "992003", "o": true },
+      "schemaProperties": ["rotationStep", "pressAction", "targetDeviceId", "o"]
+    },
+    {
+      "id": "992701",
+      "family": "switch-relay",
+      "name": "switch-卫生间场景开关-992701-01",
+      "alias": "卫生间场景开关",
+      "roomId": "991006",
+      "gatewayDeviceId": "992900",
+      "capabilityPid": "17009701",
+      "category": "switch",
+      "typeName": "四键场景开关",
+      "online": false,
+      "properties": { "buttonCount": 4, "battery": 22, "o": false },
+      "schemaProperties": ["buttonCount", "battery", "o"]
+    }
+  ],
+  "groups": [
+    { "id": "993001", "name": "客厅灯光组", "roomId": "991001", "deviceIds": ["992001"] },
+    { "id": "993002", "name": "公共区域照明", "roomId": "991002", "deviceIds": ["992001", "992002"] }
+  ],
+  "scenes": [
+    { "id": "994001", "name": "回家", "roomId": "991007", "status": "enabled" },
+    { "id": "994002", "name": "观影", "roomId": "991001", "status": "enabled" },
+    { "id": "994003", "name": "晚安", "roomId": "991003", "status": "enabled" }
+  ],
+  "sceneExecutions": {},
+  "automations": [
+    { "id": "995001", "name": "日落开启客厅灯", "status": "enabled" },
+    { "id": "995002", "name": "无人关闭公共区域", "status": "enabled" },
+    { "id": "995003", "name": "湿度过高开启通风", "status": "disabled" }
+  ],
+  "sensorEvents": [
+    { "eventId": "996001", "sensorId": "992401", "deviceId": "992401", "name": "温度过高", "status": "enabled", "valid": true },
+    { "eventId": "996002", "sensorId": "992401", "deviceId": "992401", "name": "湿度过高", "status": "enabled", "valid": true },
+    { "eventId": "996003", "sensorId": "992402", "deviceId": "992402", "name": "检测到有人", "status": "enabled", "valid": true }
+  ]
+}

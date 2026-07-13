@@ -1,0 +1,20 @@
+:root {
+  --yp-button-height: var(--yp-size-control);
+  --yp-button-radius: var(--yp-radius-6);
+  --yp-card-radius: var(--yp-radius-8);
+  --yp-card-border: var(--yp-border-default);
+  --yp-card-background: var(--yp-surface-raised);
+  --yp-nav-width: 232px;
+  --yp-rail-width: 80px;
+  --yp-touch-rail-width: 112px;
+  --yp-dialog-width: 480px;
+  --yp-content-max: 1240px;
+}
+
+[data-density="compact"] {
+  --yp-button-height: var(--yp-size-control-compact);
+}
+
+[data-density="touch"] {
+  --yp-button-height: var(--yp-size-control-touch);
+}

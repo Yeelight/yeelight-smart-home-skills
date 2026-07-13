@@ -1,0 +1,23 @@
+export function climateControllerSource() {
+  return `import { useEffect, useState } from "react";
+import { AlertCircle, CheckCircle2, LoaderCircle, Minus, Plus, Power, Thermometer } from "lucide-react";
+import { controllerMode, deviceProperties, hasControl, terminalMessage, writeWithReadback, type ControllerDevice, type RefreshDevice } from "./shared";
+
+const modes = [[1, "制冷"], [4, "制热"], [8, "自动"]] as const; const fans = [[1, "低"], [2, "中"], [4, "高"]] as const;
+export function ClimateController({ device, refreshDevice }: { device: ControllerDevice; refreshDevice: RefreshDevice }) {
+  const source = deviceProperties(device); const [trusted, setTrusted] = useState(source); const [values, setValues] = useState(source); const [busy, setBusy] = useState("");
+  const [feedback, setFeedback] = useState<{ kind: "success" | "error"; message: string } | null>(null); const mode = controllerMode(device);
+  const propertiesKey = JSON.stringify(source);
+  useEffect(() => { const next = deviceProperties(device); setTrusted(next); setValues(next); setBusy(""); setFeedback(null); }, [device.id]);
+  useEffect(() => { if (busy) return; const next = deviceProperties(device); setTrusted(next); setValues(next); }, [propertiesKey]);
+  async function commit(property: string, value: unknown) { setBusy(property); setFeedback(null); setValues((current) => ({ ...current, [property]: value })); try { const refreshed = await writeWithReadback({ device, intent: "device.property.set", parameters: { property, value }, property, expected: value, refreshDevice }); const next = deviceProperties(refreshed); setTrusted(next); setValues(next); setFeedback({ kind: "success", message: "温控状态已更新并完成回读确认。" }); } catch (error) { setValues(trusted); setFeedback({ kind: "error", message: error instanceof Error ? error.message : "温控操作没有完成。" }); } finally { setBusy(""); } }
+  const writable = (property: string) => mode === "write" && hasControl(device, "device.property.set", property); const power = Boolean(values.airConditionerPower); const target = Number(values.airConditionerTargetTemperature ?? 24);
+  return <section className="device-controller climate-controller" aria-labelledby="climate-controller-title"><header className="controller-heading"><span className="controller-icon active"><Thermometer size={22} /></span><div><small>温控</small><h3 id="climate-controller-title">当前 {String(values.airConditionerCurrentTemperature ?? "-")}°C</h3></div>{Object.hasOwn(values, "airConditionerPower") && <button type="button" className="controller-power" aria-pressed={power} disabled={!writable("airConditionerPower") || Boolean(busy)} onClick={() => void commit("airConditionerPower", !power)}>{busy === "airConditionerPower" ? <LoaderCircle className="spin" size={18} /> : <Power size={18} />}<span>{power ? "关闭" : "开启"}</span></button>}</header>
+    {mode !== "write" && <p className="controller-terminal" role="status"><AlertCircle size={17} />{terminalMessage(mode)}</p>}
+    {Object.hasOwn(values, "airConditionerTargetTemperature") && <div className="temperature-stepper"><span>目标温度</span><div><button type="button" aria-label="降低目标温度" disabled={!writable("airConditionerTargetTemperature") || Boolean(busy) || target <= 16} onClick={() => void commit("airConditionerTargetTemperature", target - 1)}><Minus size={18} /></button><strong>{target}°C</strong><button type="button" aria-label="提高目标温度" disabled={!writable("airConditionerTargetTemperature") || Boolean(busy) || target >= 32} onClick={() => void commit("airConditionerTargetTemperature", target + 1)}><Plus size={18} /></button></div></div>}
+    {Object.hasOwn(values, "airConditionerMode") && <fieldset className="controller-segments" disabled={!writable("airConditionerMode") || Boolean(busy)}><legend>模式</legend><div>{modes.map(([value, label]) => <button key={value} type="button" aria-pressed={Number(values.airConditionerMode) === value} onClick={() => void commit("airConditionerMode", value)}>{label}</button>)}</div></fieldset>}
+    {Object.hasOwn(values, "airConditionerFanSpeed") && <fieldset className="controller-segments" disabled={!writable("airConditionerFanSpeed") || Boolean(busy)}><legend>风速</legend><div>{fans.map(([value, label]) => <button key={value} type="button" aria-pressed={Number(values.airConditionerFanSpeed) === value} onClick={() => void commit("airConditionerFanSpeed", value)}>{label}</button>)}</div></fieldset>}
+    <div className={feedback ? "controller-feedback " + feedback.kind : "controller-feedback"} aria-live="polite">{feedback ? <>{feedback.kind === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}<span>{feedback.message}</span></> : null}</div></section>;
+}
+`;
+}

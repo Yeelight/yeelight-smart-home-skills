@@ -1,0 +1,39 @@
+{
+  "groups": [
+    { "id":"993001","name":"客厅灯光组","description":"客厅同能力照明统一控制","icon":"lamp-ceiling","roomId":"991001","groupCapability":"light","groupCategory":"lighting","componentId":5,"deviceIds":["992001","992010"] },
+    { "id":"993002","name":"公共区域照明","description":"公共区域基础照明集合","icon":"lights","roomId":"991002","groupCapability":"light","groupCategory":"lighting","componentId":5,"deviceIds":["992001","992002","992009","992010","992011"] },
+    { "id":"993003","name":"卧室夜灯","description":"卧室低亮度夜灯集合","icon":"moon","roomId":"991003","groupCapability":"light","groupCategory":"lighting","componentId":5,"deviceIds":["992004","992005","992904"] },
+    { "id":"993004","name":"影音氛围","description":"影音室氛围照明集合","icon":"clapperboard","roomId":"991011","groupCapability":"light","groupCategory":"lighting","componentId":5,"deviceIds":["992006"] },
+    { "id":"993005","name":"全屋窗帘","description":"全屋遮阳设备统一控制","icon":"blinds","roomId":"991001","groupCapability":"curtain","groupCategory":"shading","componentId":12,"deviceIds":["992101","992102","992103","992104"] },
+    { "id":"993006","name":"环境传感器","description":"温湿度与空气质量传感器","icon":"thermometer-sun","roomId":"991001","groupCapability":"sensor","groupCategory":"environment","componentId":20,"deviceIds":["992401","992405","992903"] },
+    { "id":"993007","name":"安防传感器","description":"存在、门磁、水浸与烟雾传感器","icon":"shield-check","roomId":"991007","groupCapability":"sensor","groupCategory":"security","componentId":21,"deviceIds":["992402","992403","992404","992406","992802"] },
+    { "id":"993008","name":"基础设施","description":"网关与基础设施设备集合","icon":"network","roomId":"991012","groupCapability":"infrastructure","groupCategory":"infrastructure","componentId":30,"deviceIds":["992900","992901","992902"] }
+  ],
+  "deviceOverlays": [
+    {
+      "deviceId":"992501",
+      "panelDetail":{"id":"992501","did":"992501","name":"客厅智能面板","alias":"客厅智能面板","roomId":"991001","gatewayDeviceId":"992900","typeName":"智能屏面板","online":true,"valid":1},
+      "panelButtons":{"click":[
+        {"id":"992501-button-1","buttonId":"1","deviceId":"992501","name":"第一键","alias":"回家","keyValue":1,"index":1,"resId":"994001","resType":4,"visible":1,"icon":0,"sort":1,"type":2,"extend":"","valid":1,"buttonEvents":[{"id":"992501-event-1","name":"单击","alias":"回家","type":1,"resId":"994001","resType":4,"valid":1}]},
+        {"id":"992501-button-2","buttonId":"2","deviceId":"992501","name":"第二键","alias":"观影","keyValue":2,"index":2,"resId":"994002","resType":4,"visible":1,"icon":0,"sort":2,"type":2,"extend":"","valid":1,"buttonEvents":[{"id":"992501-event-2","name":"单击","alias":"观影","type":1,"resId":"994002","resType":4,"valid":1}]}
+      ]}
+    },
+    {
+      "deviceId":"992502",
+      "panelDetail":{"id":"992502","did":"992502","name":"主卧床头面板","alias":"主卧床头面板","roomId":"991003","gatewayDeviceId":"992900","typeName":"四键智能面板","online":true,"valid":1},
+      "panelButtons":{"click":[
+        {"id":"992502-button-1","buttonId":"1","deviceId":"992502","name":"第一键","alias":"晚安","keyValue":1,"index":1,"resId":"994003","resType":4,"visible":1,"icon":0,"sort":1,"type":2,"extend":"","valid":1,"buttonEvents":[{"id":"992502-event-1","name":"单击","alias":"晚安","type":1,"resId":"994003","resType":4,"valid":1}]}
+      ]}
+    },
+    {
+      "deviceId":"992601",
+      "knobSingle":{"id":"992601","did":"992601","name":"书房旋钮","configType":"multi","valid":1},
+      "knobMulti":{"id":"992601","did":"992601","name":"书房旋钮","details":[{"id":"992601-detail-1","index":1,"configType":"device","mode":"brightness","alias":"主灯亮度","resId":"992003","typeId":2,"property":"b","sensitivity":5},{"id":"992601-detail-2","index":2,"configType":"scene","mode":"scene","alias":"晚安情景","resId":"994003","typeId":6,"sensitivity":1}]}
+    },
+    {
+      "deviceId":"992602",
+      "knobSingle":{"id":"992602","did":"992602","name":"影音室旋钮","configType":"scene","valid":1},
+      "knobMulti":{"id":"992602","did":"992602","name":"影音室旋钮","details":[{"id":"992602-detail-1","index":1,"configType":"scene","mode":"scene","alias":"观影情景","resId":"994002","typeId":6,"sensitivity":1}]}
+    }
+  ]
+}

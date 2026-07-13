@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/pro-app-builder/capability-catalog.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogVersion", "runtimeContractVersion", "runtimeSource", "statuses", "capabilities"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "enum": [1] },
+    "catalogVersion": { "type": "string", "minLength": 1 },
+    "runtimeContractVersion": { "type": "string", "minLength": 1 },
+    "runtimeSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "contract"],
+      "properties": {
+        "command": { "type": "string", "enum": ["yeelight-home invoke --stdin"] },
+        "contract": { "type": "string", "enum": ["intent-schema-and-runtime-probe"] }
+      }
+    },
+    "statuses": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true,
+      "items": { "type": "string", "enum": ["read-proven", "preview-proven", "write-proven", "read-only", "unsupported", "version-mismatch"] }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "resource", "intent", "operation", "risk", "fixtureIds", "handlerId", "probeId", "uiConsumer", "selector", "parameters", "minimumCliVersion", "evidenceStrategy"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "resource": { "type": "string", "minLength": 1 },
+          "intent": { "type": "string", "minLength": 1 },
+          "operation": { "type": "string", "enum": ["read", "write"] },
+          "risk": { "type": "string", "enum": ["R0", "R1", "R2", "R3"] },
+          "fixtureIds": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+          "handlerId": { "type": "string", "minLength": 1 },
+          "probeId": { "type": "string", "minLength": 1 },
+          "uiConsumer": { "type": "string", "minLength": 1 },
+          "selector": { "type": "object" },
+          "parameters": { "type": "object" },
+          "minimumCliVersion": { "type": "string", "minLength": 1 },
+          "evidenceStrategy": { "type": "string", "enum": ["read", "preview", "mock-write-readback-restore"] },
+          "previewRequired": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

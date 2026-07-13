@@ -1,0 +1,1065 @@
+{
+  "namespace": "YeelightPro_2d6edd",
+  "components": [
+    {
+      "name": "Button",
+      "sourcePath": "components/actions/Button.jsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "variant",
+          "values": [
+            "primary",
+            "secondary",
+            "ghost"
+          ]
+        },
+        {
+          "name": "disabled",
+          "type": "boolean"
+        },
+        {
+          "name": "busy",
+          "type": "boolean"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void"
+        },
+        {
+          "name": "type",
+          "values": [
+            "button",
+            "submit"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "IconButton",
+      "sourcePath": "components/actions/IconButton.jsx",
+      "props": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "disabled",
+          "type": "boolean"
+        },
+        {
+          "name": "onClick",
+          "type": "() => void"
+        }
+      ]
+    },
+    {
+      "name": "InlineNotice",
+      "sourcePath": "components/feedback/InlineNotice.jsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "tone",
+          "values": [
+            "info",
+            "error"
+          ]
+        },
+        {
+          "name": "action",
+          "type": "React.ReactNode"
+        }
+      ]
+    },
+    {
+      "name": "StatusBadge",
+      "sourcePath": "components/feedback/StatusBadge.jsx",
+      "props": [
+        {
+          "name": "children",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "tone",
+          "values": [
+            "success",
+            "warning",
+            "error",
+            "offline",
+            "readonly",
+            "mismatch"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AppNavigation",
+      "sourcePath": "components/navigation/AppNavigation.jsx",
+      "props": [
+        {
+          "name": "items",
+          "type": "AppNavigationItem[]"
+        },
+        {
+          "name": "activeId",
+          "type": "string"
+        },
+        {
+          "name": "onNavigate",
+          "type": "(id: string) => void"
+        }
+      ]
+    },
+    {
+      "name": "ModalSurface",
+      "sourcePath": "components/overlay/ModalSurface.jsx",
+      "props": [
+        {
+          "name": "open",
+          "type": "boolean"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "footer",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "onClose",
+          "type": "() => void"
+        },
+        {
+          "name": "closeLabel",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "AppShell",
+      "sourcePath": "components/shell/AppShell.jsx",
+      "props": [
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "navigation",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "status",
+          "type": "React.ReactNode"
+        },
+        {
+          "name": "children",
+          "type": "React.ReactNode"
+        }
+      ]
+    }
+  ],
+  "startingPoints": [
+    {
+      "name": "AppShell",
+      "path": "components/shell/AppShell.jsx",
+      "previewPath": "components/shell/shell.card.html",
+      "kind": "component",
+      "section": "Application shells",
+      "subtitle": "Adaptive Yeelight PRO product shell",
+      "viewport": "1200x760"
+    },
+    {
+      "name": "starting-points",
+      "path": "starting-points/desktop.html",
+      "previewPath": "starting-points/desktop.html",
+      "kind": "screen",
+      "section": "Application shells",
+      "subtitle": "Desktop whole-home sidebar",
+      "viewport": "1200x760"
+    },
+    {
+      "name": "starting-points",
+      "path": "starting-points/mobile.html",
+      "previewPath": "starting-points/mobile.html",
+      "kind": "screen",
+      "section": "Application shells",
+      "subtitle": "Mobile bottom navigation",
+      "viewport": "375x812"
+    },
+    {
+      "name": "starting-points",
+      "path": "starting-points/tablet.html",
+      "previewPath": "starting-points/tablet.html",
+      "kind": "screen",
+      "section": "Application shells",
+      "subtitle": "Tablet adaptive rail",
+      "viewport": "768x1024"
+    },
+    {
+      "name": "starting-points",
+      "path": "starting-points/wall.html",
+      "previewPath": "starting-points/wall.html",
+      "kind": "screen",
+      "section": "Application shells",
+      "subtitle": "Wall touch rail",
+      "viewport": "1024x768"
+    }
+  ],
+  "cards": [
+    {
+      "path": "foundations/themes.html",
+      "group": "Brand",
+      "viewport": "700x240",
+      "subtitle": "Four product structures independent from feature modules",
+      "name": "Structural themes"
+    },
+    {
+      "path": "foundations/brand-colors.html",
+      "group": "Colors",
+      "viewport": "700x180",
+      "subtitle": "Controlled Yeelight teal for actions and selected state",
+      "name": "Brand colors"
+    },
+    {
+      "path": "foundations/neutral-colors.html",
+      "group": "Colors",
+      "viewport": "700x180",
+      "subtitle": "Quiet layers for dense whole-home information",
+      "name": "Neutral surfaces"
+    },
+    {
+      "path": "foundations/status-colors.html",
+      "group": "Colors",
+      "viewport": "700x160",
+      "subtitle": "Success, warning, error, offline and read-only meanings",
+      "name": "Semantic status"
+    },
+    {
+      "path": "components/actions/actions.card.html",
+      "group": "Components",
+      "viewport": "700x180",
+      "subtitle": "Primary, secondary, ghost, busy and icon-only commands",
+      "name": "Actions"
+    },
+    {
+      "path": "components/feedback/feedback.card.html",
+      "group": "Components",
+      "viewport": "700x250",
+      "subtitle": "Text-backed state badges and recoverable notices",
+      "name": "Status and feedback"
+    },
+    {
+      "path": "components/navigation/navigation.card.html",
+      "group": "Components",
+      "viewport": "700x360",
+      "subtitle": "Stable page labels and explicit active state",
+      "name": "Adaptive navigation"
+    },
+    {
+      "path": "components/overlay/overlay.card.html",
+      "group": "Components",
+      "viewport": "700x360",
+      "subtitle": "One modal contract with responsive presentation",
+      "name": "Dialog and sheet"
+    },
+    {
+      "path": "components/shell/shell.card.html",
+      "group": "Components",
+      "viewport": "1200x760",
+      "subtitle": "Quiet adaptive frame for whole-home pages",
+      "name": "Application shell"
+    },
+    {
+      "path": "foundations/spacing.html",
+      "group": "Spacing",
+      "viewport": "700x190",
+      "subtitle": "A 4 and 8 pixel rhythm with explicit hierarchy",
+      "name": "Spacing rhythm"
+    },
+    {
+      "path": "foundations/type-scale.html",
+      "group": "Type",
+      "viewport": "700x250",
+      "subtitle": "System-native typography for reliable local apps",
+      "name": "Chinese type scale"
+    }
+  ],
+  "globalCssPaths": [
+    "tokens/primitives.css",
+    "tokens/semantic.css",
+    "tokens/components.css",
+    "foundations.css",
+    "styles.css"
+  ],
+  "tokens": [
+    {
+      "name": "--yp-color-white",
+      "value": "#ffffff",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-black",
+      "value": "#0a1114",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-teal-050",
+      "value": "#edf8f7",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-teal-100",
+      "value": "#d7efed",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-teal-300",
+      "value": "#79c9c4",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-teal-500",
+      "value": "#168a87",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-teal-600",
+      "value": "#0e716f",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-teal-700",
+      "value": "#0b5b59",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-000",
+      "value": "#ffffff",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-025",
+      "value": "#fafcfc",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-050",
+      "value": "#f4f7f7",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-100",
+      "value": "#e8eeee",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-200",
+      "value": "#d4dede",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-400",
+      "value": "#819193",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-600",
+      "value": "#536467",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-800",
+      "value": "#263639",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-neutral-900",
+      "value": "#142326",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-green-600",
+      "value": "#25784b",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-amber-600",
+      "value": "#9a6418",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-red-600",
+      "value": "#b13a35",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-color-blue-600",
+      "value": "#356f9d",
+      "kind": "color",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-sans",
+      "value": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", sans-serif",
+      "kind": "font",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--yp-font-mono",
+      "value": "\"SFMono-Regular\", Consolas, \"Liberation Mono\", monospace",
+      "kind": "font",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--yp-font-size-12",
+      "value": "12px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-size-14",
+      "value": "14px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-size-16",
+      "value": "16px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-size-18",
+      "value": "18px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-size-20",
+      "value": "20px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-size-24",
+      "value": "24px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-font-size-28",
+      "value": "28px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-line-compact",
+      "value": "1.25",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-line-body",
+      "value": "1.5",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-weight-regular",
+      "value": "400",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-weight-medium",
+      "value": "600",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-weight-bold",
+      "value": "700",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-space-1",
+      "value": "4px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-2",
+      "value": "8px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-3",
+      "value": "12px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-4",
+      "value": "16px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-5",
+      "value": "20px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-6",
+      "value": "24px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-8",
+      "value": "32px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-space-10",
+      "value": "40px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-radius-2",
+      "value": "2px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-radius-4",
+      "value": "4px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-radius-6",
+      "value": "6px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-radius-8",
+      "value": "8px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-size-control-compact",
+      "value": "36px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-size-control",
+      "value": "44px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-size-control-touch",
+      "value": "48px",
+      "kind": "spacing",
+      "definedIn": "tokens/primitives.css"
+    },
+    {
+      "name": "--yp-duration-fast",
+      "value": "150ms",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-duration-standard",
+      "value": "220ms",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-ease-standard",
+      "value": "cubic-bezier(0.2, 0, 0, 1)",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-layer-nav",
+      "value": "20",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-layer-popover",
+      "value": "60",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-layer-modal",
+      "value": "100",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-layer-toast",
+      "value": "120",
+      "kind": "other",
+      "definedIn": "tokens/primitives.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--yp-surface-page",
+      "value": "var(--yp-color-neutral-050)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-section",
+      "value": "var(--yp-color-neutral-000)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-raised",
+      "value": "var(--yp-color-white)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-subtle",
+      "value": "var(--yp-color-neutral-025)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-selected",
+      "value": "var(--yp-color-teal-050)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-heading",
+      "value": "var(--yp-color-neutral-900)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-body",
+      "value": "var(--yp-color-neutral-800)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-muted",
+      "value": "var(--yp-color-neutral-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-on-action",
+      "value": "var(--yp-color-white)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary",
+      "value": "var(--yp-color-teal-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary-hover",
+      "value": "var(--yp-color-teal-700)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-secondary",
+      "value": "var(--yp-color-neutral-000)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-subtle",
+      "value": "var(--yp-color-neutral-100)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-default",
+      "value": "var(--yp-color-neutral-200)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-strong",
+      "value": "var(--yp-color-neutral-400)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-focus-ring",
+      "value": "#2b7fa7",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-success",
+      "value": "var(--yp-color-green-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-warning",
+      "value": "var(--yp-color-amber-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-error",
+      "value": "var(--yp-color-red-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-info",
+      "value": "var(--yp-color-blue-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-offline",
+      "value": "var(--yp-color-neutral-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-readonly",
+      "value": "var(--yp-color-blue-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-status-mismatch",
+      "value": "var(--yp-color-amber-600)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-overlay-scrim",
+      "value": "rgb(10 17 20 / 0.54)",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-shadow-raised",
+      "value": "0 8px 24px rgb(23 51 54 / 0.08)",
+      "kind": "shadow",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-shadow-overlay",
+      "value": "0 24px 64px rgb(10 24 27 / 0.24)",
+      "kind": "shadow",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-page",
+      "value": "#faf7f1",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-selected",
+      "value": "#f8eddc",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary",
+      "value": "#8b6429",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary-hover",
+      "value": "#6f4f20",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-focus-ring",
+      "value": "#9a6f2c",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-page",
+      "value": "#11191b",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-section",
+      "value": "#182326",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-raised",
+      "value": "#1b282b",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-subtle",
+      "value": "#152023",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-selected",
+      "value": "#173737",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-heading",
+      "value": "#f0f7f7",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-body",
+      "value": "#d6e1e1",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-muted",
+      "value": "#9aadaf",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary",
+      "value": "#5ec3be",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary-hover",
+      "value": "#77d4cf",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-text-on-action",
+      "value": "#102526",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-subtle",
+      "value": "#26383b",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-default",
+      "value": "#344a4e",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-strong",
+      "value": "#65797c",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-focus-ring",
+      "value": "#89d5e6",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-shadow-raised",
+      "value": "0 8px 24px rgb(0 0 0 / 0.24)",
+      "kind": "shadow",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-surface-page",
+      "value": "#f4f5f5",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-subtle",
+      "value": "#c2c9ca",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-border-default",
+      "value": "#899698",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary",
+      "value": "#075f5d",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-action-primary-hover",
+      "value": "#064a49",
+      "kind": "color",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-shadow-raised",
+      "value": "0 2px 0 rgb(10 17 20 / 0.18)",
+      "kind": "shadow",
+      "definedIn": "tokens/semantic.css"
+    },
+    {
+      "name": "--yp-button-height",
+      "value": "var(--yp-size-control)",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-button-radius",
+      "value": "var(--yp-radius-6)",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-card-radius",
+      "value": "var(--yp-radius-8)",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-card-border",
+      "value": "var(--yp-border-default)",
+      "kind": "color",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-card-background",
+      "value": "var(--yp-surface-raised)",
+      "kind": "color",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-nav-width",
+      "value": "232px",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-rail-width",
+      "value": "80px",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-touch-rail-width",
+      "value": "112px",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-dialog-width",
+      "value": "480px",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-content-max",
+      "value": "1240px",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-button-height",
+      "value": "var(--yp-size-control-compact)",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    },
+    {
+      "name": "--yp-button-height",
+      "value": "var(--yp-size-control-touch)",
+      "kind": "spacing",
+      "definedIn": "tokens/components.css"
+    }
+  ],
+  "themes": [],
+  "fonts": [],
+  "brandFonts": [],
+  "source": "spa"
+}

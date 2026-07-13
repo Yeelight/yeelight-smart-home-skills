@@ -1,0 +1,4 @@
+interface:
+  display_name: Yeelight PRO App Builder
+  short_description: Generate a modular Yeelight smart-home app from one request and proven CLI capabilities.
+  default_prompt: Build a unique Yeelight smart-home application from the user's scope, modules, theme, palette, density, target form factor and installed yeelight-home capabilities. Generate only proven functions.

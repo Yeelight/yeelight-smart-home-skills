@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/module-manifest-v1.json",
+  "title": "Yeelight PRO Module Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "status", "deviceFamilies", "requiredIntents", "optionalIntents", "formFactors", "routes", "tests"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9.-]+$" },
+    "version": { "type": "string" },
+    "status": { "enum": ["implemented", "planned"] },
+    "deviceFamilies": { "type": "array", "items": { "type": "string" } },
+    "requiredIntents": { "type": "array", "items": { "type": "string" } },
+    "optionalIntents": { "type": "array", "items": { "type": "string" } },
+    "formFactors": { "type": "array", "items": { "enum": ["desktop", "tablet", "mobile", "wall"] } },
+    "routes": { "type": "array", "items": { "type": "string" } },
+    "tests": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "palettes": [
+    {
+      "id": "teal-blue",
+      "light": { "primary": "#087F8C", "accent": "#1BA8A0", "background": "#F4F8F8", "surface": "#FFFFFF", "text": "#142328", "muted": "#5D7075", "border": "#C9DCDD" },
+      "dark": { "primary": "#4EC5CE", "accent": "#62D9D1", "background": "#08191D", "surface": "#10272C", "text": "#ECFEFF", "muted": "#A6C8CC", "border": "#31545A" }
+    },
+    {
+      "id": "sunset-amber",
+      "light": { "primary": "#8A5A14", "accent": "#C98218", "background": "#FCF8F1", "surface": "#FFFFFF", "text": "#2D241B", "muted": "#746658", "border": "#E3D5C2" },
+      "dark": { "primary": "#F2B95F", "accent": "#FFCB78", "background": "#1D1710", "surface": "#2A2117", "text": "#FFF8ED", "muted": "#D1C0A8", "border": "#5C4932" }
+    },
+    {
+      "id": "neutral-graphite",
+      "light": { "primary": "#334155", "accent": "#64748B", "background": "#F8FAFC", "surface": "#FFFFFF", "text": "#172033", "muted": "#64748B", "border": "#CBD5E1" },
+      "dark": { "primary": "#A7C7E7", "accent": "#94A3B8", "background": "#0B111B", "surface": "#141C28", "text": "#F1F5F9", "muted": "#A8B3C2", "border": "#334155" }
+    },
+    {
+      "id": "forest-cyan",
+      "light": { "primary": "#146B5C", "accent": "#188D85", "background": "#F3F8F6", "surface": "#FFFFFF", "text": "#17332E", "muted": "#60756F", "border": "#C9DCD6" },
+      "dark": { "primary": "#62CBB6", "accent": "#69D8D0", "background": "#0B1916", "surface": "#132722", "text": "#EEFCF8", "muted": "#A8C8C0", "border": "#31534B" }
+    }
+  ]
+}

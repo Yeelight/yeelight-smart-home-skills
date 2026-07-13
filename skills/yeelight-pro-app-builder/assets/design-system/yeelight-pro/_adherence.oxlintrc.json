@@ -1,0 +1,341 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/actions/**",
+              "components/feedback/**",
+              "components/navigation/**",
+              "components/overlay/**",
+              "components/shell/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AppNavigation'] > JSXAttribute > JSXIdentifier[name!=/^(?:items|activeId|onNavigate|key|ref|className|style|children)$/]",
+        "message": "<AppNavigation> doesn't accept that prop. Declared props: items, activeId, onNavigate."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AppShell'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|navigation|status|children|key|ref|className|style)$/]",
+        "message": "<AppShell> doesn't accept that prop. Declared props: title, navigation, status, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|variant|disabled|busy|onClick|type|key|ref|className|style)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: children, variant, disabled, busy, onClick, type."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|ghost)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'ghost'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='type'] > Literal[value!=/^(?:button|submit)$/]",
+        "message": "<Button> type must be one of 'button' | 'submit'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IconButton'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|children|disabled|onClick|key|ref|className|style)$/]",
+        "message": "<IconButton> doesn't accept that prop. Declared props: label, children, disabled, onClick."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='InlineNotice'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|children|tone|action|key|ref|className|style)$/]",
+        "message": "<InlineNotice> doesn't accept that prop. Declared props: title, children, tone, action."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='InlineNotice'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:info|error)$/]",
+        "message": "<InlineNotice> tone must be one of 'info' | 'error'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ModalSurface'] > JSXAttribute > JSXIdentifier[name!=/^(?:open|title|children|footer|onClose|closeLabel|key|ref|className|style)$/]",
+        "message": "<ModalSurface> doesn't accept that prop. Declared props: open, title, children, footer, onClose, closeLabel."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatusBadge'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|tone|key|ref|className|style)$/]",
+        "message": "<StatusBadge> doesn't accept that prop. Declared props: children, tone."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatusBadge'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:success|warning|error|offline|readonly|mismatch)$/]",
+        "message": "<StatusBadge> tone must be one of 'success' | 'warning' | 'error' | 'offline' | 'readonly' | 'mismatch'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "AppNavigation": {
+        "replaces": []
+      },
+      "AppShell": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "IconButton": {
+        "replaces": []
+      },
+      "InlineNotice": {
+        "replaces": []
+      },
+      "ModalSurface": {
+        "replaces": []
+      },
+      "StatusBadge": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--yp-action-primary",
+      "--yp-action-primary",
+      "--yp-action-primary",
+      "--yp-action-primary",
+      "--yp-action-primary-hover",
+      "--yp-action-primary-hover",
+      "--yp-action-primary-hover",
+      "--yp-action-primary-hover",
+      "--yp-action-secondary",
+      "--yp-border-default",
+      "--yp-border-default",
+      "--yp-border-default",
+      "--yp-border-strong",
+      "--yp-border-strong",
+      "--yp-border-subtle",
+      "--yp-border-subtle",
+      "--yp-border-subtle",
+      "--yp-button-height",
+      "--yp-button-height",
+      "--yp-button-height",
+      "--yp-button-radius",
+      "--yp-card-background",
+      "--yp-card-border",
+      "--yp-card-radius",
+      "--yp-color-amber-600",
+      "--yp-color-black",
+      "--yp-color-blue-600",
+      "--yp-color-green-600",
+      "--yp-color-neutral-000",
+      "--yp-color-neutral-025",
+      "--yp-color-neutral-050",
+      "--yp-color-neutral-100",
+      "--yp-color-neutral-200",
+      "--yp-color-neutral-400",
+      "--yp-color-neutral-600",
+      "--yp-color-neutral-800",
+      "--yp-color-neutral-900",
+      "--yp-color-red-600",
+      "--yp-color-teal-050",
+      "--yp-color-teal-100",
+      "--yp-color-teal-300",
+      "--yp-color-teal-500",
+      "--yp-color-teal-600",
+      "--yp-color-teal-700",
+      "--yp-color-white",
+      "--yp-content-max",
+      "--yp-dialog-width",
+      "--yp-duration-fast",
+      "--yp-duration-standard",
+      "--yp-ease-standard",
+      "--yp-focus-ring",
+      "--yp-focus-ring",
+      "--yp-focus-ring",
+      "--yp-font-mono",
+      "--yp-font-sans",
+      "--yp-font-size-12",
+      "--yp-font-size-14",
+      "--yp-font-size-16",
+      "--yp-font-size-18",
+      "--yp-font-size-20",
+      "--yp-font-size-24",
+      "--yp-font-size-28",
+      "--yp-layer-modal",
+      "--yp-layer-nav",
+      "--yp-layer-popover",
+      "--yp-layer-toast",
+      "--yp-line-body",
+      "--yp-line-compact",
+      "--yp-nav-width",
+      "--yp-overlay-scrim",
+      "--yp-radius-2",
+      "--yp-radius-4",
+      "--yp-radius-6",
+      "--yp-radius-8",
+      "--yp-rail-width",
+      "--yp-shadow-overlay",
+      "--yp-shadow-raised",
+      "--yp-shadow-raised",
+      "--yp-shadow-raised",
+      "--yp-size-control",
+      "--yp-size-control-compact",
+      "--yp-size-control-touch",
+      "--yp-space-1",
+      "--yp-space-10",
+      "--yp-space-2",
+      "--yp-space-3",
+      "--yp-space-4",
+      "--yp-space-5",
+      "--yp-space-6",
+      "--yp-space-8",
+      "--yp-status-error",
+      "--yp-status-info",
+      "--yp-status-mismatch",
+      "--yp-status-offline",
+      "--yp-status-readonly",
+      "--yp-status-success",
+      "--yp-status-warning",
+      "--yp-surface-page",
+      "--yp-surface-page",
+      "--yp-surface-page",
+      "--yp-surface-page",
+      "--yp-surface-raised",
+      "--yp-surface-raised",
+      "--yp-surface-section",
+      "--yp-surface-section",
+      "--yp-surface-selected",
+      "--yp-surface-selected",
+      "--yp-surface-selected",
+      "--yp-surface-subtle",
+      "--yp-surface-subtle",
+      "--yp-text-body",
+      "--yp-text-body",
+      "--yp-text-heading",
+      "--yp-text-heading",
+      "--yp-text-muted",
+      "--yp-text-muted",
+      "--yp-text-on-action",
+      "--yp-text-on-action",
+      "--yp-touch-rail-width",
+      "--yp-weight-bold",
+      "--yp-weight-medium",
+      "--yp-weight-regular"
+    ],
+    "tokenKinds": {
+      "--yp-color-white": "color",
+      "--yp-color-black": "color",
+      "--yp-color-teal-050": "color",
+      "--yp-color-teal-100": "color",
+      "--yp-color-teal-300": "color",
+      "--yp-color-teal-500": "color",
+      "--yp-color-teal-600": "color",
+      "--yp-color-teal-700": "color",
+      "--yp-color-neutral-000": "color",
+      "--yp-color-neutral-025": "color",
+      "--yp-color-neutral-050": "color",
+      "--yp-color-neutral-100": "color",
+      "--yp-color-neutral-200": "color",
+      "--yp-color-neutral-400": "color",
+      "--yp-color-neutral-600": "color",
+      "--yp-color-neutral-800": "color",
+      "--yp-color-neutral-900": "color",
+      "--yp-color-green-600": "color",
+      "--yp-color-amber-600": "color",
+      "--yp-color-red-600": "color",
+      "--yp-color-blue-600": "color",
+      "--yp-font-sans": "font",
+      "--yp-font-mono": "font",
+      "--yp-font-size-12": "spacing",
+      "--yp-font-size-14": "spacing",
+      "--yp-font-size-16": "spacing",
+      "--yp-font-size-18": "spacing",
+      "--yp-font-size-20": "spacing",
+      "--yp-font-size-24": "spacing",
+      "--yp-font-size-28": "spacing",
+      "--yp-line-compact": "other",
+      "--yp-line-body": "other",
+      "--yp-weight-regular": "other",
+      "--yp-weight-medium": "other",
+      "--yp-weight-bold": "other",
+      "--yp-space-1": "spacing",
+      "--yp-space-2": "spacing",
+      "--yp-space-3": "spacing",
+      "--yp-space-4": "spacing",
+      "--yp-space-5": "spacing",
+      "--yp-space-6": "spacing",
+      "--yp-space-8": "spacing",
+      "--yp-space-10": "spacing",
+      "--yp-radius-2": "spacing",
+      "--yp-radius-4": "spacing",
+      "--yp-radius-6": "spacing",
+      "--yp-radius-8": "spacing",
+      "--yp-size-control-compact": "spacing",
+      "--yp-size-control": "spacing",
+      "--yp-size-control-touch": "spacing",
+      "--yp-duration-fast": "other",
+      "--yp-duration-standard": "other",
+      "--yp-ease-standard": "other",
+      "--yp-layer-nav": "other",
+      "--yp-layer-popover": "other",
+      "--yp-layer-modal": "other",
+      "--yp-layer-toast": "other",
+      "--yp-surface-page": "color",
+      "--yp-surface-section": "color",
+      "--yp-surface-raised": "color",
+      "--yp-surface-subtle": "color",
+      "--yp-surface-selected": "color",
+      "--yp-text-heading": "color",
+      "--yp-text-body": "color",
+      "--yp-text-muted": "color",
+      "--yp-text-on-action": "color",
+      "--yp-action-primary": "color",
+      "--yp-action-primary-hover": "color",
+      "--yp-action-secondary": "color",
+      "--yp-border-subtle": "color",
+      "--yp-border-default": "color",
+      "--yp-border-strong": "color",
+      "--yp-focus-ring": "color",
+      "--yp-status-success": "color",
+      "--yp-status-warning": "color",
+      "--yp-status-error": "color",
+      "--yp-status-info": "color",
+      "--yp-status-offline": "color",
+      "--yp-status-readonly": "color",
+      "--yp-status-mismatch": "color",
+      "--yp-overlay-scrim": "color",
+      "--yp-shadow-raised": "shadow",
+      "--yp-shadow-overlay": "shadow",
+      "--yp-button-height": "spacing",
+      "--yp-button-radius": "spacing",
+      "--yp-card-radius": "spacing",
+      "--yp-card-border": "color",
+      "--yp-card-background": "color",
+      "--yp-nav-width": "spacing",
+      "--yp-rail-width": "spacing",
+      "--yp-touch-rail-width": "spacing",
+      "--yp-dialog-width": "spacing",
+      "--yp-content-max": "spacing"
+    },
+    "fontFamilies": []
+  }
+}

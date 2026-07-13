@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "packs": [
+    { "id": "daylight-minimal", "modes": ["light"], "radius": 8, "motion": "standard", "surface": "quiet-flat" },
+    { "id": "warm-residential", "modes": ["light", "dark"], "radius": 8, "motion": "standard", "surface": "material-soft" },
+    { "id": "obsidian-console", "modes": ["dark"], "radius": 6, "motion": "reduced", "surface": "dense-console" },
+    { "id": "installer-contrast", "modes": ["light", "dark"], "radius": 4, "motion": "reduced", "surface": "high-contrast" }
+  ]
+}

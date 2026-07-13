@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "verifiedBy": "validate-theme-target-matrix.mjs",
+  "themes": [
+    { "id": "daylight-minimal", "modes": ["light"], "status": "generated-e2e-passed" },
+    { "id": "warm-residential", "modes": ["light", "dark"], "status": "generated-e2e-passed" },
+    { "id": "obsidian-console", "modes": ["dark"], "status": "generated-e2e-passed" },
+    { "id": "installer-contrast", "modes": ["light", "dark"], "status": "generated-e2e-passed" }
+  ],
+  "palettes": ["teal-blue", "sunset-amber", "neutral-graphite", "forest-cyan"],
+  "densities": ["comfortable", "compact", "touch"],
+  "targets": [
+    { "formFactor": "desktop", "navigation": "sidebar", "status": "generated-e2e-passed" },
+    { "formFactor": "tablet", "navigation": "adaptive-rail", "status": "generated-e2e-passed" },
+    { "formFactor": "mobile", "navigation": "bottom-tabs", "status": "generated-e2e-passed" },
+    { "formFactor": "wall", "navigation": "touch-rail", "status": "generated-e2e-passed" }
+  ],
+  "browserChecks": ["semantic-tokens", "dark-mode", "adaptive-navigation", "contrast", "visible-focus", "reduced-motion", "touch-targets", "no-overflow"]
+}

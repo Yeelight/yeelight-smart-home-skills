@@ -2,176 +2,70 @@
 
 [English](README.md) | 简体中文
 
-这是 Yeelight Smart Home agent skills 的官方公开发布仓库。默认入口是英文版 `README.md`，中文版会同步维护，方便中文用户、平台审核人员和内部发布验证使用。
+易来官方智能家居 Agent Skills，用于直接操作智能家居，以及按用户需求生成专属智能家居应用。本仓库只保存可安装的 Skill 源码；带版本的压缩包应位于 [GitHub Releases](https://github.com/Yeelight/yeelight-smart-home-skills/releases)，不重复放入 Git 当前树。
 
-## 已发布 Skill
+## Skills
 
-| Skill | Version | Runtime | Packages |
+| Skill | 能力 | 适用场景 | Runtime |
 | --- | --- | --- | --- |
-| `yeelight-smart-home` | `0.1.11` | `yeelight-home >= 0.1.20` | Agent Skill ZIP、Codex Plugin ZIP、Claude Skill ZIP、Copilot Skill ZIP |
+| [`yeelight-smart-home`](skills/yeelight-smart-home/) | 自然语言控制、查询、诊断、整理、场景、自动化、灯光设计、产品知识、记忆和推荐 | 希望 AI Agent 操作或协助设计 Yeelight 智能家居 | `yeelight-home >= 0.1.20` |
+| [`yeelight-pro-app-builder`](skills/yeelight-pro-app-builder/) | 根据一个需求和已验证的 Runtime 能力，生成模块化本地 Yeelight 应用 | 需要面向手机、平板、墙屏或桌面的专用控制应用 | `yeelight-home >= 0.1.19` |
 
-## 这个 Skill 能做什么
+两个 Skill 都使用单独安装的 [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime，不内置账号凭据，也不会绕过 Runtime 的策略和确认门禁。
 
-`yeelight-smart-home` 让兼容的 agent 平台可以通过本地 `yeelight-home` Runtime 控制、整理、诊断、设计和回答 Yeelight 智能家居相关问题。
+## 安装
 
-它是一个 Skill 分发包，不是 Runtime 安装包。Skill 里只包含 agent 运行需要的指令、schema、catalog、reference、包元数据和平台适配材料。真实设备访问、账号认证、策略校验、敏感写操作确认这些能力都保留在单独安装的 runtime 里。
+先安装 Runtime：
 
-## 发布信息
-
-- 仓库：https://github.com/Yeelight/yeelight-smart-home-skills
-- 最新 Release：https://github.com/Yeelight/yeelight-smart-home-skills/releases/tag/yeelight-skill-yeelight-smart-home-v0.1.11
-- 发布证据：`releases/yeelight-smart-home/v0.1.11/`
-- 校验和：`releases/yeelight-smart-home/v0.1.11/checksums.txt`
-- 验证摘要：`releases/yeelight-smart-home/v0.1.11/validation-summary.json`
-
-## 安装方式
-
-### 让 AI 一句话帮你安装
-
-如果你使用的是可以执行本地终端命令的 AI 助手，可以直接把下面这一句话发给它：
-
-```text
-请从 Yeelight 官方 GitHub Release 或已支持的包管理渠道，为我的系统安装 yeelight-home CLI，然后从 Yeelight 官方 Skill GitHub Release 或这个 GitHub 仓库安装最新版 Yeelight Smart Home Skill。安装后用 `yeelight-home doctor --json` 验证 CLI，并引导我执行 `yeelight-home auth login --qr`；不要要求我把 token、密码或 cookie 粘贴到聊天里。
+```sh
+brew install Yeelight/tap/yeelight-home
+yeelight-home doctor --json
+yeelight-home auth login --qr
 ```
 
-### ClawHub / OpenClaw
+再通过 skills.sh 安装一个或两个 Skill：
 
-该 Skill 仍可从 Yeelight 官方 publisher namespace 安装，但这个渠道当前是可选且滞后的 `0.1.9`。最新版 `0.1.11` 请使用 GitHub Release。
+```sh
+npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
+npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
+```
+
+OpenClaw 用户也可以从可选的 ClawHub 渠道安装直控 Skill：
 
 ```sh
 openclaw skills install @yeelight/yeelight-smart-home
 ```
 
-- ClawHub 页面：https://clawhub.ai/yeelight/skills/yeelight-smart-home
-- 状态：`0.1.11` 可选阻塞。ClawHub 安全包已排除无扩展名的 `scripts/invoke`，但 ClawHub 仍返回 `skillId/versionId invalid value`；GitHub Release 是当前最新版事实渠道。
+其他操作系统、手动安装、升级和验证方式见[安装指南](docs/installation.zh-CN.md)。
 
-### skills.sh
+## 使用
 
-该仓库已被 skills.sh 索引：
-
-```sh
-npx skills add https://github.com/yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
-```
-
-- skills.sh 页面：https://www.skills.sh/yeelight/yeelight-smart-home-skills/yeelight-smart-home
-- 状态：已索引且可安装，页面可见安全审计通过标识。
-
-### Codex / Agent Plugin
-
-可以通过本仓库 marketplace metadata 安装，也可以下载：
+安装后可以直接向 Agent 提出自然语言请求：
 
 ```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-codex-plugin-v0.1.11.zip
+使用 yeelight-smart-home 列出客厅里的灯并显示当前状态。
 ```
-
-### Claude Skill ZIP
-
-下载并上传：
 
 ```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-claude-skill-v0.1.11.zip
+使用 yeelight-smart-home 为我设计一个放松的晚间灯光场景，持久化修改前先预览方案。
 ```
-
-### GitHub Copilot Agent Skill
-
-使用：
 
 ```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-copilot-skill-v0.1.11.zip
+使用 yeelight-pro-app-builder 生成一个控制客厅灯和窗帘的紧凑移动端应用，使用明亮绿色主题。
 ```
 
-### Open Agent Skills
+常见工作流、安全行为、故障排查和 Builder 产物验证见[使用指南](docs/usage.zh-CN.md)。
 
-使用：
+## Yeelight AI 能力矩阵
 
-```text
-releases/yeelight-smart-home/v0.1.11/yeelight-smart-home-agent-skill-v0.1.11.zip
-```
+| 项目 | 定位 | 核心能力 | GitHub |
+| --- | --- | --- | --- |
+| Yeelight CLI | 通用 AI 命令行 | 登录鉴权、API 访问、MCP 客户端和自动化命令 | [Yeelight/yeelight-cli](https://github.com/Yeelight/yeelight-cli) |
+| Yeelight Metadata MCP | 元数据发现 MCP 服务 | 产品、能力、任务与动作元数据 | [Yeelight/yeelight-metadata-mcp](https://github.com/Yeelight/yeelight-metadata-mcp) |
+| Yeelight IoT MCP | 设备控制 MCP 服务 | MCP 原生 Yeelight IoT 服务访问 | [Yeelight/yeelight-iot-mcp](https://github.com/Yeelight/yeelight-iot-mcp) |
+| Yeelight Home | 本地智能家居 Runtime CLI | 鉴权、查询、控制、诊断、策略和结构化调用 | [Yeelight/yeelight-home](https://github.com/Yeelight/yeelight-home) |
+| Yeelight Smart Home Skills | Agent Skills | 智能家居直控和模块化应用生成 | [Yeelight/yeelight-smart-home-skills](https://github.com/Yeelight/yeelight-smart-home-skills) |
 
-### LobeHub Skills
+## 许可证
 
-首次收录走网页请求表单：
-
-```text
-https://lobehub.com/zh/skills
-```
-
-点击 `请求收录`，提交：
-
-```text
-https://github.com/Yeelight/yeelight-smart-home-skills
-```
-
-LobeHub 完成仓库收录后，再用 `@lobehub/market-cli` 认领所有权并发布后续版本。
-
-### 需要审核或控制台配置的平台
-
-Dify Marketplace、OpenAI GPT Store / Apps SDK、Coze、百炼、元器、千帆、火山方舟、NanoSkill、Molili/CocoLoop 等平台都有各自的审核、控制台、PR 或邮件流程。可复用的提审材料都放在 `submissions/` 目录下。
-
-## Runtime 依赖
-
-该 Skill 依赖单独安装的 `yeelight-home` runtime，并通过下面的命令调用：
-
-```sh
-yeelight-home invoke --stdin
-```
-
-这个仓库不会内置 runtime。发布 Skill 包时不要把 runtime 二进制、runtime 源码、本地工作区路径、内部原始文档、凭证或 API token 一起发布出去。
-
-## Bridge Adapter
-
-不能直接安装 Skill ZIP 的平台使用：
-
-```text
-adapters/yeelight-skill-bridge/
-```
-
-Bridge 暴露：
-
-- `GET /health`
-- `GET /openapi.json`
-- `POST /invoke`
-- `POST /mcp`
-
-Bridge 只调用 `yeelight-home invoke --stdin`；认证、策略执行、敏感动作确认和真实设备访问仍由 runtime 负责。
-
-## 平台状态
-
-`platforms.json` 是当前各市场发布状态的事实来源。`submissions/skill-directory-submission-status.json` 记录每个平台的证据和剩余事项。
-
-当前状态分类：
-
-- 最新版已发布且可安装：GitHub Release、skills.sh。
-- 已发布但保持可选：ClawHub 已发布 `0.1.11`，且继续不阻断主发布流程。
-- 已提交或等待审核：LobeHub、NanoSkill、Molili/CocoLoop、Dify Marketplace。
-- Adapter kit 已准备好，等待控制台审核：OpenAI GPT Store / Apps SDK、Coze、百炼、元器、千帆、火山方舟。
-
-平台还在审核时，不要把它当成已发布。只有安装副本或线上 endpoint smoke 通过后，才可以把状态升级为已发布。
-
-## 验证
-
-校验 Release 文件：
-
-```sh
-cd releases/yeelight-smart-home/v0.1.11
-shasum -a 256 -c checksums.txt
-```
-
-运行完整发布资产检查：
-
-```sh
-node scripts/verify-publication-assets.mjs --skill yeelight-smart-home --version 0.1.11
-```
-
-该检查会覆盖 JSON 元数据、双语 README 互链、包校验和、各平台提审材料、Dify 包结构、Node 脚本语法，以及 bridge 的 health/invoke/MCP smoke。
-
-## 可复用发布流程
-
-后续 Yeelight 其他 Skill 或新版本发布时：
-
-1. 在源仓库里走通通用 Skill release pipeline，并完成验证。
-2. 用 `scripts/publish-skill-release.mjs` 刷新这个公开分发仓库。
-3. 运行 `node scripts/verify-publication-assets.mjs --skill <skill-id> --version <x.y.z>`。
-4. 通过各平台 CLI 或表单发布原生 Skill。
-5. 对 API/MCP 类型平台，通过 bridge adapter 发布。
-6. 把最终安装副本或线上 endpoint smoke 证据记录到 `platforms.json` 和 `submissions/skill-directory-submission-status.json`。
+仓库维护的代码以及两个 Skill 均采用 [Apache License 2.0](LICENSE)。第三方组件继续遵循其各自许可证和声明。

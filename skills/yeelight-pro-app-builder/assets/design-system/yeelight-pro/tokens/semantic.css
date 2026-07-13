@@ -1,0 +1,66 @@
+:root {
+  color-scheme: light;
+  --yp-surface-page: var(--yp-color-neutral-050);
+  --yp-surface-section: var(--yp-color-neutral-000);
+  --yp-surface-raised: var(--yp-color-white);
+  --yp-surface-subtle: var(--yp-color-neutral-025);
+  --yp-surface-selected: var(--yp-color-teal-050);
+  --yp-text-heading: var(--yp-color-neutral-900);
+  --yp-text-body: var(--yp-color-neutral-800);
+  --yp-text-muted: var(--yp-color-neutral-600);
+  --yp-text-on-action: var(--yp-color-white);
+  --yp-action-primary: var(--yp-color-teal-600);
+  --yp-action-primary-hover: var(--yp-color-teal-700);
+  --yp-action-secondary: var(--yp-color-neutral-000);
+  --yp-border-subtle: var(--yp-color-neutral-100);
+  --yp-border-default: var(--yp-color-neutral-200);
+  --yp-border-strong: var(--yp-color-neutral-400);
+  --yp-focus-ring: #2b7fa7;
+  --yp-status-success: var(--yp-color-green-600);
+  --yp-status-warning: var(--yp-color-amber-600);
+  --yp-status-error: var(--yp-color-red-600);
+  --yp-status-info: var(--yp-color-blue-600);
+  --yp-status-offline: var(--yp-color-neutral-600);
+  --yp-status-readonly: var(--yp-color-blue-600);
+  --yp-status-mismatch: var(--yp-color-amber-600);
+  --yp-overlay-scrim: rgb(10 17 20 / 0.54);
+  --yp-shadow-raised: 0 8px 24px rgb(23 51 54 / 0.08);
+  --yp-shadow-overlay: 0 24px 64px rgb(10 24 27 / 0.24);
+}
+
+[data-theme="warm-home"] {
+  --yp-surface-page: #faf7f1;
+  --yp-surface-selected: #f8eddc;
+  --yp-action-primary: #8b6429;
+  --yp-action-primary-hover: #6f4f20;
+  --yp-focus-ring: #9a6f2c;
+}
+
+[data-theme="night-ambient"] {
+  color-scheme: dark;
+  --yp-surface-page: #11191b;
+  --yp-surface-section: #182326;
+  --yp-surface-raised: #1b282b;
+  --yp-surface-subtle: #152023;
+  --yp-surface-selected: #173737;
+  --yp-text-heading: #f0f7f7;
+  --yp-text-body: #d6e1e1;
+  --yp-text-muted: #9aadaf;
+  --yp-action-primary: #5ec3be;
+  --yp-action-primary-hover: #77d4cf;
+  --yp-text-on-action: #102526;
+  --yp-border-subtle: #26383b;
+  --yp-border-default: #344a4e;
+  --yp-border-strong: #65797c;
+  --yp-focus-ring: #89d5e6;
+  --yp-shadow-raised: 0 8px 24px rgb(0 0 0 / 0.24);
+}
+
+[data-theme="installer-contrast"] {
+  --yp-surface-page: #f4f5f5;
+  --yp-border-subtle: #c2c9ca;
+  --yp-border-default: #899698;
+  --yp-action-primary: #075f5d;
+  --yp-action-primary-hover: #064a49;
+  --yp-shadow-raised: 0 2px 0 rgb(10 17 20 / 0.18);
+}

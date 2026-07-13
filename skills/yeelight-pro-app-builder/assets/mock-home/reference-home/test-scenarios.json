@@ -1,0 +1,9 @@
+{
+  "testScenarios": [
+    { "id": "device-state-503", "kind": "endpoint-failure", "target": "992001", "status": 503 },
+    { "id": "device-state-timeout", "kind": "timeout", "target": "992001", "status": 504, "delayMs": 250 },
+    { "id": "readonly-curtain-position", "kind": "missing-property", "target": "992104", "property": "targetPosition" },
+    { "id": "offline-curtain", "kind": "offline", "target": "992103" },
+    { "id": "deterministic-reset", "kind": "reset", "target": "reference-home" }
+  ]
+}

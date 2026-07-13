@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "reference-home",
+  "title": "Yeelight PRO 全能力参考家庭",
+  "schema": "schema.json",
+  "fragments": ["topology.json", "devices.json", "management.json", "infrastructure.json", "experiences.json", "test-scenarios.json"],
+  "fragmentSha256": {
+    "topology.json": "1c7af83ebe419b8f2b58df00e037081d5d12d4491c73b3a829d8339824e61075",
+    "devices.json": "1f204321197af94c905ad57f8543e35b4617e6fc8920d1474a4cb5df5ac6a2b6",
+    "management.json": "6df6b38973bd578187910be5325358198d23fec1c6026b6115a89548f0208491",
+    "infrastructure.json": "3e6a3232170aa2adb30d276750635af48dd8e754fb618a3097ed629777fe2383",
+    "experiences.json": "2aead928292a9cea73e8b5205a3b284d33f2aed2976f3dbf1e12a7de743238c9",
+    "test-scenarios.json": "b39a777ebebc34af7a5b63f4699fce6dac881c85b07de3e3902e33cdc73414e8"
+  }
+}

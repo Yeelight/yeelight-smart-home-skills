@@ -1,0 +1,530 @@
+{
+  "schemaVersion": 1,
+  "fixtureId": "comprehensive",
+  "states": [
+    "fixture-present",
+    "api-contract-covered",
+    "cli-proven",
+    "generated-e2e-passed"
+  ],
+  "modules": [
+    {
+      "id": "home.lighting-summary",
+      "fixture": { "status": "fixture-present", "entityIds": ["992001", "992002", "992003"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "POST /apis/iot/v1/room/r/all",
+          "POST /apis/iot/v1/device/r/all",
+          "POST /apis/iot/v1/device/{deviceId}/r/detail",
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties"
+        ]
+      },
+      "cli": { "status": "cli-proven", "tests": ["mock-home-cli.test.mjs", "build-app-mock.test.mjs"] },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home room-and-state-first hierarchy",
+          "Yeelight PRO room operation efficiency",
+          "Home Assistant explicit unavailable state"
+        ]
+      },
+    "generatedApp": {
+      "status": "generated-e2e-passed",
+        "requiredEvidence": ["responsive", "search", "sync-failure", "console-network"],
+        "verifiedBy": "validate-lighting-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-lighting/lighting-e2e-summary.json",
+        "checks": 47
+      }
+    },
+    {
+      "id": "room.lighting-control",
+      "fixture": { "status": "fixture-present", "entityIds": ["992001", "992002", "992003"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties/{property}",
+          "POST /apis/iot/v1/controll/device/{deviceType}/{deviceId}/w/properties/{property}"
+        ]
+      },
+      "cli": { "status": "cli-proven", "intents": ["light.power.set", "light.brightness.set", "light.color_temperature.set"] },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Xiaomi Home and Tuya device-family-specific controls",
+          "Apple Home progressive device feedback",
+          "Yeelight PRO lighting-specific power brightness and color-temperature semantics"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["power-write-restore", "brightness-write-restore", "color-temperature-write-restore", "error-recovery"],
+        "verifiedBy": "validate-lighting-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-lighting/lighting-e2e-summary.json",
+        "checks": 47
+      }
+    },
+    {
+      "id": "home.space-summary",
+      "fixture": { "status": "fixture-present", "entityIds": ["990101", "991001", "992001"] },
+      "api": { "status": "api-contract-covered", "contracts": ["entity list", "device detail", "deterministic reset"] },
+      "cli": { "status": "cli-proven", "version": "0.1.19", "intents": ["entity.list", "device.rename", "device.move"] },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home room-and-state-first overview",
+          "Home Assistant capability-driven unavailable states",
+          "Yeelight PRO compact whole-home status hierarchy"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "room-device-online-summary", "search-and-filters", "deep-link-restore", "sync-failure-recovery", "large-list-windowing"],
+        "verifiedBy": "validate-space-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-space-device/space-e2e-summary.json",
+        "checks": 66
+      }
+    },
+    {
+      "id": "room.device-management",
+      "fixture": { "status": "fixture-present", "entityIds": ["991001", "991004", "992001"] },
+      "api": { "status": "api-contract-covered", "contracts": ["entity list", "single device rename", "device move with write verification", "deterministic reset"] },
+      "cli": { "status": "cli-proven", "version": "0.1.19", "intents": ["entity.list", "device.rename", "device.move"] },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Xiaomi Home and Tuya explicit device detail entry",
+          "Apple Home progressive management dialogs and focus recovery",
+          "Home Assistant URL-addressable filters and explicit failure recovery"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["dialog-focus-trap", "rename-write-restore", "move-write-restore", "bridge-allowlist", "entity-list-failure-recovery", "large-list-windowing"],
+        "verifiedBy": "validate-space-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-space-device/space-e2e-summary.json",
+        "checks": 66
+      }
+    },
+    {
+      "id": "device.curtain-control",
+      "fixture": { "status": "fixture-present", "entityIds": ["992101"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v2/thing/schema/house/{houseId}/device/r/info/1/100",
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties/{property}",
+          "POST /apis/iot/v1/controll/device/2/{deviceId}/w/properties/tp",
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties/tp"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["state.query", "device.property.set"],
+        "evidence": ["targetPosition preview-only without persistent writes", "position write with read-after-write verification"]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home direct state-first control without redundant one-item navigation",
+          "Xiaomi Home and Tuya device-family quick positions with explicit offline state",
+          "Home Assistant capability-driven unavailable state and recovery",
+          "Yeelight PRO target-position semantics and efficient room operation"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "position-write-restore", "strict-write-body", "read-after-write-verification", "write-error-retry", "offline-disable-recovery", "state-query-failure-recovery", "bridge-allowlist", "retry-action-unobstructed", "console-network"],
+        "verifiedBy": "validate-curtain-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-curtain/curtain-e2e-summary.json",
+        "checks": 55
+      }
+    },
+    {
+      "id": "device.switch-control",
+      "fixture": { "status": "fixture-present", "entityIds": ["992201", "992701"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v2/thing/schema/house/{houseId}/device/r/info/1/100",
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties/{property}",
+          "POST /apis/iot/v1/controll/device/2/{deviceId}/w/properties/{channel}-sp",
+          "strict switch write body {value:boolean}"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["state.query", "device.property.set"],
+        "evidence": [
+          "0-sp, 1-sp and 2-sp instance preview-only probes without persistent writes",
+          "per-circuit boolean writes with read-after-write verification",
+          "wireless scene switch remains read-only when no write capability is proven"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home direct state-first switch control with clear disabled states",
+          "Xiaomi Home and Tuya channel-specific relay controls",
+          "Home Assistant capability-driven read-only and unavailable states",
+          "Yeelight PRO compact multi-circuit operation and explicit device feedback"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "two-physical-circuits-plus-master-control", "keyboard-control", "single-and-all-circuit-write-restore", "strict-boolean-write-body", "read-after-write-verification", "readonly-zero-write", "write-error-retry", "offline-disable-recovery", "state-query-failure-recovery", "bridge-allowlist", "retry-action-unobstructed", "console-network"],
+        "verifiedBy": "validate-switch-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-switch/switch-e2e-summary.json",
+        "checks": 60
+      }
+    },
+    {
+      "id": "device.climate-control",
+      "fixture": { "status": "fixture-present", "entityIds": ["992301"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v2/thing/schema/house/{houseId}/device/r/info/1/100",
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties/{property}",
+          "POST /apis/iot/v1/controll/device/2/{deviceId}/w/properties/acp|actt|acm|acf",
+          "strict climate write body {value}",
+          "actt integer range 16-32, acm enum 1|4|8, acf enum 1|2|4",
+          "acct and aco are read-only"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["state.query", "device.property.set"],
+        "evidence": [
+          "instance preview-only probes for airConditionerPower, airConditionerTargetTemperature, airConditionerMode and airConditionerFanSpeed",
+          "public Runtime names map to acp, actt, acm and acf API properties",
+          "writes use read-after-write verification and deterministic restore"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home state-first thermostat hierarchy with restrained single-device navigation",
+          "Xiaomi Home and Tuya device-specific mode and fan segmented controls",
+          "Home Assistant capability-driven unavailable and offline states",
+          "Yeelight PRO integer HVAC property semantics and efficient temperature stepping"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "power-temperature-mode-fan-write-restore", "strict-write-body", "read-after-write-verification", "write-error-retry", "offline-disable-recovery", "bridge-allowlist", "retry-action-unobstructed", "console-network"],
+        "verifiedBy": "validate-climate-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-climate/climate-e2e-summary.json",
+        "checks": 52
+      }
+    },
+    {
+      "id": "sensor.environment",
+      "fixture": { "status": "fixture-present", "entityIds": ["992401", "992402"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v2/thing/schema/house/{houseId}/device/r/info/1/100",
+          "POST /apis/iot/v1/controll/device/{deviceId}/r/properties/{property}",
+          "POST /apis/iot/v1/device/r/sensors",
+          "POST /apis/iot/v1/sensor/r/events",
+          "sensor properties use Runtime-backed t, h, oc, luminance, bl and o names",
+          "no history endpoint is claimed or synthesized"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["state.query", "sensor.event.list"],
+        "evidence": [
+          "current sensor readings are normalized by the real Runtime",
+          "event definitions are returned through the semantic sensor.event.list adapter",
+          "the generated module exposes zero write controls"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home state-first environmental readings with compact room context",
+          "Xiaomi Home and Tuya explicit online, battery and occupancy states",
+          "Home Assistant capability-driven unavailable readings without fabricated history",
+          "Yeelight PRO concise whole-home sensor monitoring and clear Runtime boundaries"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "temperature-humidity-occupancy-luminance-battery", "event-definitions", "read-only-zero-write", "history-boundary", "missing-reading", "offline-recovery", "state-failure-recovery", "event-failure-focus-and-recovery", "bridge-write-block", "touch-targets", "contrast", "console-network"],
+        "verifiedBy": "validate-sensor-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-sensor/sensor-e2e-summary.json",
+        "checks": 73
+      }
+    },
+    {
+      "id": "group.manager",
+      "fixture": { "status": "fixture-present", "entityIds": ["993001", "993002"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v2/thing/manage/house/{houseId}/group/r/info/{pageNo}/{pageSize}",
+          "GET /apis/iot/v2/thing/manage/house/{houseId}/group/{groupId}/r/info",
+          "POST /apis/iot/v2/thing/manage/house/{houseId}/group/{groupId}/w/devices",
+          "member writes contain only houseId, groupId, addDeviceList and removeDeviceList",
+          "Runtime verifies writes through group detail"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["group.list", "group.detail.get", "group.members.update"],
+        "evidence": [
+          "group discovery is scoped to selected group modules and uses lightweight device candidates",
+          "every editable group proves a real member delta with preview-only and no persistent write",
+          "generated writes are verified by Runtime and followed by generated-app group detail readback"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home progressive member selection with one clear save action",
+          "Xiaomi Home and Tuya explicit group membership and device-room context",
+          "Home Assistant capability-backed editing with retained state on failure",
+          "Yeelight PRO compact lighting-group maintenance without unsupported create, delete or rename actions"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "preview-proven-actions", "dialog-focus-scroll-lock-and-escape", "member-add-and-restore", "strict-delta-body", "read-after-write-verification", "write-failure-in-dialog-retry", "detail-failure-preserve-and-retry", "list-failure-preserve-and-retry", "bridge-allowlist", "touch-targets", "contrast", "console-network"],
+        "verifiedBy": "validate-group-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-group/group-e2e-summary.json",
+        "checks": 102
+      }
+    },
+    {
+      "id": "scene.launcher",
+      "fixture": { "status": "fixture-present", "entityIds": ["994001", "994002", "994003"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "POST /apis/iot/v1/scene/r/all",
+          "POST /apis/iot/v1/open/control/house/{houseId}/control/w/scenes/{sceneId}",
+          "scene execution body is exactly {}"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["scene.list", "scene.execute"],
+        "evidence": [
+          "scene discovery is scoped to selected scene modules",
+          "each visible execution action has successful preview-only evidence",
+          "generated Bridge execution uses the real Runtime and strict mock API"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home compact one-tap scenes with immediate execution feedback",
+          "Xiaomi Home and Tuya clear per-scene action state and retry recovery",
+          "Home Assistant capability-backed service actions without fabricated editing",
+          "Yeelight PRO room-oriented scene execution with restrained residential density"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "preview-proven-actions", "strict-execution-body", "success-feedback", "execution-failure-retry", "list-failure-preserve-and-retry", "bridge-allowlist", "touch-targets", "contrast", "console-network"],
+        "verifiedBy": "validate-scene-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-scene/scene-e2e-summary.json",
+        "checks": 63
+      }
+    },
+    {
+      "id": "automation.manager",
+      "fixture": { "status": "fixture-present", "entityIds": ["995001", "995002", "995003"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "POST /apis/iot/v1/automations/r/list",
+          "POST /apis/iot/v1/automations/w/enable/{automationId}",
+          "POST /apis/iot/v1/automations/w/disable/{automationId}",
+          "status writes accept no payload and are verified by Runtime through automation.list"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "dev",
+        "intents": ["automation.list", "automation.enable", "automation.disable"],
+        "evidence": [
+          "automation discovery is scoped to selected automation modules",
+          "enable and disable are preview-proven independently for every automation",
+          "writes are verified by Runtime and followed by a generated-app list readback"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home status-first automation rows with restrained direct controls",
+          "Xiaomi Home and Tuya explicit enabled state with immediate write feedback",
+          "Home Assistant capability-backed toggles and persistent unavailable states",
+          "Yeelight PRO compact household automation management without exposing rule internals"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "per-item-enable-disable-preview", "keyboard-toggle", "write-and-restore", "write-after-list-verification", "write-failure-retry", "list-failure-preserve-and-retry", "strict-empty-body", "bridge-allowlist", "touch-targets", "contrast", "console-network"],
+        "verifiedBy": "validate-automation-slice.mjs",
+        "evidenceFile": ".trellis/tasks/archive/2026-07/06-26-yeelight-pro-app-builder-pro-ui-runtime/validation/evidence/schema-v3-automation/automation-e2e-summary.json",
+        "checks": 68
+      }
+    },
+    {
+      "id": "gateway.overview",
+      "fixture": { "status": "fixture-present", "entityIds": ["992900"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v2/thing/manage/house/{houseId}/gateway/r/info/{pageNo}/{pageSize}",
+          "GET /apis/iot/v2/thing/manage/house/{houseId}/gateway/{gatewayId}/r/info",
+          "POST /apis/iot/v1/device/r/gatewayswithstats with houseId only",
+          "GET /apis/iot/v2/thing/manage/house/{houseId}/gateway/{gatewayId}/r/thread-info",
+          "GET gateway scene relations and diagnose envelopes with endpoint-local failure recovery",
+          "gateway configure preview/execute/readback/restore and Installer-only delete/reset"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "workspace dev",
+        "intents": ["gateway.list", "gateway.detail.get", "gateway.stats.list", "gateway.thread.get", "gateway.scene_relation.list", "diagnose.gateway", "gateway.configure", "gateway.delete"],
+        "evidence": [
+          "gateway discovery and each read operation are probed independently through the workspace Runtime",
+          "configure requires preview, execute and detail readback while delete is compiled only for Installer",
+          "model, firmware, relationship, room, device, Thread and diagnostic fields come from Runtime responses"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home status-first accessory identity and progressive infrastructure detail",
+          "Xiaomi Home and Tuya explicit online or offline state with model and firmware facts",
+          "Home Assistant capability-backed unavailable states and retained data during partial failures",
+          "Yeelight PRO compact gateway statistics with progressive configuration and protected Installer deletion"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "online-offline", "identity-and-firmware", "device-and-room-stats", "thread-and-scene-relations", "diagnostic-and-partial-failure", "configure-preview-readback", "installer-delete-confirm-execute-readback-reset", "bridge-allowlist", "no-generic-device-reads", "no-fabricated-metrics", "touch-targets", "contrast", "console-network"],
+        "verifiedBy": "validate-gateway-slice.mjs",
+        "evidenceFile": ".trellis/tasks/07-12-yeelight-pro-app-builder-infrastructure-installer/validation/gateway-operation-complete/gateway-e2e-summary.json",
+        "checks": 91,
+        "supplementalEvidence": [
+          {
+            "id": "installer-delete-flow",
+            "evidenceFile": ".trellis/tasks/07-12-yeelight-pro-app-builder-infrastructure-installer/validation/infrastructure-operation-complete/installer/installer-e2e-summary.json",
+            "checks": 165,
+            "checkSource": "browser"
+          }
+        ]
+      }
+    },
+    {
+      "id": "panel.manager",
+      "fixture": { "status": "fixture-present", "entityIds": ["992501", "992601"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "GET /apis/iot/v1/panel/r/list/{houseId}",
+          "POST /apis/iot/v1/panel/r/detail/{panelId} with no body",
+          "POST /apis/iot/v1/panel/r/button/info/{panelId} with no body",
+          "GET /apis/iot/v1/knobs/{knobId}/detail",
+          "GET /apis/iot/v1/multi-knob/{knobId}/detail",
+          "POST /apis/iot/v1/panel/w/button/update/{panelId} with Runtime-merged complete button rows",
+          "panel button type, single event, batch event and reset strict contracts",
+          "knob detail configure and reset with exact bodies, readback and deterministic restore"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "0.1.19 + workspace dev",
+        "intents": ["panel.list", "panel.get", "panel.button.type.get", "panel.button.configure", "panel.button_event.update", "panel.button_event.batch_update", "panel.button_event.reset", "panel.click", "knob.get", "knob.configure", "knob.reset"],
+        "evidence": [
+          "panel and knob discovery uses dedicated Runtime reads without generic device detail or state probes",
+          "panel alias and event editors preserve complete current rows and verify writes through panel.get",
+          "knob configure and reset are enabled per instance only when detail and write evidence are complete",
+          "panel.click remains a version-mismatch terminal when the installed profile does not prove commissioning"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Apple Home accessory-first identity with progressive per-control editing",
+          "Xiaomi Home and Tuya explicit wall-control online state and labeled key rows",
+          "Home Assistant capability-backed read-only states when configuration data is incomplete",
+          "Yeelight PRO compact panel and knob summaries with one safe edit action per dialog"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["four-viewports", "panel-and-knob-dedicated-reads", "button-type-and-event-editors", "dialog-focus-escape-return", "alias-and-event-write-readback-restore", "batch-and-reset", "write-failure-preserve", "knob-configure-reset-readback-restore", "terminal-knob-readonly", "bridge-allowlist", "touch-targets", "contrast", "console-network"],
+        "verifiedBy": "validate-panel-slice.mjs",
+        "evidenceFile": ".trellis/tasks/07-12-yeelight-pro-app-builder-infrastructure-installer/validation/panel-opaque-final/panel-e2e-summary.json",
+        "checks": 141,
+        "supplementalEvidence": [
+          {
+            "id": "knob-write-flow",
+            "evidenceFile": ".trellis/tasks/07-12-yeelight-pro-app-builder-infrastructure-installer/validation/knob-opaque-final/knob-e2e-summary.json",
+            "checks": 145,
+            "checkSource": "browser"
+          }
+        ]
+      }
+    },
+    {
+      "id": "installer.maintenance",
+      "fixture": { "status": "fixture-present", "entityIds": ["992900", "992901", "992902", "992501", "992502", "992601", "992602"] },
+      "api": {
+        "status": "api-contract-covered",
+        "contracts": [
+          "Gateway list/detail/stats/thread/scene-relation/diagnose strict handlers",
+          "Panel list/detail/button-type/event and knob strict handlers",
+          "endpoint-level one-shot failure injection with deterministic reset"
+        ]
+      },
+      "cli": {
+        "status": "cli-proven",
+        "version": "workspace dev",
+        "intents": ["gateway.list", "gateway.detail.get", "gateway.stats.list", "gateway.thread.get", "gateway.scene_relation.list", "diagnose.gateway", "panel.list", "panel.get", "panel.button.type.get", "knob.get"],
+        "evidence": [
+          "public Builder generation probes every selected infrastructure operation through the workspace yeelight-home binary",
+          "the Installer profile adds only proven operations and keeps panel.click in a terminal state when unavailable",
+          "the household profile excludes gateway.delete and panel.click from its compiled Bridge allowlist"
+        ]
+      },
+      "industryBenchmark": {
+        "status": "reviewed",
+        "patterns": [
+          "Yeelight PRO issue-first installation maintenance hierarchy and restrained residential visual language",
+          "Apple Home status hierarchy with predictable navigation and recovery",
+          "Xiaomi Home and Tuya explicit offline and commissioning feedback",
+          "Home Assistant dense protocol diagnostics without exposing raw transport internals"
+        ]
+      },
+      "generatedApp": {
+        "status": "generated-e2e-passed",
+        "requiredEvidence": ["public-builder-generation", "household-installer-diff", "four-viewports", "matter-dali-device-room-relations", "thread-status", "gateway-delete-confirm-execute-readback-reset", "offline", "partial-failure-retry", "version-terminal", "more-sheet", "focus-escape-restore", "200-percent-text", "reduced-motion", "bridge-allowlist", "sensitive-data-scan", "console-network"],
+      "verifiedBy": "validate-installer-canary.mjs",
+      "evidenceFile": ".trellis/tasks/07-12-yeelight-pro-app-builder-infrastructure-installer/validation/infrastructure-operation-complete/installer/installer-e2e-summary.json",
+      "checks": 165,
+        "supplementalEvidence": [
+          {
+            "id": "household-installer-diff",
+            "evidenceFile": ".trellis/tasks/07-12-yeelight-pro-app-builder-infrastructure-installer/validation/infrastructure-operation-complete/infrastructure-suite-summary.json",
+            "checks": 12,
+            "checkSource": "top-level"
+          }
+        ]
+      }
+    }
+  ]
+}
