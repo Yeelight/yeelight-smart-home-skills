@@ -60,7 +60,13 @@ npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill ye
 
 ### OpenClaw / ClawHub
 
-ClawHub 当前会为所有已发布 Skill 版本固定标记 MIT-0，无法表达本项目采用的 Apache-2.0 许可证。在其支持所需 SPDX 许可证前，它不属于这两个 Skill 的官方分发渠道。请通过支持仓库安装的工具从 Yeelight 官方 GitHub 仓库安装。
+从 Yeelight 官方 listing 安装直控 Skill：
+
+```sh
+clawhub install @yeelight/yeelight-smart-home
+```
+
+GitHub 仓库是采用 Apache-2.0 的规范源。ClawHub 当前会把平台版本许可证元数据显示为 MIT-0，但这一平台限制不会改变源码许可证。`yeelight-pro-app-builder` 尚未在 ClawHub 上架，必须通过 skills.sh 或手动方式从 GitHub 安装。
 
 ### 手动安装
 
@@ -92,7 +98,7 @@ node --version
 
 ## 升级
 
-重新执行 skills.sh 安装命令即可刷新 Skill。Runtime 应通过最初使用的包管理器独立升级。
+通过 GitHub 安装的副本可重新执行 skills.sh 命令刷新；ClawHub 直控 Skill 使用 `clawhub update @yeelight/yeelight-smart-home`。Runtime 应通过最初使用的包管理器独立升级。
 
 升级后重新执行 `yeelight-home version --json`、`yeelight-home doctor --json`，并对所选 Skill 重新执行宿主发现验证。
 

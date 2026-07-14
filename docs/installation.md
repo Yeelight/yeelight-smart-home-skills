@@ -60,7 +60,13 @@ Install only the Skill you need, or run both commands.
 
 ### OpenClaw / ClawHub
 
-ClawHub currently assigns MIT-0 to every published Skill version and cannot represent this project's Apache-2.0 license. It is not an official distribution channel for these Skills until it supports the required SPDX license. Use the official GitHub repository through a supported repository-based installer.
+Install the direct-control Skill from Yeelight's official listing:
+
+```sh
+clawhub install @yeelight/yeelight-smart-home
+```
+
+The GitHub repository is the canonical Apache-2.0 source. ClawHub currently displays MIT-0 as platform version metadata; this platform limitation does not change the source license. `yeelight-pro-app-builder` is not listed on ClawHub and must be installed from GitHub with skills.sh or manually.
 
 ### Manual installation
 
@@ -92,7 +98,7 @@ node --version
 
 ## Upgrade
 
-Repeat the skills.sh installation command to refresh the installed copy. Upgrade the Runtime independently with the package manager used during installation.
+Repeat the skills.sh installation command to refresh a GitHub-installed copy. For the ClawHub direct-control Skill, run `clawhub update @yeelight/yeelight-smart-home`. Upgrade the Runtime independently with the package manager used during installation.
 
 After an upgrade, rerun `yeelight-home version --json`, `yeelight-home doctor --json`, and the host discovery check for the selected Skill.
 
