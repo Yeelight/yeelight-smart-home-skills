@@ -2,6 +2,18 @@
 
 English | [简体中文](README.zh-CN.md)
 
+## Official Repository And Mirrors
+
+[GitHub](https://github.com/Yeelight/yeelight-smart-home-skills) is the
+canonical source for issues, contributions, CI, and releases. Read-only mirrors
+are available on
+[Gitee](https://gitee.com/yeelight/yeelight-smart-home-skills) and
+[GitCode](https://gitcode.com/Yeelight/yeelight-smart-home-skills) for users who
+cannot reach GitHub reliably, with
+[GitLab.com](https://gitlab.com/Yeelight/yeelight-smart-home-skills) as an
+additional global fallback. Clone or install source from any reachable mirror,
+but report issues and contribute changes on GitHub.
+
 Official Yeelight agent Skills for controlling a smart home and generating tailored smart-home applications. This repository contains the installable Skill source. Versioned archives belong in [GitHub Releases](https://github.com/Yeelight/yeelight-smart-home-skills/releases), not in the Git tree.
 
 ## Skills
@@ -20,13 +32,13 @@ Give your local AI agent exactly one of these prompts. Each prompt names one Ski
 **Yeelight Smart Home:**
 
 ```text
-Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-smart-home` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, restart or refresh my agent host and verify that it discovers `yeelight-smart-home`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
+Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-smart-home` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, restart or refresh my agent host and verify that it discovers `yeelight-smart-home`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
 ```
 
 **Yeelight PRO App Builder:**
 
 ```text
-Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-pro-app-builder` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, verify Node.js 22 or later, restart or refresh my agent host and verify that it discovers `yeelight-pro-app-builder`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
+Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-pro-app-builder` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, verify Node.js 22 or later, restart or refresh my agent host and verify that it discovers `yeelight-pro-app-builder`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
 ```
 
 ## Install
@@ -47,6 +59,11 @@ Then install one or both Skills with skills.sh:
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
 ```
+
+If GitHub is unreachable, replace the repository URL with the official Gitee
+mirror `https://gitee.com/yeelight/yeelight-smart-home-skills` or GitCode mirror
+`https://gitcode.com/Yeelight/yeelight-smart-home-skills`; keep the same
+`--skill` value.
 
 OpenClaw users can install the direct-control Skill from its official ClawHub listing:
 

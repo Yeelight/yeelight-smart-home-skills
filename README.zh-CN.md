@@ -2,6 +2,16 @@
 
 [English](README.md) | 简体中文
 
+## 官方仓库与国内镜像
+
+[GitHub](https://github.com/Yeelight/yeelight-smart-home-skills) 是 Issue、贡献、
+CI 和发布的规范源。国内无法稳定访问 GitHub 时，可使用只读的
+[Gitee 镜像](https://gitee.com/yeelight/yeelight-smart-home-skills) 或
+[GitCode 镜像](https://gitcode.com/Yeelight/yeelight-smart-home-skills)；
+[GitLab.com](https://gitlab.com/Yeelight/yeelight-smart-home-skills) 是额外的
+全球备用源。可以从任一可访问镜像克隆或安装源码，但请仍在 GitHub 提交 Issue 和
+贡献修改。
+
 易来官方智能家居 Agent Skills，用于直接操作智能家居，以及按用户需求生成专属智能家居应用。本仓库只保存可安装的 Skill 源码；带版本的压缩包应位于 [GitHub Releases](https://github.com/Yeelight/yeelight-smart-home-skills/releases)，不重复放入 Git 当前树。
 
 ## Skills
@@ -20,13 +30,13 @@
 **Yeelight Smart Home：**
 
 ```text
-请从 Yeelight 官方 GitHub Release 或已支持的包管理器，为我的操作系统安装 Yeelight Home Runtime，然后只从 https://github.com/Yeelight/yeelight-smart-home-skills 安装 `yeelight-smart-home` Skill；执行 `yeelight-home version --json`、`yeelight-home doctor --json` 和 `yeelight-home auth status --json`，需要登录时只引导我在本机运行 `yeelight-home auth login --qr`，刷新或重启 Agent host 并确认它已发现 `yeelight-smart-home`；只使用 Yeelight 官方来源，不要要求我把 token、密码、cookie 或扫码结果粘贴到聊天里，若宿主或渠道不受支持就明确报告并停止，不要臆造命令。
+请从 Yeelight 官方 GitHub Release 或已支持的包管理器，为我的操作系统安装 Yeelight Home Runtime，然后只从 https://github.com/Yeelight/yeelight-smart-home-skills 安装 `yeelight-smart-home` Skill；如果无法访问 GitHub，就改用官方只读镜像 https://gitee.com/yeelight/yeelight-smart-home-skills 或 https://gitcode.com/Yeelight/yeelight-smart-home-skills；执行 `yeelight-home version --json`、`yeelight-home doctor --json` 和 `yeelight-home auth status --json`，需要登录时只引导我在本机运行 `yeelight-home auth login --qr`，刷新或重启 Agent host 并确认它已发现 `yeelight-smart-home`；只使用 Yeelight 官方来源，不要要求我把 token、密码、cookie 或扫码结果粘贴到聊天里，若宿主或渠道不受支持就明确报告并停止，不要臆造命令。
 ```
 
 **Yeelight PRO App Builder：**
 
 ```text
-请从 Yeelight 官方 GitHub Release 或已支持的包管理器，为我的操作系统安装 Yeelight Home Runtime，然后只从 https://github.com/Yeelight/yeelight-smart-home-skills 安装 `yeelight-pro-app-builder` Skill；执行 `yeelight-home version --json`、`yeelight-home doctor --json` 和 `yeelight-home auth status --json`，需要登录时只引导我在本机运行 `yeelight-home auth login --qr`，确认 Node.js 不低于 22，刷新或重启 Agent host 并确认它已发现 `yeelight-pro-app-builder`；只使用 Yeelight 官方来源，不要要求我把 token、密码、cookie 或扫码结果粘贴到聊天里，若宿主或渠道不受支持就明确报告并停止，不要臆造命令。
+请从 Yeelight 官方 GitHub Release 或已支持的包管理器，为我的操作系统安装 Yeelight Home Runtime，然后只从 https://github.com/Yeelight/yeelight-smart-home-skills 安装 `yeelight-pro-app-builder` Skill；如果无法访问 GitHub，就改用官方只读镜像 https://gitee.com/yeelight/yeelight-smart-home-skills 或 https://gitcode.com/Yeelight/yeelight-smart-home-skills；执行 `yeelight-home version --json`、`yeelight-home doctor --json` 和 `yeelight-home auth status --json`，需要登录时只引导我在本机运行 `yeelight-home auth login --qr`，确认 Node.js 不低于 22，刷新或重启 Agent host 并确认它已发现 `yeelight-pro-app-builder`；只使用 Yeelight 官方来源，不要要求我把 token、密码、cookie 或扫码结果粘贴到聊天里，若宿主或渠道不受支持就明确报告并停止，不要臆造命令。
 ```
 
 ## 安装
@@ -47,6 +57,11 @@ yeelight-home auth login --qr
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
 ```
+
+无法访问 GitHub 时，把命令中的仓库地址替换为官方 Gitee 镜像
+`https://gitee.com/yeelight/yeelight-smart-home-skills` 或 GitCode 镜像
+`https://gitcode.com/Yeelight/yeelight-smart-home-skills`，并保持 `--skill`
+参数不变。
 
 OpenClaw 用户可以从官方 ClawHub listing 安装直控 Skill：
 
