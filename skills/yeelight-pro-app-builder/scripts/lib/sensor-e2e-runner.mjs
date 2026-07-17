@@ -24,7 +24,7 @@ export async function runSensorBrowserE2E({ chromium, baseUrl, bridgeOrigin, moc
       check(report, `${viewport.id}:environment-readings`, await page.getByText("24℃", { exact: true }).isVisible() && await page.getByText("48%", { exact: true }).isVisible() && await page.getByText("86%", { exact: true }).isVisible(), "temperature, humidity and battery are visible");
       check(report, `${viewport.id}:presence-readings`, await page.getByText("无人", { exact: true }).isVisible() && await page.getByText("126 lx", { exact: true }).isVisible() && await page.getByText("74%", { exact: true }).isVisible(), "presence, luminance and battery are visible");
       check(report, `${viewport.id}:event-definitions`, await page.getByText("温度过高", { exact: true }).isVisible() && await page.getByText("检测到有人", { exact: true }).isVisible(), "real Runtime event definitions are visible");
-      check(report, `${viewport.id}:history-boundary`, await page.getByText("当前 Runtime 未提供时间序列历史", { exact: true }).isVisible(), "history boundary is explicit");
+      check(report, `${viewport.id}:history-boundary`, await page.getByText("当前家庭系统未提供时间序列历史", { exact: true }).isVisible(), "history boundary is explicit");
       check(report, `${viewport.id}:read-only`, await page.locator(".sensor-card button, .sensor-card input, .sensor-card select").count() === 0, "sensor cards expose no write controls");
       const layout = await inspectLayout(page);
       check(report, `${viewport.id}:no-horizontal-overflow`, layout.scrollWidth <= layout.clientWidth + 1, layout);

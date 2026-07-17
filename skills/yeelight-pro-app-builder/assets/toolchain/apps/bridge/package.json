@@ -1,0 +1,8 @@
+{
+  "name": "@app/bridge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.mjs"
+  }
+}

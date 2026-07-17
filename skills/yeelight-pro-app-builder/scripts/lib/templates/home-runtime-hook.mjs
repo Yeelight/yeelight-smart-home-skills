@@ -23,7 +23,7 @@ export type ManagedDeviceDetail = ManagedDevice & { properties: Record<string, u
     if (!force && areaDetailCache.current[id]) return areaDetailCache.current[id];
     setSpaceDetailLoading((current) => ({ ...current, [key]: true })); setSpaceDetailErrors((current) => ({ ...current, [key]: "" }));
     try {
-      const response = await fetch("/api/operations/area.detail.get", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "读取区域详情", targets: [{ entityType: "area", id }], parameters: { houseId: ${houseId}, areaId: id } }) });
+      const response = await requestAction("area.detail.get", { locale: "zh-CN", utterance: "读取区域详情", targets: [{ entityType: "area", id }], parameters: { houseId: ${houseId}, areaId: id } });
       const body = await response.json();
       if (!response.ok || body.status !== "success") throw new Error(body.userMessage || "区域详情读取失败。");
       const raw = body?.result?.data?.detail; const summary = areas.find((item) => item.id === id);
@@ -38,7 +38,7 @@ export type ManagedDeviceDetail = ManagedDevice & { properties: Record<string, u
     if (!force && roomDetailCache.current[id]) return roomDetailCache.current[id];
     setSpaceDetailLoading((current) => ({ ...current, [key]: true })); setSpaceDetailErrors((current) => ({ ...current, [key]: "" }));
     try {
-      const response = await fetch("/api/operations/room.detail.get", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "读取房间详情", targets: [{ entityType: "room", id }], parameters: { houseId: ${houseId}, roomId: id } }) });
+      const response = await requestAction("room.detail.get", { locale: "zh-CN", utterance: "读取房间详情", targets: [{ entityType: "room", id }], parameters: { houseId: ${houseId}, roomId: id } });
       const body = await response.json();
       if (!response.ok || body.status !== "success") throw new Error(body.userMessage || "房间详情读取失败。");
       const raw = body?.result?.data?.detail; const summary = rooms.find((item) => item.id === id);
@@ -55,7 +55,7 @@ export type ManagedDeviceDetail = ManagedDevice & { properties: Record<string, u
     try {
       const summary = summaryOverride || devices.find((device) => device.id === id);
       if (!summary) throw new Error("设备不存在或已被移除。");
-      const response = await fetch("/api/operations/device.detail.get", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "读取设备详情", targets: [{ entityType: "device", id }], parameters: { houseId: ${houseId}, deviceId: id } }) });
+      const response = await requestAction("device.detail.get", { locale: "zh-CN", utterance: "读取设备详情", targets: [{ entityType: "device", id }], parameters: { houseId: ${houseId}, deviceId: id } });
       const body = await response.json();
       if (!response.ok || body.status !== "success") throw new Error(body.userMessage || "设备详情读取失败。");
       const raw = body?.result?.data?.detail;
@@ -63,7 +63,7 @@ export type ManagedDeviceDetail = ManagedDevice & { properties: Record<string, u
       const detailProperties = raw.properties && typeof raw.properties === "object" ? raw.properties as Record<string, unknown> : {};
       let liveProperties: Record<string, unknown> = {};
       try {
-        const stateResponse = await fetch("/api/operations/state.query", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "读取设备实时状态", targets: [{ entityType: "device", id }], parameters: { houseId: ${houseId}, deviceId: id } }) });
+        const stateResponse = await requestAction("state.query", { locale: "zh-CN", utterance: "读取设备实时状态", targets: [{ entityType: "device", id }], parameters: { houseId: ${houseId}, deviceId: id } });
         const stateBody = await stateResponse.json();
         if (stateResponse.ok && ["success", "partial"].includes(String(stateBody.status || "")) && stateBody?.result?.properties && typeof stateBody.result.properties === "object") liveProperties = stateBody.result.properties as Record<string, unknown>;
       } catch { /* 保留摘要和详情中的最近可信状态。 */ }
@@ -83,18 +83,19 @@ export type ManagedDeviceDetail = ManagedDevice & { properties: Record<string, u
     }
   }, [devices, rooms]);
   const refreshDevice = useCallback(async (id: string, statePatch: Record<string, unknown> = {}) => {
-    const refreshed = await refresh();
-    const summary = refreshed?.find((device: ManagedDevice) => device.id === id);
+    const summary = devices.find((device) => device.id === id);
     const detail = await loadDeviceDetail(id, true, summary);
-    if (!detail || Object.keys(statePatch).length === 0) return detail;
+    if (!detail) return undefined;
     const patched = { ...detail, state: { ...(detail.state || {}), ...statePatch }, properties: { ...detail.properties, ...statePatch } };
     detailCache.current[id] = patched;
     setDeviceDetails((current) => ({ ...current, [id]: patched }));
+    setDevices((current) => current.map((device) => device.id === id ? { ...device, ...patched } : device));
     return patched;
-  }, [refresh, loadDeviceDetail]);` : "";
+  }, [devices, loadDeviceDetail]);` : "";
   const detailReturnSource = deviceDirectory ? ", areaDetails, roomDetails, spaceDetailLoading, spaceDetailErrors, loadAreaDetail, loadRoomDetail, deviceDetails, detailLoading, detailErrors, loadDeviceDetail, refreshDevice" : "";
   return `import { ${reactImports} } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type ManagedArea = { id: string; name: string };
 export type ManagedRoom = { id: string; name: string; areaId: string; areaName: string };
@@ -123,7 +124,7 @@ export function useHomeModel() {
   const refresh = useCallback(async () => {
     setLoading(true); setError("");
     try {
-      const response = await fetch("/api/operations/entity.list", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步家庭空间和设备", parameters: { houseId: ${houseId} } }) });
+      const response = await requestAction("entity.list", { locale: "zh-CN", utterance: "同步家庭空间和设备", parameters: { houseId: ${houseId} } });
       const body = await response.json();
       if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "家庭空间同步失败。");
       const entities = Array.isArray(body?.result?.entities) ? body.result.entities : [];

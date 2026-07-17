@@ -1,27 +1,7 @@
-:root {
-  --yp-color-white: #ffffff;
-  --yp-color-black: #0a1114;
-  --yp-color-teal-050: #edf8f7;
-  --yp-color-teal-100: #d7efed;
-  --yp-color-teal-300: #79c9c4;
-  --yp-color-teal-500: #168a87;
-  --yp-color-teal-600: #0e716f;
-  --yp-color-teal-700: #0b5b59;
-  --yp-color-neutral-000: #ffffff;
-  --yp-color-neutral-025: #fafcfc;
-  --yp-color-neutral-050: #f4f7f7;
-  --yp-color-neutral-100: #e8eeee;
-  --yp-color-neutral-200: #d4dede;
-  --yp-color-neutral-400: #819193;
-  --yp-color-neutral-600: #536467;
-  --yp-color-neutral-800: #263639;
-  --yp-color-neutral-900: #142326;
-  --yp-color-green-600: #25784b;
-  --yp-color-amber-600: #9a6418;
-  --yp-color-red-600: #b13a35;
-  --yp-color-blue-600: #356f9d;
-  --yp-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; /* @kind font */
-  --yp-font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace; /* @kind font */
+:root,
+[data-theme-preset] {
+  --yp-font-sans: var(--yp-primitive-font-body, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif); /* @kind font */
+  --yp-font-mono: var(--yp-primitive-font-data, "SFMono-Regular", Consolas, "Liberation Mono", monospace); /* @kind font */
   --yp-font-size-12: 12px;
   --yp-font-size-14: 14px;
   --yp-font-size-16: 16px;
@@ -34,23 +14,23 @@
   --yp-weight-regular: 400; /* @kind other */
   --yp-weight-medium: 600; /* @kind other */
   --yp-weight-bold: 700; /* @kind other */
-  --yp-space-1: 4px;
-  --yp-space-2: 8px;
-  --yp-space-3: 12px;
-  --yp-space-4: 16px;
-  --yp-space-5: 20px;
-  --yp-space-6: 24px;
-  --yp-space-8: 32px;
-  --yp-space-10: 40px;
-  --yp-radius-2: 2px;
-  --yp-radius-4: 4px;
-  --yp-radius-6: 6px;
-  --yp-radius-8: 8px;
+  --yp-space-1: var(--yp-primitive-space-1, 4px);
+  --yp-space-2: var(--yp-primitive-space-2, 8px);
+  --yp-space-3: var(--yp-primitive-space-3, 12px);
+  --yp-space-4: var(--yp-primitive-space-4, 16px);
+  --yp-space-5: calc(var(--yp-primitive-space-4, 16px) + var(--yp-primitive-space-1, 4px));
+  --yp-space-6: var(--yp-primitive-space-6, 24px);
+  --yp-space-8: calc(var(--yp-primitive-space-4, 16px) * 2);
+  --yp-space-10: calc(var(--yp-primitive-space-4, 16px) * 2 + var(--yp-primitive-space-2, 8px));
+  --yp-radius-2: calc(var(--yp-primitive-radius-sm, 4px) / 2);
+  --yp-radius-4: var(--yp-primitive-radius-sm, 4px);
+  --yp-radius-6: var(--yp-primitive-radius-md, 6px);
+  --yp-radius-8: calc(var(--yp-primitive-radius-md, 6px) + 2px);
   --yp-size-control-compact: 36px;
-  --yp-size-control: 44px;
+  --yp-size-control: var(--yp-component-control-min-height, 44px);
   --yp-size-control-touch: 48px;
-  --yp-duration-fast: 150ms; /* @kind other */
-  --yp-duration-standard: 220ms; /* @kind other */
+  --yp-duration-fast: var(--yp-primitive-duration-fast, 150ms); /* @kind other */
+  --yp-duration-standard: var(--yp-primitive-duration-standard, 220ms); /* @kind other */
   --yp-ease-standard: cubic-bezier(0.2, 0, 0, 1); /* @kind other */
   --yp-layer-nav: 20; /* @kind other */
   --yp-layer-popover: 60; /* @kind other */

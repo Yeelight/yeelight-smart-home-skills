@@ -1,22 +1,26 @@
 import { inspectGroupManagement, inspectGroupMemberUpdates, parseCapabilityJSON as parseJSON } from "./capability-inspector-groups.mjs";
 import { inspectKnobs } from "./capability-inspector-knobs.mjs";
-
+import { inspectAutomationStatusActions, inspectPanelButtonAliases, inspectSceneExecutions } from "./capability-management-inspector.mjs";
+import { evaluateDevicePreview } from "./capability-preview-diagnostics.mjs";
+import { inspectDeviceState } from "./capability-state-inspector.mjs";
+import { assertRuntimeSupported } from "./runtime-compatibility.mjs";
 const lightProbes = [
   { id: "power", intent: "light.power.set", property: "power", value: (state) => !Boolean(state.power) },
   { id: "brightness", intent: "light.brightness.set", property: "brightness", value: (state) => Number(state.brightness) === 50 ? 51 : 50 },
   { id: "colorTemperature", intent: "light.color_temperature.set", property: "colorTemperature", value: (state) => Number(state.colorTemperature) === 4000 ? 4100 : 4000 },
   { id: "color", intent: "light.color.set", property: "color", value: (state) => Number(state.color) === 16737792 ? 8454143 : 16737792 },
 ];
-
 export async function inspectCapabilities({ spec, areas = [], rooms = [], entities = [], scenes = [], automations = [], groups = [], gateways = [], protocolRelationships = [], panels = [], knobs = [], run }) {
   if (typeof run !== "function") throw new Error("capability inspector requires a command runner");
   const versionResult = await run(["--version"]);
   if (versionResult.code !== 0) throw new Error("无法读取 yeelight-home 版本");
   const version = parseVersion(versionResult.stdout);
+  assertRuntimeSupported(version);
   const snapshot = {
     schemaVersion: 1,
     cli: { name: "yeelight-home", version, contractVersion: "1.0" },
     intents: {},
+    diagnostics: [],
     areas: Object.fromEntries(areas.map((area) => [area.id, area])),
     rooms: Object.fromEntries(rooms.map((room) => [room.id, room])),
     entities: {},
@@ -39,20 +43,22 @@ export async function inspectCapabilities({ spec, areas = [], rooms = [], entiti
   const climateControl = spec.modules?.some((module) => module.id === "device.climate-control");
   const sensorEnvironment = spec.modules?.some((module) => module.id === "sensor.environment");
   const sceneManager = spec.modules?.some((module) => module.id === "scene.launcher");
+  const sceneManagement = spec.modules?.some((module) => module.id === "scene.launcher" && module.options?.management === true);
   const automationManager = spec.modules?.some((module) => module.id === "automation.manager");
   const groupManager = spec.modules?.some((module) => module.id === "group.manager");
   const gatewayOverview = spec.modules?.some((module) => module.id === "gateway.overview");
   const panelManager = spec.modules?.some((module) => module.id === "panel.manager");
-  const needsDeviceState = sceneManager || automationManager || spaceManagement || lightingSummary || lightingControl
+  const needsDeviceState = sceneManagement || automationManager || spaceManagement || lightingSummary || lightingControl
     || curtainControl || switchControl || climateControl || sensorEnvironment || panelManager;
   for (const entity of entities) {
     const read = needsDeviceState ? await inspectDeviceState(spec, entity, run) : { proven: false, state: entity.state || {} };
+    if (read.diagnostic) snapshot.diagnostics.push(read.diagnostic);
     const access = spaceManagement ? await inspectDeviceAccess(spec, entity, run) : {};
     const writeBlocked = entity.readOnly === true || access.readOnly === true || access.capabilityStatus === "version-mismatch";
-    const controls = !writeBlocked && entity.family === "light" && (sceneManager || automationManager || lightingControl) ? await inspectLightControls(spec, entity, read.state, run) : [];
-    if (!writeBlocked && entity.family === "curtain" && (sceneManager || automationManager || curtainControl)) controls.push(...await inspectCurtainControls(spec, entity, run));
-    if (!writeBlocked && entity.family === "switch-relay" && (sceneManager || automationManager || switchControl)) controls.push(...await inspectSwitchControls(spec, entity, read.state, run));
-    if (!writeBlocked && entity.family === "climate" && (automationManager || climateControl)) controls.push(...await inspectClimateControls(spec, entity, read.state, run));
+    const controls = !writeBlocked && entity.family === "light" && (sceneManagement || automationManager || lightingControl) ? await inspectLightControls(spec, entity, read.state, run, snapshot.diagnostics) : [];
+    if (!writeBlocked && entity.family === "curtain" && (sceneManagement || automationManager || curtainControl)) controls.push(...await inspectCurtainControls(spec, entity, run, snapshot.diagnostics));
+    if (!writeBlocked && entity.family === "switch-relay" && (sceneManagement || automationManager || switchControl)) controls.push(...await inspectSwitchControls(spec, entity, read.state, run, snapshot.diagnostics));
+    if (!writeBlocked && entity.family === "climate" && (automationManager || climateControl)) controls.push(...await inspectClimateControls(spec, entity, read.state, run, snapshot.diagnostics));
     if (!writeBlocked && spaceManagement) controls.push(...await inspectSpaceControls(spec, rooms, entity, run));
     snapshot.entities[entity.id] = { ...entity, ...access, state: { ...(entity.state || {}), ...(read.state || {}) }, readIntent: read.proven ? "state.query" : undefined, controls };
     if (read.proven) snapshot.intents["state.query"] = { status: "proven", evidence: "live-read" };
@@ -67,13 +73,13 @@ export async function inspectCapabilities({ spec, areas = [], rooms = [], entiti
   }
   if (spec.modules?.some((module) => module.id === "scene.launcher")) {
     snapshot.intents["scene.list"] = { status: "proven", evidence: "live-read" };
-    snapshot.scenes = await inspectSceneExecutions(spec, scenes, run);
+    snapshot.scenes = await inspectSceneExecutions(spec, scenes, run, snapshot.diagnostics);
     if (snapshot.scenes.some((scene) => scene.executable)) snapshot.intents["scene.execute"] = { status: "proven", evidence: "preview-only" };
     snapshot.groups = groups;
   }
   if (automationManager) {
     snapshot.intents["automation.list"] = { status: "proven", evidence: "live-read" };
-    snapshot.automations = await inspectAutomationStatusActions(spec, automations, run);
+    snapshot.automations = await inspectAutomationStatusActions(spec, automations, run, snapshot.diagnostics);
     snapshot.scenes ??= scenes;
     snapshot.groups ??= groups;
     for (const automation of snapshot.automations) {
@@ -83,9 +89,9 @@ export async function inspectCapabilities({ spec, areas = [], rooms = [], entiti
   if (groupManager) {
     snapshot.intents["group.list"] = { status: "proven", evidence: "live-read" };
     snapshot.intents["group.detail.get"] = { status: "proven", evidence: "live-read" };
-    snapshot.groups = await inspectGroupMemberUpdates(spec, groups, entities, run);
+    snapshot.groups = await inspectGroupMemberUpdates(spec, groups, entities, run, snapshot.diagnostics);
     if (snapshot.groups.some((group) => group.editable)) snapshot.intents["group.members.update"] = { status: "proven", evidence: "preview-only" };
-    const management = await inspectGroupManagement(spec, groups, entities, run);
+    const management = await inspectGroupManagement(spec, groups, entities, run, snapshot.diagnostics);
     for (const intent of management) snapshot.intents[intent] = { status: "proven", evidence: "preview-only" };
   }
   if (gatewayOverview) {
@@ -96,10 +102,9 @@ export async function inspectCapabilities({ spec, areas = [], rooms = [], entiti
     snapshot.intents["panel.list"] = { status: "proven", evidence: "live-read" };
     snapshot.intents["panel.get"] = { status: "proven", evidence: "live-read" };
     snapshot.intents["knob.get"] = { status: "proven", evidence: "live-read" };
-    snapshot.panels = await inspectPanelButtonAliases(spec, panels, run);
+    snapshot.panels = await inspectPanelButtonAliases(spec, panels, run, snapshot.diagnostics);
     const knobInspection = await inspectKnobs({ spec, knobs, run });
-    snapshot.knobs = knobInspection.knobs;
-    Object.assign(snapshot.intents, knobInspection.intents);
+    snapshot.knobs = knobInspection.knobs; snapshot.diagnostics.push(...knobInspection.diagnostics); Object.assign(snapshot.intents, knobInspection.intents);
     snapshot.scenes ??= scenes;
     snapshot.groups ??= groups;
     if (snapshot.panels.some((panel) => panel.editable)) snapshot.intents["panel.button.configure"] = { status: "proven", evidence: "preview-only" };
@@ -135,75 +140,6 @@ function protocolDeviceName(entity) {
   return String(entity.displayName || entity.name || entity.id).replace(/^(?:matter|dali)-/i, "");
 }
 
-async function inspectPanelButtonAliases(spec, panels, run) {
-  const houseId = spec.scope?.homeIds?.[0] || ""; const result = [];
-  for (const panel of panels) {
-    const buttons = [];
-    for (const button of panel.buttons) {
-      const request = { contractVersion: "1.0", requestId: `capability-panel-${panel.id}-${button.id}`, locale: "zh-CN", utterance: `预览修改${panel.name}${button.name}别名`, intent: "panel.button.configure", targets: [{ entityType: "device", id: panel.id }], parameters: { houseId, deviceId: panel.id, buttons: [{ id: button.id, alias: button.alias }] } };
-      const execution = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) }); const payload = parseJSON(execution.stdout); const preview = payload?.result?.preview; const rows = preview?.payloadPreview?.buttons;
-      const proven = execution.code === 0 && payload?.status === "success" && payload?.result?.dryRun === true && payload?.warnings?.includes("dry_run_no_cloud_write") && preview?.intent === request.intent && String(preview?.payloadPreview?.deviceId || "") === panel.id && Array.isArray(rows) && String(rows[0]?.id || "") === button.id;
-      buttons.push({ ...button, editable: proven, ...(proven ? { evidence: "preview-only" } : {}) });
-    }
-    result.push({ ...panel, buttons, editable: buttons.length > 0 && buttons.every((button) => button.editable) });
-  }
-  return result;
-}
-
-async function inspectAutomationStatusActions(spec, automations, run) {
-  const houseId = spec.scope?.homeIds?.[0] || "";
-  const inspected = [];
-  for (const automation of automations) {
-    const actions = [];
-    for (const intent of ["automation.enable", "automation.disable"]) {
-      const request = {
-        contractVersion: "1.0", requestId: `capability-${intent}-${automation.id}`, locale: "zh-CN",
-        utterance: `${intent.endsWith("enable") ? "启用" : "停用"}自动化${automation.name}`, intent,
-        targets: [{ entityType: "automation", id: automation.id }], parameters: { houseId, automationId: automation.id },
-      };
-      const result = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) });
-      const payload = parseJSON(result.stdout);
-      const planned = payload?.result?.planned || payload?.result?.preview;
-      const plannedAutomationId = planned?.automationId || planned?.payloadPreview?.automationId;
-      const noWrite = payload?.result?.persistentWrites === false || (
-        payload?.traceId === "invoke-preview" && Array.isArray(payload?.warnings) && payload.warnings.includes("dry_run_no_cloud_write")
-      );
-      const proven = result.code === 0 && payload?.status === "success" && payload?.result?.dryRun === true
-        && noWrite && planned?.intent === intent && String(plannedAutomationId || "") === automation.id;
-      if (proven) actions.push({ intent, evidence: "preview-only" });
-    }
-    inspected.push({ ...automation, actions });
-  }
-  return inspected;
-}
-
-async function inspectSceneExecutions(spec, scenes, run) {
-  const houseId = spec.scope?.homeIds?.[0] || "";
-  const inspected = [];
-  for (const scene of scenes) {
-    const request = {
-      contractVersion: "1.0",
-      requestId: `capability-scene-${scene.id}`,
-      locale: "zh-CN",
-      utterance: `预览执行情景${scene.name}`,
-      intent: "scene.execute",
-      targets: [{ entityType: "scene", id: scene.id }],
-      parameters: { houseId, sceneId: scene.id },
-    };
-    const result = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) });
-    const payload = parseJSON(result.stdout);
-    const planned = payload?.result?.planned;
-    const executable = result.code === 0
-      && payload?.status === "success"
-      && payload?.result?.dryRun === true
-      && payload?.result?.persistentWrites === false
-      && planned?.intent === "scene.execute"
-      && String(planned?.sceneId || "") === scene.id;
-    inspected.push({ ...scene, executable, ...(executable ? { evidence: "preview-only" } : {}) });
-  }
-  return inspected;
-}
-
 async function inspectSensorEvents(spec, run) {
   const houseId = spec.scope?.homeIds?.[0] || "";
   const request = {
@@ -222,7 +158,7 @@ async function inspectSensorEvents(spec, run) {
   return { proven: true, items };
 }
 
-async function inspectClimateControls(spec, entity, state, run) {
+async function inspectClimateControls(spec, entity, state, run, diagnostics) {
   const probes = [
     { id: "power", property: "airConditionerPower", value: !Boolean(state.airConditionerPower) },
     { id: "target-temperature", property: "airConditionerTargetTemperature", value: nextTemperature(state.airConditionerTargetTemperature) },
@@ -244,11 +180,12 @@ async function inspectClimateControls(spec, entity, state, run) {
     };
     const result = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) });
     const payload = parseJSON(result.stdout);
-    const planned = payload?.result?.planned;
-    if (result.code !== 0 || payload?.status !== "success") continue;
-    if (payload?.result?.dryRun !== true || payload?.result?.persistentWrites !== false) continue;
-    if (planned?.intent !== request.intent || planned?.property !== probe.property || planned?.value !== probe.value) continue;
-    controls.push({ ...probe, intent: request.intent, evidence: "preview-only", planned });
+    const evidence = evaluateDevicePreview({ result, payload, expected: { intent: request.intent, property: probe.property, value: probe.value }, entity });
+    if (!evidence.proven) {
+      diagnostics.push(evidence.diagnostic);
+      continue;
+    }
+    controls.push({ ...probe, intent: request.intent, evidence: "preview-only", planned: evidence.planned });
   }
   return controls;
 }
@@ -259,7 +196,7 @@ function nextTemperature(value) {
   return current === 32 ? 31 : current + 1;
 }
 
-async function inspectSwitchControls(spec, entity, state, run) {
+async function inspectSwitchControls(spec, entity, state, run, diagnostics) {
   const houseId = spec.scope?.homeIds?.[0] || entity.houseId || "";
   const properties = Object.keys(state || {}).filter((property) => property === "sp" || /^(?:0|[1-6])-sp$/.test(property)).sort(switchPropertyOrder);
   const controls = [];
@@ -276,12 +213,13 @@ async function inspectSwitchControls(spec, entity, state, run) {
     };
     const result = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) });
     const payload = parseJSON(result.stdout);
-    const planned = payload?.result?.planned;
-    if (result.code !== 0 || payload?.status !== "success") continue;
-    if (payload?.result?.dryRun !== true || payload?.result?.persistentWrites !== false) continue;
-    if (planned?.intent !== request.intent || planned?.property !== property || planned?.value !== value) continue;
+    const evidence = evaluateDevicePreview({ result, payload, expected: { intent: request.intent, property, value }, entity });
+    if (!evidence.proven) {
+      diagnostics.push(evidence.diagnostic);
+      continue;
+    }
     const channel = property === "sp" ? 1 : Number(property.split("-")[0]);
-    controls.push({ id: channel === 0 ? "all-circuits" : `channel-${channel}`, intent: request.intent, property, channel, evidence: "preview-only", planned });
+    controls.push({ id: channel === 0 ? "all-circuits" : `channel-${channel}`, intent: request.intent, property, channel, evidence: "preview-only", planned: evidence.planned });
   }
   return controls;
 }
@@ -291,7 +229,7 @@ function switchPropertyOrder(left, right) {
   return channel(left) - channel(right);
 }
 
-async function inspectCurtainControls(spec, entity, run) {
+async function inspectCurtainControls(spec, entity, run, diagnostics) {
   const houseId = spec.scope?.homeIds?.[0] || entity.houseId || "";
   const request = {
     contractVersion: "1.0",
@@ -304,11 +242,17 @@ async function inspectCurtainControls(spec, entity, run) {
   };
   const result = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) });
   const payload = parseJSON(result.stdout);
-  const planned = payload?.result?.planned;
-  if (result.code !== 0 || payload?.status !== "success") return [];
-  if (payload?.result?.dryRun !== true || payload?.result?.persistentWrites !== false) return [];
-  if (planned?.intent !== request.intent || planned?.property !== request.parameters.property || planned?.value !== request.parameters.value) return [];
-  return [{ id: "position", intent: request.intent, property: request.parameters.property, evidence: "preview-only", planned }];
+  const evidence = evaluateDevicePreview({
+    result,
+    payload,
+    expected: { intent: request.intent, property: request.parameters.property, value: request.parameters.value },
+    entity,
+  });
+  if (!evidence.proven) {
+    diagnostics.push(evidence.diagnostic);
+    return [];
+  }
+  return [{ id: "position", intent: request.intent, property: request.parameters.property, evidence: "preview-only", planned: evidence.planned }];
 }
 
 async function inspectSpaceControls(spec, rooms, entity, run) {
@@ -331,15 +275,6 @@ async function inspectSpaceControls(spec, rooms, entity, run) {
   return controls;
 }
 
-async function inspectDeviceState(spec, entity, run) {
-  const houseId = spec.scope?.homeIds?.[0] || entity.houseId || "";
-  const result = await run(["device", "state", "--device-id", entity.id, ...(houseId ? ["--house-id", houseId] : []), "--json"]);
-  const payload = parseJSON(result.stdout);
-  const state = payload?.result?.properties;
-  if (result.code !== 0 || payload?.status !== "success" || !state || typeof state !== "object" || Array.isArray(state)) return { proven: false, state: {} };
-  return { proven: true, state };
-}
-
 async function inspectDeviceAccess(spec, entity, run) {
   const houseId = spec.scope?.homeIds?.[0] || entity.houseId || "";
   const result = await run(["device", "capabilities", "--device-id", entity.id, ...(houseId ? ["--house-id", houseId] : []), "--json"]);
@@ -358,7 +293,7 @@ async function inspectDeviceAccess(spec, entity, run) {
   return access.length > 0 && access.every((value) => !value.includes("write")) ? { readOnly: true } : {};
 }
 
-async function inspectLightControls(spec, entity, state, run) {
+async function inspectLightControls(spec, entity, state, run, diagnostics) {
   const houseId = spec.scope?.homeIds?.[0] || entity.houseId || "";
   const controls = [];
   for (const probe of lightProbes) {
@@ -375,11 +310,12 @@ async function inspectLightControls(spec, entity, state, run) {
     };
     const result = await run(["invoke", "--stdin", "--preview-only"], { stdin: JSON.stringify(request) });
     const payload = parseJSON(result.stdout);
-    const planned = payload?.result?.planned;
-    if (result.code !== 0 || payload?.status !== "success") continue;
-    if (payload?.result?.dryRun !== true || payload?.result?.persistentWrites !== false) continue;
-    if (planned?.intent !== probe.intent || planned?.property !== probe.property || planned?.value !== value) continue;
-    controls.push({ id: probe.id, intent: probe.intent, property: probe.property, evidence: "preview-only", planned });
+    const evidence = evaluateDevicePreview({ result, payload, expected: { intent: probe.intent, property: probe.property, value }, entity });
+    if (!evidence.proven) {
+      diagnostics.push(evidence.diagnostic);
+      continue;
+    }
+    controls.push({ id: probe.id, intent: probe.intent, property: probe.property, evidence: "preview-only", planned: evidence.planned });
   }
   return controls;
 }

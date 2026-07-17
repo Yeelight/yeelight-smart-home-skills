@@ -10,7 +10,7 @@ export function SensorController({ device }: { device: ControllerDevice; refresh
   const format = (property: string, value: unknown, unit: string) => typeof value === "boolean" ? (["occupancy", "occupancyDetected"].includes(property) ? value ? "有人" : "无人" : property === "motionDetected" ? value ? "检测到移动" : "无移动" : value ? "异常" : "正常") : String(value ?? "-") + unit;
   return <section className="device-controller sensor-controller" aria-labelledby="sensor-controller-title"><header className="controller-heading"><span className="controller-icon active"><Activity size={22} /></span><div><small>传感器</small><h3 id="sensor-controller-title">当前环境与安全状态</h3></div></header>{mode === "offline" && <p className="controller-terminal" role="status"><AlertCircle size={17} />设备当前离线，以下为最近一次可信读数。</p>}
     <div className="sensor-reading-grid">{visible.map(([property, label, unit, Icon]) => { const value = properties[property]; const alert = ["open", "water", "smoke"].includes(property) && value === true; return <div className={alert ? "sensor-reading alert" : "sensor-reading"} key={property}><Icon size={20} /><span>{label}</span><strong>{format(property, value, unit)}</strong></div>; })}</div>
-    {!visible.length && <p className="controller-terminal"><AlertCircle size={17} />Runtime 未返回可识别的当前读数。</p>}
+    {!visible.length && <p className="controller-terminal"><AlertCircle size={17} />家庭系统未返回可识别的当前读数。</p>}
   </section>;
 }
 `;

@@ -1,19 +1,85 @@
 {
-  "schemaVersion": 1,
-  "verifiedBy": "validate-theme-target-matrix.mjs",
-  "themes": [
-    { "id": "daylight-minimal", "modes": ["light"], "status": "generated-e2e-passed" },
-    { "id": "warm-residential", "modes": ["light", "dark"], "status": "generated-e2e-passed" },
-    { "id": "obsidian-console", "modes": ["dark"], "status": "generated-e2e-passed" },
-    { "id": "installer-contrast", "modes": ["light", "dark"], "status": "generated-e2e-passed" }
+  "schemaVersion": 2,
+  "catalogVersion": "2.0.0",
+  "verifiedBy": [
+    "validate-theme-target-matrix.mjs",
+    "audit-theme-v2-matrix.mjs"
   ],
-  "palettes": ["teal-blue", "sunset-amber", "neutral-graphite", "forest-cyan"],
-  "densities": ["comfortable", "compact", "touch"],
+  "families": [
+    { "id": "pro-core", "status": "generated-e2e-passed" },
+    { "id": "pure-minimal", "status": "generated-e2e-passed" },
+    { "id": "warm-residential", "status": "generated-e2e-passed" },
+    { "id": "natural-comfort", "status": "generated-e2e-passed" },
+    { "id": "night-ambience", "status": "generated-e2e-passed" },
+    { "id": "immersive-console", "status": "generated-e2e-passed" },
+    { "id": "command-center", "status": "generated-e2e-passed" },
+    { "id": "wall-touch", "status": "generated-e2e-passed" },
+    { "id": "installer", "status": "generated-e2e-passed" },
+    { "id": "high-contrast", "status": "generated-e2e-passed" },
+    { "id": "architectural-lighting", "status": "generated-e2e-passed" },
+    { "id": "universal-connectivity", "status": "generated-e2e-passed" }
+  ],
+  "presets": [
+    { "id": "pro-daylight", "status": "generated-e2e-passed" },
+    { "id": "pro-graphite", "status": "generated-e2e-passed" },
+    { "id": "pure-canvas", "status": "generated-e2e-passed" },
+    { "id": "quiet-mist", "status": "generated-e2e-passed" },
+    { "id": "linen-home", "status": "generated-e2e-passed" },
+    { "id": "amber-evening", "status": "generated-e2e-passed" },
+    { "id": "forest-air", "status": "generated-e2e-passed" },
+    { "id": "stone-garden", "status": "generated-e2e-passed" },
+    { "id": "moonlight-home", "status": "generated-e2e-passed" },
+    { "id": "low-light-cinema", "status": "generated-e2e-passed" },
+    { "id": "obsidian-focus", "status": "generated-e2e-passed" },
+    { "id": "carbon-signal", "status": "generated-e2e-passed" },
+    { "id": "command-day", "status": "generated-e2e-passed" },
+    { "id": "command-night", "status": "generated-e2e-passed" },
+    { "id": "wall-day", "status": "generated-e2e-passed" },
+    { "id": "wall-night", "status": "generated-e2e-passed" },
+    { "id": "installer-precision", "status": "generated-e2e-passed" },
+    { "id": "commissioning-dark", "status": "generated-e2e-passed" },
+    { "id": "contrast-clear", "status": "generated-e2e-passed" },
+    { "id": "contrast-night", "status": "generated-e2e-passed" },
+    { "id": "architect-gallery", "status": "generated-e2e-passed" },
+    { "id": "architect-theatre", "status": "generated-e2e-passed" },
+    { "id": "universal-home", "status": "generated-e2e-passed" },
+    { "id": "unified-fabric", "status": "generated-e2e-passed" }
+  ],
+  "dimensions": {
+    "modes": ["light", "dark", "auto"],
+    "densities": ["comfortable", "compact", "touch"],
+    "targets": ["mobile", "tablet", "desktop", "wall", "installer"],
+    "typography": ["system-modern", "system-readable", "system-technical", "system-compact"],
+    "shapes": ["sharp", "precise", "balanced", "soft"],
+    "motions": ["reduced", "precise", "standard", "expressive"]
+  },
   "targets": [
-    { "formFactor": "desktop", "navigation": "sidebar", "status": "generated-e2e-passed" },
-    { "formFactor": "tablet", "navigation": "adaptive-rail", "status": "generated-e2e-passed" },
-    { "formFactor": "mobile", "navigation": "bottom-tabs", "status": "generated-e2e-passed" },
-    { "formFactor": "wall", "navigation": "touch-rail", "status": "generated-e2e-passed" }
+    { "id": "desktop", "formFactor": "desktop", "navigation": "sidebar", "status": "generated-e2e-passed" },
+    { "id": "tablet", "formFactor": "tablet", "navigation": "adaptive-rail", "status": "generated-e2e-passed" },
+    { "id": "mobile", "formFactor": "mobile", "navigation": "bottom-tabs", "status": "generated-e2e-passed" },
+    { "id": "wall", "formFactor": "wall", "navigation": "touch-rail", "status": "generated-e2e-passed" },
+    { "id": "installer", "formFactor": "desktop", "navigation": "sidebar", "status": "generated-e2e-passed" }
   ],
-  "browserChecks": ["semantic-tokens", "dark-mode", "adaptive-navigation", "contrast", "visible-focus", "reduced-motion", "touch-targets", "no-overflow"]
+  "coverage": {
+    "presetCount": 24,
+    "familyCount": 12,
+    "browserCheckCountPerPreset": 31,
+    "screenshotCountPerPreset": 3,
+    "pairwiseStrength": 2,
+    "status": "generated-e2e-passed"
+  },
+  "browserChecks": [
+    "semantic-tokens",
+    "family-recipe-contract",
+    "adaptive-navigation",
+    "contrast",
+    "visible-focus",
+    "reduced-motion",
+    "touch-targets",
+    "overlay-focus-return",
+    "switch-slider-color-picker",
+    "route-and-action-semantics",
+    "no-overflow",
+    "text-zoom-200"
+  ]
 }

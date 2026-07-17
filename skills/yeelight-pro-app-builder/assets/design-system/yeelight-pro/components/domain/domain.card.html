@@ -1,0 +1,25 @@
+<!-- @dsCard group="Components" viewport="1080x760" name="Smart-home domain surfaces" subtitle="Capability-led device tiles and focused controllers" -->
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="../../styles.css">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="../../_ds_bundle.js"></script>
+</head>
+<body>
+  <div id="root" class="yp-specimen"></div>
+  <script type="text/babel">
+    const { Button, ColorPicker, ControllerSurface, DeviceTile, Slider, Switch } = window.YeelightPro_2d6edd;
+    const domainStyles = getComputedStyle(document.documentElement);
+    const domainSwatches = Array.from({ length: 8 }, (_, index) => domainStyles.getPropertyValue(`--yp-component-color-swatch-${index + 1}`).trim());
+    function DomainSpecimen() {
+      const [power, setPower] = React.useState(true);
+      const [brightness, setBrightness] = React.useState(68);
+      const [color, setColor] = React.useState(domainSwatches[1]);
+      return <div className="yp-domain-specimen"><div className="yp-device-grid"><DeviceTile name="客厅主灯" room="客厅" category="灯光" summary="68% / 4000 K" power={power} onPowerChange={setPower} /><DeviceTile name="观景纱帘" room="主卧" category="窗帘" summary="开启 42%" status="success" /><DeviceTile name="家庭中枢" room="设备间" category="网关" summary="Matter / Thread / DALI" status="warning" statusLabel="需关注" /><DeviceTile name="温湿度传感器" room="儿童房" category="传感器" summary="23.8 C / 51%" status="offline" statusLabel="离线" /></div><ControllerSurface title="客厅主灯" subtitle="调光调色灯 / 客厅" value={brightness} unit="%"><Switch label="主灯电源" checked={power} onChange={setPower} /><Slider label="亮度" value={brightness} min={1} max={100} unit="%" onChange={setBrightness} /><ColorPicker label="灯光颜色" value={color} swatches={domainSwatches} onChange={setColor} /></ControllerSurface></div>;
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<DomainSpecimen />);
+  </script>
+</body>
+</html>

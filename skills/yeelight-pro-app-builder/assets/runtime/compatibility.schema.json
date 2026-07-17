@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/pro-app-builder/runtime-compatibility.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "runtime", "contractVersion", "minimumVersion", "supportedMajor", "knownIncompatible"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "runtime": { "const": "yeelight-home" },
+    "contractVersion": { "const": "1.0" },
+    "minimumVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "supportedMajor": { "type": "integer", "minimum": 0 },
+    "knownIncompatible": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "reasonId", "message"],
+        "properties": {
+          "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+          "reasonId": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

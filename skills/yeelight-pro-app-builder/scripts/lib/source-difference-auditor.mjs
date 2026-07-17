@@ -24,6 +24,16 @@ export function inspectGeneratedProduct(appRoot, profileId) {
     moduleFiles: fileManifest(moduleRoot, appRoot),
     runtimeFiles: fileManifest(runtimeRoot, appRoot),
     actions: parseBridgeRows(bridgeSource, "privateActions", "Map").map(([actionId, intent]) => ({ actionId, intent })),
+    policies: parseBridgeRows(bridgeSource, "actionPolicies", "Map").map(([actionId, policy]) => ({
+      actionId,
+      intent: policy.intent,
+      risk: policy.risk,
+      resourceType: policy.resourceType || "home",
+      allowedHomeCount: policy.allowedHomeIds?.length || 0,
+      resourceCount: policy.resourceIds?.length || 0,
+      branchCount: policy.branches?.length || 0,
+      requiredParameters: unique((policy.branches || []).flatMap((branch) => branch.required || [])),
+    })),
     allowlist: parseBridgeRows(bridgeSource, "allowedIntents", "Set"),
   };
 }
@@ -33,7 +43,7 @@ export function auditGeneratedProductDifferences(products) {
   const checks = [];
   check(checks, "required-profiles-present", requiredProfiles.every((id) => byId.has(id)), requiredProfiles.filter((id) => !byId.has(id)));
   check(checks, "profile-ids-unique", byId.size === products.length, products.map(({ profileId }) => profileId));
-  for (const field of ["modules", "routes", "moduleFiles", "actions", "allowlist"]) {
+  for (const field of ["modules", "routes", "moduleFiles", "actions", "policies", "allowlist"]) {
     const signatures = products.map((product) => digest(product[field]));
     check(checks, `${field}-materially-different`, new Set(signatures).size === products.length, products.map((product, index) => ({ profileId: product.profileId, signature: signatures[index] })));
   }
@@ -69,7 +79,8 @@ function readJSON(file) {
 }
 
 function digest(value) {
-  return crypto.createHash("sha256").update(Buffer.isBuffer(value) ? value : JSON.stringify(value)).digest("hex");
+  const serialized = value === undefined ? "undefined" : JSON.stringify(value);
+  return crypto.createHash("sha256").update(Buffer.isBuffer(value) ? value : serialized).digest("hex");
 }
 
 function unique(values) {

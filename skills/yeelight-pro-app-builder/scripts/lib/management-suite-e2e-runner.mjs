@@ -1,5 +1,7 @@
 import path from "node:path";
 
+import { requestBridgePath } from "./e2e-browser-boundary.mjs";
+
 const viewports = [
   { id: "mobile-375", width: 375, height: 812 },
   { id: "tablet-768", width: 768, height: 1024 },
@@ -95,7 +97,7 @@ async function requestPageNavigation(page, label) {
   }
 }
 
-async function bridgeRequest(origin, pathname) { const response = await fetch(`${origin}${pathname}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
+async function bridgeRequest(origin, pathname) { const response = await requestBridgePath(origin, pathname); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
 
 async function verifyDeepLinks(page, report, viewport, baseUrl) {
   for (const item of [

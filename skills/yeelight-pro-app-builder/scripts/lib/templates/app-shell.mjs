@@ -1,26 +1,29 @@
 import { resolvePageContributions } from "./page-contributions.mjs";
+import { loadThemeCatalog } from "../theme-catalog.mjs";
+
+const themeCatalog = loadThemeCatalog();
 
 export function appSource(spec, selected, moduleTemplates, managementOperations = {}) {
   const contributions = resolvePageContributions(selected, moduleTemplates, managementOperations);
   const models = uniqueBy(contributions.map((item) => item.model), (item) => item.hook);
   const pages = groupPages(contributions);
-  const imports = [
-    ...moduleImports(contributions),
-    ...models.map((item) => `import { ${item.hook} } from "./runtime/${item.file}";`),
-  ].join("\n");
+  const componentDeclarations = moduleImports(contributions).join("\n");
+  const modelImports = models.map((item) => `import { ${item.hook} } from "./runtime/${item.file}";`).join("\n");
   const icons = [...new Set(["ChevronRight", "Menu", "RefreshCw", "RotateCcw", "Wifi", "WifiOff", "X", ...pages.map((page) => page.icon)])].join(", ");
   const pageData = pages.map((page) => `{ route: "${page.route}", label: "${page.label}", shortLabel: "${page.shortLabel}", icon: ${page.icon} }`).join(",\n  ");
   const bindings = models.map((item) => `  ${item.binding}`).join("\n");
   const loading = models.map((item) => item.loading).join(" || ") || "false";
   const errors = models.map((item) => item.error).join(", ");
   const refreshes = models.map((item) => `${item.refresh}()`).join(", ");
-  const content = pages.map((page) => `      {activeRoute.split("/")[0] === "${page.route}" && <div className="${page.route === "overview" ? "page-stack home-slot-host" : "page-stack"}" data-page="${page.route}">\n${page.items.map((item) => `        <section className="${item.homeSlot ? `module-section home-slot home-slot-${item.homeSlot}` : "module-section"}" data-module="${item.moduleId}"${item.homeSlot ? ` data-home-slot="${item.homeSlot}"` : ""}>${item.render}</section>`).join("\n")}\n      </div>}`).join("\n");
+  const content = pages.map((page) => `      {activeRoute.split("/")[0] === "${page.route}" && <Suspense fallback={<RouteLoading label={${JSON.stringify(page.label)}} />}><div className="${page.route === "overview" ? "page-stack home-slot-host" : "page-stack"}" data-page="${page.route}">\n${page.items.map((item) => `        <section className="${item.homeSlot ? `module-section home-slot home-slot-${item.homeSlot}` : "module-section"}" data-module="${item.moduleId}"${item.homeSlot ? ` data-home-slot="${item.homeSlot}"` : ""}>${item.render}</section>`).join("\n")}\n      </div></Suspense>}`).join("\n");
   const navigation = pages.length > 1 ? navigationSource(pages.length, escapeText(spec.product.title)) : "";
   const shellClass = pages.length > 1 ? "app-shell management-shell" : "app-shell";
-  return `${imports}
+  return `${modelImports}
 import { ${icons} } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import "./styles.css";
+
+${componentDeclarations}
 
 const pages = [
   ${pageData}
@@ -35,6 +38,10 @@ function routeFromLocation(): PageRoute {
 
 function firstObjectError(errors: Record<string, string> | undefined) {
   return errors ? Object.values(errors).find(Boolean) : undefined;
+}
+
+function RouteLoading({ label }: { label: string }) {
+  return <div className="route-loading" role="status" aria-live="polite"><span className="route-loading-indicator" aria-hidden="true" /><strong>正在载入{label}</strong></div>;
 }
 
 export function App() {
@@ -151,7 +158,9 @@ function moduleImports(contributions) {
     components.add(item.component);
     modules.set(item.directory, components);
   }
-  return [...modules.entries()].map(([directory, components]) => `import { ${[...components].join(", ")} } from "./modules/${directory}";`);
+  return [...modules.entries()].flatMap(([directory, components]) => [...components].map((component) =>
+    `const ${component} = lazy(() => import("./modules/${directory}").then((module) => ({ default: module.${component} })));`,
+  ));
 }
 
 function escapeText(value) {
@@ -159,5 +168,11 @@ function escapeText(value) {
 }
 
 function shellAttributes(spec) {
-  return `data-form-factor="${spec.target.formFactor}" data-navigation="${spec.target.navigation}" data-density="${spec.target.density}" data-theme-pack="${spec.theme.pack}" data-theme-mode="${spec.theme.mode}"`;
+  const presetId = spec.theme.preset || themeCatalog.legacyAliases.packs[spec.theme.pack];
+  const preset = themeCatalog.presets.find(({ id }) => id === presetId);
+  const family = themeCatalog.families.find(({ id }) => id === preset?.familyId);
+  const density = spec.theme.density || spec.target.density;
+  const pack = spec.theme.pack || preset?.legacyPack;
+  const recipe = family?.recipe || {};
+  return `data-form-factor="${spec.target.formFactor}" data-navigation="${spec.target.navigation}" data-density="${density}" data-theme-preset="${presetId}" data-theme-family="${family?.id || ""}" data-theme-pack="${pack}" data-theme-mode="${spec.theme.mode}" data-surface-style="${recipe.surfaceStyle || ""}" data-navigation-style="${recipe.navigationStyle || ""}" data-collection-style="${recipe.collectionStyle || ""}" data-controller-style="${recipe.controllerStyle || ""}" data-data-style="${recipe.dataStyle || ""}" data-elevation-style="${recipe.elevationStyle || ""}"`;
 }

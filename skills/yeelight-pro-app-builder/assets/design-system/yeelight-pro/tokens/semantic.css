@@ -1,66 +1,53 @@
-:root {
+:root,
+[data-theme-preset] {
   color-scheme: light;
-  --yp-surface-page: var(--yp-color-neutral-050);
-  --yp-surface-section: var(--yp-color-neutral-000);
-  --yp-surface-raised: var(--yp-color-white);
-  --yp-surface-subtle: var(--yp-color-neutral-025);
-  --yp-surface-selected: var(--yp-color-teal-050);
-  --yp-text-heading: var(--yp-color-neutral-900);
-  --yp-text-body: var(--yp-color-neutral-800);
-  --yp-text-muted: var(--yp-color-neutral-600);
-  --yp-text-on-action: var(--yp-color-white);
-  --yp-action-primary: var(--yp-color-teal-600);
-  --yp-action-primary-hover: var(--yp-color-teal-700);
-  --yp-action-secondary: var(--yp-color-neutral-000);
-  --yp-border-subtle: var(--yp-color-neutral-100);
-  --yp-border-default: var(--yp-color-neutral-200);
-  --yp-border-strong: var(--yp-color-neutral-400);
-  --yp-focus-ring: #2b7fa7;
-  --yp-status-success: var(--yp-color-green-600);
-  --yp-status-warning: var(--yp-color-amber-600);
-  --yp-status-error: var(--yp-color-red-600);
-  --yp-status-info: var(--yp-color-blue-600);
-  --yp-status-offline: var(--yp-color-neutral-600);
-  --yp-status-readonly: var(--yp-color-blue-600);
-  --yp-status-mismatch: var(--yp-color-amber-600);
-  --yp-overlay-scrim: rgb(10 17 20 / 0.54);
-  --yp-shadow-raised: 0 8px 24px rgb(23 51 54 / 0.08);
-  --yp-shadow-overlay: 0 24px 64px rgb(10 24 27 / 0.24);
+  --yp-surface-page: var(--yp-semantic-page);
+  --yp-surface-section: var(--yp-semantic-surface);
+  --yp-surface-raised: var(--yp-component-card-background);
+  --yp-surface-subtle: color-mix(in srgb, var(--yp-semantic-text) 3%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-surface-selected: color-mix(in srgb, var(--yp-semantic-action) 9%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-text-heading: var(--yp-semantic-text);
+  --yp-text-body: var(--yp-semantic-text);
+  --yp-text-muted: var(--yp-semantic-text-muted);
+  --yp-text-on-action: var(--yp-semantic-on-action);
+  --yp-action-primary: var(--yp-semantic-action);
+  --yp-action-primary-hover: color-mix(in srgb, var(--yp-semantic-action) 86%, var(--yp-semantic-text)); /* @kind color */
+  --yp-action-secondary: var(--yp-semantic-surface);
+  --yp-border-subtle: color-mix(in srgb, var(--yp-semantic-border) 64%, transparent); /* @kind color */
+  --yp-border-default: var(--yp-semantic-border);
+  --yp-border-strong: color-mix(in srgb, var(--yp-semantic-border) 58%, var(--yp-semantic-text)); /* @kind color */
+  --yp-focus-ring: var(--yp-semantic-focus);
+  --yp-status-success: var(--yp-semantic-success);
+  --yp-status-warning: var(--yp-semantic-warning);
+  --yp-status-error: var(--yp-semantic-error);
+  --yp-status-info: var(--yp-semantic-focus);
+  --yp-status-offline: var(--yp-semantic-text-muted);
+  --yp-status-readonly: var(--yp-semantic-focus);
+  --yp-status-mismatch: var(--yp-semantic-warning);
+  --yp-overlay-scrim: var(--yp-semantic-overlay);
+  --yp-shadow-raised: var(--yp-component-shadow-card);
+  --yp-shadow-overlay: var(--yp-component-shadow-overlay);
+  --yp-color-white: var(--yp-semantic-on-action);
+  --yp-color-black: var(--yp-semantic-text);
+  --yp-color-teal-050: color-mix(in srgb, var(--yp-semantic-action) 8%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-teal-100: color-mix(in srgb, var(--yp-semantic-action) 16%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-teal-300: color-mix(in srgb, var(--yp-semantic-action) 42%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-teal-500: color-mix(in srgb, var(--yp-semantic-action) 76%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-teal-600: var(--yp-semantic-action);
+  --yp-color-teal-700: var(--yp-action-primary-hover); /* @kind color */
+  --yp-color-neutral-000: var(--yp-semantic-surface);
+  --yp-color-neutral-025: color-mix(in srgb, var(--yp-semantic-text) 2%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-neutral-050: var(--yp-semantic-page);
+  --yp-color-neutral-100: color-mix(in srgb, var(--yp-semantic-text) 7%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-neutral-200: var(--yp-semantic-border);
+  --yp-color-neutral-400: color-mix(in srgb, var(--yp-semantic-text) 42%, var(--yp-semantic-surface)); /* @kind color */
+  --yp-color-neutral-600: var(--yp-semantic-text-muted);
+  --yp-color-neutral-800: var(--yp-semantic-text);
+  --yp-color-neutral-900: var(--yp-semantic-text);
+  --yp-color-green-600: var(--yp-semantic-success);
+  --yp-color-amber-600: var(--yp-semantic-warning);
+  --yp-color-red-600: var(--yp-semantic-error);
+  --yp-color-blue-600: var(--yp-semantic-focus);
 }
 
-[data-theme="warm-home"] {
-  --yp-surface-page: #faf7f1;
-  --yp-surface-selected: #f8eddc;
-  --yp-action-primary: #8b6429;
-  --yp-action-primary-hover: #6f4f20;
-  --yp-focus-ring: #9a6f2c;
-}
-
-[data-theme="night-ambient"] {
-  color-scheme: dark;
-  --yp-surface-page: #11191b;
-  --yp-surface-section: #182326;
-  --yp-surface-raised: #1b282b;
-  --yp-surface-subtle: #152023;
-  --yp-surface-selected: #173737;
-  --yp-text-heading: #f0f7f7;
-  --yp-text-body: #d6e1e1;
-  --yp-text-muted: #9aadaf;
-  --yp-action-primary: #5ec3be;
-  --yp-action-primary-hover: #77d4cf;
-  --yp-text-on-action: #102526;
-  --yp-border-subtle: #26383b;
-  --yp-border-default: #344a4e;
-  --yp-border-strong: #65797c;
-  --yp-focus-ring: #89d5e6;
-  --yp-shadow-raised: 0 8px 24px rgb(0 0 0 / 0.24);
-}
-
-[data-theme="installer-contrast"] {
-  --yp-surface-page: #f4f5f5;
-  --yp-border-subtle: #c2c9ca;
-  --yp-border-default: #899698;
-  --yp-action-primary: #075f5d;
-  --yp-action-primary-hover: #064a49;
-  --yp-shadow-raised: 0 2px 0 rgb(10 17 20 / 0.18);
-}
+[data-theme-mode="dark"] { color-scheme: dark; }

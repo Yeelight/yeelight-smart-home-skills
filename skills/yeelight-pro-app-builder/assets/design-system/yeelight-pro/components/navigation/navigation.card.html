@@ -1,2 +1,24 @@
-<!-- @dsCard group="Components" viewport="700x360" name="Adaptive navigation" subtitle="Stable page labels and explicit active state" -->
-<!doctype html><html><head><link rel="stylesheet" href="../../styles.css"><script src="https://unpkg.com/react@18/umd/react.production.min.js"></script><script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script><script src="../../_ds_bundle.js"></script></head><body><div id="root" class="yp-specimen"></div><script type="text/babel">const { AppNavigation } = window.YeelightPro_2d6edd; const navItems = [{id:"overview",label:"总览"},{id:"spaces",label:"空间"},{id:"devices",label:"设备"},{id:"scenes",label:"情景"},{id:"more",label:"更多"}]; function Demo(){const [activeId,setActiveId]=React.useState("overview");return <div style={{width:240,padding:12,border:"1px solid var(--yp-border-default)",background:"var(--yp-surface-section)"}}><AppNavigation items={navItems} activeId={activeId} onNavigate={setActiveId}/></div>} ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);</script></body></html>
+<!-- @dsCard group="Components" viewport="900x560" name="Navigation and commands" subtitle="Adaptive navigation, peer views and contextual menus" -->
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="../../styles.css">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="../../_ds_bundle.js"></script>
+</head>
+<body>
+  <div id="root" class="yp-specimen"></div>
+  <script type="text/babel">
+    const { AppNavigation, Menu, Tabs } = window.YeelightPro_2d6edd;
+    const navigationItems = [{ id: "overview", label: "总览" }, { id: "spaces", label: "空间" }, { id: "devices", label: "设备" }, { id: "scenes", label: "情景" }, { id: "more", label: "更多" }];
+    const tabItems = [{ value: "all", label: "全部", count: 41, content: "41 个家庭实体" }, { value: "online", label: "在线", count: 34, content: "34 个设备在线" }, { value: "attention", label: "需关注", count: 2, content: "2 个设备需要处理" }];
+    function NavigationSpecimen() {
+      const [activeId, setActiveId] = React.useState("overview");
+      const [tabValue, setTabValue] = React.useState("all");
+      return <div className="yp-navigation-specimen"><div className="yp-navigation-frame"><AppNavigation items={navigationItems} activeId={activeId} onNavigate={setActiveId} /></div><div className="yp-stack"><Tabs items={tabItems} value={tabValue} onChange={setTabValue} /><Menu label="更多操作" align="end" items={[{ id: "rename", label: "重命名", description: "修改家庭内显示名称" }, { id: "move", label: "移动到房间" }, { id: "delete", label: "删除设备", destructive: true }]} /></div></div>;
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<NavigationSpecimen />);
+  </script>
+</body>
+</html>

@@ -1,5 +1,8 @@
 import { opaqueActionId } from "./browser-boundary.mjs";
 
+const e2eWebOrigin = "http://127.0.0.1:5173";
+const sessionByOrigin = new Map();
+
 export function browserActionPath(intent) {
   return `/api/actions/${opaqueActionId(intent)}`;
 }
@@ -25,8 +28,8 @@ export function classifyExpectedFailures(diagnostics, { expectedHttpErrorPaths =
 }
 
 export async function probeBrowserBoundary(bridgeOrigin, semanticIntent) {
-  const semanticResponse = await fetch(`${bridgeOrigin}/api/operations/${semanticIntent}`, requestOptions({}));
-  const unknownResponse = await fetch(`${bridgeOrigin}/api/actions/a_000000000000`, requestOptions({}));
+  const semanticResponse = await requestBridgePath(bridgeOrigin, `/api/operations/${semanticIntent}`, {});
+  const unknownResponse = await requestBridgePath(bridgeOrigin, "/api/actions/a_000000000000", {});
   return {
     semanticRoute: { status: semanticResponse.status },
     unknownAction: { status: unknownResponse.status, body: await unknownResponse.json() },
@@ -34,7 +37,12 @@ export async function probeBrowserBoundary(bridgeOrigin, semanticIntent) {
 }
 
 export function requestBrowserAction(bridgeOrigin, intent, payload) {
-  return fetch(`${bridgeOrigin}${browserActionPath(intent)}`, requestOptions(payload));
+  return requestBridgePath(bridgeOrigin, browserActionPath(intent), payload);
+}
+
+export async function requestBridgePath(bridgeOrigin, pathname, payload = {}) {
+  const token = await bridgeSession(bridgeOrigin);
+  return fetch(`${bridgeOrigin}${pathname}`, requestOptions(payload, token));
 }
 
 export async function routeNavigationIsValid(page, label) {
@@ -46,10 +54,28 @@ export async function routeNavigationIsValid(page, label) {
   return await moreButton.count() > 0 && await moreButton.getAttribute("aria-current") === "page";
 }
 
-function requestOptions(payload) {
+async function bridgeSession(bridgeOrigin) {
+  let pending = sessionByOrigin.get(bridgeOrigin);
+  if (!pending) {
+    pending = fetch(`${bridgeOrigin}/api/session`, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json", Origin: e2eWebOrigin }, cache: "no-store" })
+      .then(async (response) => {
+        const body = await response.json();
+        if (!response.ok || typeof body.sessionToken !== "string" || !body.sessionToken) throw new Error("E2E Bridge session failed");
+        return body.sessionToken;
+      })
+      .catch((error) => {
+        sessionByOrigin.delete(bridgeOrigin);
+        throw error;
+      });
+    sessionByOrigin.set(bridgeOrigin, pending);
+  }
+  return pending;
+}
+
+function requestOptions(payload, token) {
   return {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", Origin: e2eWebOrigin, "X-Yeelight-App-Session": token },
     body: JSON.stringify(payload),
   };
 }

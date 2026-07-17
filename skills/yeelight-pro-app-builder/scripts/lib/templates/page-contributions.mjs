@@ -56,7 +56,13 @@ export function resolvePageContributions(selected, moduleTemplates, managementOp
     const template = moduleTemplates[moduleId];
     if (!template) throw new Error(`模块 ${moduleId} 缺少模板定义`);
     const selectedEntries = Array.isArray(entries) ? [...entries] : [entries];
-    if (moduleId === "scene.launcher" && managementOperations[moduleId]?.detail.enabled) {
+    if (moduleId === "installer.maintenance") {
+      const modelId = selected.includes("gateway.overview") ? "gateway" : "panel";
+      for (let index = 0; index < selectedEntries.length; index += 1) {
+        selectedEntries[index] = { ...selectedEntries[index], modelId, render: installerRender(selectedEntries[index].component, selected) };
+      }
+    }
+    if (moduleId === "scene.launcher" && managementOperations[moduleId]?.detail?.enabled) {
       selectedEntries[0] = contribution({ route: "scenes", label: "情景", icon: "Sparkles", priority: 90, component: "SceneLauncher", model: "scene", render: sceneManagementRender(managementOperations[moduleId]) });
     }
     if (moduleId === "automation.manager" && managementOperations[moduleId]) {
@@ -80,8 +86,10 @@ function contribution(input) {
   return { shortLabel: input.label, ...input, modelId: input.model };
 }
 
-function installerRender(component) {
-  return `<${component} gateways={gatewayModel.gateways} panels={panelModel.panels} knobs={panelModel.knobs} gatewayErrors={gatewayModel.errors} panelErrors={panelModel.errors} refreshGateways={gatewayModel.refresh} refreshPanels={panelModel.refresh} onNavigate={navigatePath} />`;
+function installerRender(component, selected = ["gateway.overview", "panel.manager"]) {
+  const gateway = selected.includes("gateway.overview");
+  const panel = selected.includes("panel.manager");
+  return `<${component} gateways={${gateway ? "gatewayModel.gateways" : "[]"}} panels={${panel ? "panelModel.panels" : "[]"}} knobs={${panel ? "panelModel.knobs" : "[]"}} gatewayErrors={${gateway ? "gatewayModel.errors" : "{}"}} panelErrors={${panel ? "panelModel.errors" : "{}"}} refreshGateways={${gateway ? "gatewayModel.refresh" : "async () => {}"}} refreshPanels={${panel ? "panelModel.refresh" : "async () => {}"}} onNavigate={navigatePath} />`;
 }
 
 function model(hook, file, binding, loading, error, refresh) {

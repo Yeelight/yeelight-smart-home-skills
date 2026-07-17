@@ -36,7 +36,7 @@ try {
       "--runtime-bin", runtimeBin,
       "--out", appRoot,
     ]);
-    runStep("npm-install", "npm", ["install"], { cwd: appRoot });
+    runStep("npm-install", "npm", ["ci"], { cwd: appRoot });
   }
   runStep("npm-build", "npm", ["run", "build"], { cwd: appRoot });
 
@@ -56,7 +56,7 @@ try {
     YEELIGHT_CLOUD_REGION: "dev",
     YEELIGHT_HOME_BIN: runtimeBin,
   };
-  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
   web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
   await waitForUrl(`${bridgeOrigin}/health`);
   await waitForUrl(baseUrl);

@@ -1,5 +1,7 @@
 import path from "node:path";
 
+import { requestBridgePath } from "./e2e-browser-boundary.mjs";
+
 const viewports = [
   { id: "mobile-375", width: 375, height: 812 },
   { id: "tablet-768", width: 768, height: 1024 },
@@ -128,12 +130,21 @@ async function runDialogLifecycle(page, report, evidenceDir) {
   check(report, "dialog:focus-trap-backward", await dialog.getByRole("button", { name: "保存配置" }).evaluate((element) => document.activeElement === element), "focus wraps to last control");
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-alias-dialog.png"), fullPage: true });
 
-  page.once("dialog", (confirmation) => confirmation.dismiss());
   await page.keyboard.press("Escape");
-  check(report, "dialog:unsaved-dismiss", await dialog.isVisible() && await input.inputValue() === "待确认别名", "dirty input preserved after cancelling dismissal");
-  page.once("dialog", (confirmation) => confirmation.accept());
+  const discardDialog = page.getByRole("dialog", { name: "放弃当前修改？" });
+  await discardDialog.waitFor();
+  await waitForActive(discardDialog.getByRole("button", { name: "继续编辑", exact: true }));
+  check(report, "dialog:discard-first-focus", await discardDialog.getByRole("button", { name: "继续编辑", exact: true }).evaluate((element) => document.activeElement === element), "continue editing receives focus");
+  check(report, "dialog:discard-scroll-lock", await page.evaluate(() => document.body.style.overflow === "hidden"), await page.evaluate(() => document.body.style.overflow));
+  await discardDialog.getByRole("button", { name: "继续编辑", exact: true }).click();
+  await dialog.getByLabel("按键别名").waitFor();
+  check(report, "dialog:unsaved-dismiss", await input.inputValue() === "待确认别名", "dirty input preserved after continuing editing");
+  await page.screenshot({ path: path.join(evidenceDir, "mobile-375-alias-discard-dialog.png"), fullPage: true });
   await page.keyboard.press("Escape");
+  await discardDialog.waitFor();
+  await discardDialog.getByRole("button", { name: "放弃修改" }).click();
   await dialog.waitFor({ state: "hidden" });
+  await waitForActive(opener);
   check(report, "dialog:escape-focus-restore", await opener.evaluate((element) => document.activeElement === element), "focus restored to current trigger");
   check(report, "dialog:scroll-restore", await page.evaluate(() => document.body.style.overflow !== "hidden"), await page.evaluate(() => document.body.style.overflow));
 }
@@ -153,8 +164,10 @@ async function runAliasFlow(page, report, mockServer, diagnostics, evidenceDir) 
   markLatestActionError(diagnostics);
   check(report, "alias:failure-preserves-input", await input.inputValue() === "失败验证" && panelAlias(mockServer, "992501-button-1") === "回家", await input.inputValue());
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-alias-failure.png"), fullPage: true });
-  page.once("dialog", (confirmation) => confirmation.accept());
   await dialog.getByRole("button", { name: "取消" }).click();
+  const discardDialog = page.getByRole("dialog", { name: "放弃当前修改？" });
+  await discardDialog.waitFor();
+  await discardDialog.getByRole("button", { name: "放弃修改" }).click();
   await dialog.waitFor({ state: "hidden" });
 }
 
@@ -185,8 +198,10 @@ async function runEventFlow(page, report, mockServer, diagnostics, evidenceDir) 
   markLatestActionError(diagnostics);
   check(report, "event:failure-preserves-input", await dialog.getByLabel("事件名称").inputValue() === "失败事件" && eventMatches(mockServer, "992501-event-1", "回家", "994001"), panelEvent(mockServer, "992501-event-1"));
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-event-failure.png"), fullPage: true });
-  page.once("dialog", (confirmation) => confirmation.accept());
   await dialog.getByRole("button", { name: "取消" }).click();
+  const discardDialog = page.getByRole("dialog", { name: "放弃当前修改？" });
+  await discardDialog.waitFor();
+  await discardDialog.getByRole("button", { name: "放弃修改" }).click();
   await dialog.waitFor({ state: "hidden" });
 }
 
@@ -267,6 +282,12 @@ async function openEditor(page, buttonName, dialogName) {
   return dialog;
 }
 
+async function waitForActive(locator) {
+  const element = await locator.elementHandle();
+  if (!element) throw new Error("Cannot wait for focus on a missing element");
+  await locator.page().waitForFunction((target) => document.activeElement === target, element);
+}
+
 async function inspectScaledText(page) {
   await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
   await page.waitForTimeout(100);
@@ -308,7 +329,7 @@ function eventMatches(server, id, alias, targetId) { const event = panelEvent(se
 async function sync(page) { await page.getByRole("button", { name: "重新同步家庭状态" }).click(); await waitReady(page); }
 async function waitReady(page) { await page.waitForFunction(() => !document.querySelector('button[aria-label="重新同步家庭状态"]')?.hasAttribute("disabled")); }
 async function armFailure(server, method, apiPath) { const response = await fetch(`${server.origin}/__mock/fail-next`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method, path: apiPath, status: 503 }) }); if (!response.ok) throw new Error(`failed to arm ${method} ${apiPath}`); }
-async function bridgeRequest(origin, pathname) { const response = await fetch(`${origin}${pathname}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
+async function bridgeRequest(origin, pathname) { const response = await requestBridgePath(origin, pathname); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
 function markLatestActionError(diagnostics) { const item = diagnostics.httpErrors.findLast((entry) => !entry.expected && entry.status === 502 && /^\/api\/actions\/a_[a-f0-9]+$/.test(new URL(entry.url).pathname)); if (item) item.expected = true; }
 async function visibleTexts(page, values) { return (await Promise.all(values.map((value) => page.getByText(value, { exact: true }).first().isVisible()))).every(Boolean); }
 async function visibleButtons(page, values) { return (await Promise.all(values.map((value) => page.getByRole("button", { name: value, exact: true }).first().isVisible()))).every(Boolean); }

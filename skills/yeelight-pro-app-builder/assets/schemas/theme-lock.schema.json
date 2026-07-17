@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/yeelight-pro-app-builder/theme-lock-v1.schema.json",
+  "title": "Yeelight PRO App Builder Theme Lock v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "catalogVersion", "inputSource", "normalizedSpec", "familyId", "familyRecipe", "resolvedLightTokens", "resolvedDarkTokens", "adjustments", "sourceDigests", "resolvedDigest"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "catalogVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "inputSource": { "enum": ["inferred", "agent", "file", "flags", "legacy"] },
+    "normalizedSpec": { "$ref": "theme-spec.schema.json" },
+    "familyId": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "familyRecipe": { "$ref": "#/$defs/familyRecipe" },
+    "resolvedLightTokens": { "$ref": "#/$defs/tokenMap" },
+    "resolvedDarkTokens": { "$ref": "#/$defs/tokenMap" },
+    "adjustments": { "type": "array", "items": { "$ref": "#/$defs/adjustment" } },
+    "sourceDigests": { "$ref": "#/$defs/sourceDigests" },
+    "resolvedDigest": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "familyRecipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["surfaceStyle", "navigationStyle", "collectionStyle", "controllerStyle", "dataStyle", "elevationStyle"],
+      "properties": {
+        "surfaceStyle": { "type": "string", "minLength": 1 },
+        "navigationStyle": { "type": "string", "minLength": 1 },
+        "collectionStyle": { "type": "string", "minLength": 1 },
+        "controllerStyle": { "type": "string", "minLength": 1 },
+        "dataStyle": { "type": "string", "minLength": 1 },
+        "elevationStyle": { "type": "string", "minLength": 1 }
+      }
+    },
+    "tokenMap": {
+      "type": "object",
+      "minProperties": 20,
+      "additionalProperties": false,
+      "patternProperties": {
+        "^--yp-(?:primitive|semantic|component)-[a-z0-9-]+$": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    },
+    "adjustment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "resolved", "background", "ratio", "minimumRatio", "role", "reason"],
+      "properties": {
+        "source": { "type": "string", "pattern": "^#[0-9A-F]{6}$" },
+        "resolved": { "type": "string", "pattern": "^#[0-9A-F]{6}$" },
+        "background": { "type": "string", "pattern": "^#[0-9A-F]{6}$" },
+        "ratio": { "type": "number", "minimum": 1, "maximum": 21 },
+        "minimumRatio": { "enum": [3, 4.5] },
+        "role": { "type": "string", "minLength": 1 },
+        "reason": { "enum": ["contrast-adjusted"] }
+      }
+    },
+    "sourceDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["families", "presets", "typography", "densities", "shapes", "motions", "targets", "legacyAliases"],
+      "properties": {
+        "families": { "$ref": "#/$defs/sha256" },
+        "presets": { "$ref": "#/$defs/sha256" },
+        "typography": { "$ref": "#/$defs/sha256" },
+        "densities": { "$ref": "#/$defs/sha256" },
+        "shapes": { "$ref": "#/$defs/sha256" },
+        "motions": { "$ref": "#/$defs/sha256" },
+        "targets": { "$ref": "#/$defs/sha256" },
+        "legacyAliases": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

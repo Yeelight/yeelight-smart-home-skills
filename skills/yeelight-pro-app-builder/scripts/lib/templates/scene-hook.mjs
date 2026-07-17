@@ -7,12 +7,14 @@ export function scenesHookSource(spec, operations = {}) {
   const deleteEnabled = operations.delete?.enabled === true;
   const executeEnabled = operations.execute?.enabled === true;
   const editorEnabled = createEnabled || updateEnabled;
-  const managementTypesSource = detailEnabled || editorEnabled ? `export type SceneAction = { targetType?: string; targetId?: string; targetName?: string; rank?: number; action?: number; set?: Record<string, unknown>; custom?: Record<string, unknown>; opaque?: boolean; raw?: Record<string, unknown> };
-export type SceneDetail = SceneItem & { description?: string; icon?: string; category?: string; status?: string; actions: SceneAction[];${detailEnabled ? ` editablePayload?: { name?: string; description?: string; icon?: string; roomId?: string; actions?: SceneAction[]; [key: string]: unknown };` : ""} };
-export type SceneDraft = { name: string; description: string; icon: string; roomId?: string; actions: SceneAction[]; preserved: Record<string, unknown> };
+  const sceneActionTypeSource = detailEnabled || editorEnabled ? `export type SceneAction = { targetType?: string; targetId?: string; targetName?: string; rank?: number; action?: number; set?: Record<string, unknown>; custom?: Record<string, unknown>; opaque?: boolean; raw?: Record<string, unknown> };` : "";
+  const sceneDetailTypeSource = detailEnabled ? `export type SceneDetail = SceneItem & { description?: string; icon?: string; category?: string; status?: string; actions: SceneAction[]; editablePayload?: { name?: string; description?: string; icon?: string; roomId?: string; actions?: SceneAction[]; [key: string]: unknown }; };` : "";
+  const sceneEditorTypesSource = editorEnabled ? `export type SceneDraft = { name: string; description: string; icon: string; roomId?: string; actions: SceneAction[]; preserved: Record<string, unknown> };
 export type SceneTargetOption = { id: string; name: string; type: "device" | "group" | "room" | "scene"; roomName?: string; properties: string[] };
 export type SceneOperationResult = { message: string; sceneId?: string; preview?: Record<string, unknown> };` : "";
+  const managementTypesSource = [sceneActionTypeSource, sceneDetailTypeSource, sceneEditorTypesSource].filter(Boolean).join("\n");
   const targetOptionsSource = editorEnabled ? sceneTargetOptionsSource() : "";
+  const draftHelpersSource = editorEnabled ? sceneDraftHelpersSource() : "";
   const normalizeSource = detailEnabled ? sceneNormalizeSource() : "";
   const detailSource = detailEnabled ? sceneDetailSource(houseId) : "";
   const mutationSource = sceneMutationSource({ houseId, createEnabled, updateEnabled, testEnabled, deleteEnabled });
@@ -21,6 +23,7 @@ export type SceneOperationResult = { message: string; sceneId?: string; preview?
 
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type SceneItem = { id: string; name: string; roomId?: string; roomName: string; executable: boolean; evidence?: string; unavailableReason?: string };
 ${managementTypesSource}
@@ -36,21 +39,13 @@ function sceneErrorMessage(cause: unknown, fallback: string) {
 }
 
 async function invokeScene(intent: string, payload: Record<string, unknown>) {
-  const response = await fetch("/api/operations/" + intent, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const response = await requestAction(intent, payload);
   const body = await response.json();
   if (!response.ok || body.status !== "success") throw new Error(sceneErrorMessage(body.userMessage || body?.error?.message, "家庭服务暂时无法完成此操作，请保留当前更改后重试。"));
   return body;
 }
 
-function draftParameters(draft: SceneDraft) {
-  return { ...draft.preserved, name: draft.name.trim(), description: draft.description.trim(), icon: draft.icon || "sparkles", ...(draft.roomId ? { roomId: draft.roomId } : {}), actions: draft.actions.map(actionParameters) };
-}
-
-function actionParameters(action: SceneAction) {
-  const { opaque: _opaque, raw, custom, ...publicAction } = action;
-  return action.opaque ? { ...publicAction, custom: raw || custom || {} } : publicAction;
-}
-
+${draftHelpersSource}
 ${normalizeSource}
 
 export function useScenes() {
@@ -80,6 +75,17 @@ ${mutationSource}
   return { scenes, loading, error, refresh, execute${returnFields ? `, ${returnFields}` : ""} };
 }
 `;
+}
+
+function sceneDraftHelpersSource() {
+  return `function draftParameters(draft: SceneDraft) {
+  return { ...draft.preserved, name: draft.name.trim(), description: draft.description.trim(), icon: draft.icon || "sparkles", ...(draft.roomId ? { roomId: draft.roomId } : {}), actions: draft.actions.map(actionParameters) };
+}
+
+function actionParameters(action: SceneAction) {
+  const { opaque: _opaque, raw, custom, ...publicAction } = action;
+  return action.opaque ? { ...publicAction, custom: raw || custom || {} } : publicAction;
+}`;
 }
 
 function sceneTargetOptionsSource() {

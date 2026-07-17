@@ -40,6 +40,7 @@ export function roomDeviceManagementSource(spec) {
   const controllerRender = controllerEnabled ? "    <DeviceControllerHost device={device} refreshDevice={refreshDevice} />\n" : "";
   return `import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, ArrowLeft, CheckCircle2, ChevronRight, Edit3, LoaderCircle, MapPin, Search, SlidersHorizontal, X } from "lucide-react";
+import { requestAction } from "../../runtime/request";
 	import type { ManagedArea, ManagedAreaDetail, ManagedDevice, ManagedDeviceDetail, ManagedRoom, ManagedRoomDetail } from "../../runtime/use-home-model";
 ${controllerImport}
 
@@ -65,7 +66,7 @@ export function SpaceDirectory({ areas, rooms, devices, areaDetails, roomDetails
     return <section className="space-directory"><BackHeader eyebrow="区域详情" title={area.name} onBack={() => onNavigate("spaces")} />
       <ResourceState loading={detailLoading["area:" + area.id] === true} error={detailErrors["area:" + area.id] || ""} retry={() => void loadAreaDetail(area.id, true)} label="区域详情" />
       <div className="space-metrics"><span><strong>{areaRooms.length}</strong> 房间</span><span><strong>{areaDevices.length}</strong> 设备</span><span><strong>{areaDevices.filter((item) => item.online).length}</strong> 在线</span></div>
-      {areaDetails[area.id]?.rooms.length ? <p className="resource-caption">已从家庭 Runtime 读取 {areaDetails[area.id].rooms.length} 个房间。</p> : null}
+      {areaDetails[area.id]?.rooms.length ? <p className="resource-caption">已从家庭系统读取 {areaDetails[area.id].rooms.length} 个房间。</p> : null}
       <ObjectGrid items={areaRooms} devices={devices} onOpen={(id) => onNavigate("spaces/rooms/" + id)} />
     </section>;
   }
@@ -177,14 +178,14 @@ ${controllerRender}    <dl className="device-facts"><div><dt>设备类型</dt><d
 }
 
 async function invoke(intent: string, parameters: Record<string, unknown>) {
-  const response = await fetch("/api/operations/" + encodeURIComponent(intent), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "管理家庭设备", parameters }) });
+  const response = await requestAction(intent, { locale: "zh-CN", utterance: "管理家庭设备", parameters });
   const body = await response.json();
   if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(safeOperationMessage(body.userMessage));
 }
 
 function safeOperationMessage(value: unknown) {
   const message = String(value || "");
-  if (/write verification mismatch/i.test(message)) return "设备操作未通过回读确认，原有状态未改变。请重新同步后再试。";
+  if (/write verification mismatch|未通过回读确认|回读不一致/i.test(message)) return "设备操作未通过回读确认，原有状态未改变。请重新同步后再试。";
   return /invoke|endpoint|http|bridge|cli|token|operation/i.test(message) ? "设备操作没有完成，原有状态未改变。请稍后重试。" : message || "设备操作没有完成，原有状态未改变。";
 }
 
@@ -194,7 +195,7 @@ function DeviceManagementDialog({ device, rooms, editor, refreshDevice, onClose 
   const [busy, setBusy] = useState(false); const [feedback, setFeedback] = useState<{ kind: "success" | "error"; message: string } | null>(null);
   useEffect(() => { const previousOverflow = document.body.style.overflow; document.body.style.overflow = "hidden"; closeButtonRef.current?.focus(); return () => { document.body.style.overflow = previousOverflow; }; }, []);
   useEffect(() => { const handleKey = (event: KeyboardEvent) => { if (event.key === "Escape" && !busy) onClose(); if (event.key !== "Tab") return; const focusable = [...(dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), select:not([disabled])') || [])]; if (!focusable.length) return; if (event.shiftKey && document.activeElement === focusable[0]) { event.preventDefault(); focusable.at(-1)?.focus(); } else if (!event.shiftKey && document.activeElement === focusable.at(-1)) { event.preventDefault(); focusable[0]?.focus(); } }; window.addEventListener("keydown", handleKey); return () => window.removeEventListener("keydown", handleKey); }, [busy, onClose]);
-  async function save() { setBusy(true); setFeedback(null); try { if (editor === "rename") await invoke("device.rename", { houseId: "${spec.scope.homeIds[0] || ""}", deviceId: device.id, name: name.trim(), confirmed: true }); else await invoke("device.move", { houseId: "${spec.scope.homeIds[0] || ""}", deviceId: device.id, roomId: targetRoomId, confirmed: true }); const readback = await refreshDevice(device.id); if (!readback) throw new Error("写入已提交，但未能读取最新设备信息。请重新同步后确认。"); if (editor === "rename" && readback.displayName !== name.trim()) throw new Error("设备名称回读不一致，已保留最近一次可信状态。"); if (editor === "move" && readback.roomId !== targetRoomId) throw new Error("设备房间回读不一致，已保留最近一次可信状态。"); setFeedback({ kind: "success", message: "设备信息已更新并完成回读确认。" }); } catch (error) { setFeedback({ kind: "error", message: error instanceof Error ? error.message : "操作没有完成。" }); } finally { setBusy(false); } }
+  async function save() { setBusy(true); setFeedback(null); try { if (editor === "rename") await invoke("device.rename", { houseId: "${spec.scope.homeIds[0] || ""}", deviceId: device.id, name: name.trim(), confirmed: true }); else await invoke("device.move", { houseId: "${spec.scope.homeIds[0] || ""}", deviceId: device.id, roomId: targetRoomId, confirmed: true }); const readback = await refreshDevice(device.id); if (!readback) throw new Error("写入已提交，但未能读取最新设备信息。请重新同步后确认。"); if (editor === "rename" && readback.displayName !== name.trim()) throw new Error("设备名称回读不一致，已保留最近一次可信状态。"); if (editor === "move" && readback.roomId !== targetRoomId) throw new Error("设备房间回读不一致，已保留最近一次可信状态。"); setFeedback({ kind: "success", message: "设备信息已更新并完成回读确认。" }); } catch (error) { setFeedback({ kind: "error", message: safeOperationMessage(error instanceof Error ? error.message : error) }); } finally { setBusy(false); } }
   return <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget && !busy) onClose(); }}><section ref={dialogRef} className="device-dialog" role="dialog" aria-modal="true" aria-labelledby="device-dialog-title"><header><div><small>设备管理</small><h2 id="device-dialog-title">{editor === "rename" ? "重命名设备" : "移动设备"}</h2></div><button ref={closeButtonRef} type="button" className="icon-button" onClick={onClose} disabled={busy} aria-label="关闭设备管理"><X size={20} /></button></header>
     <div className="dialog-editor">{editor === "rename" ? <label><span>设备名称</span><input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} autoFocus /></label> : <label><span>目标房间</span><select value={targetRoomId} onChange={(event) => setTargetRoomId(event.target.value)} autoFocus>{rooms.map((room) => <option key={room.id} value={room.id}>{room.name}</option>)}</select></label>}<div className="dialog-footer"><button type="button" className="ghost-button" onClick={onClose} disabled={busy}>取消</button><button type="button" className="primary-button" onClick={() => void save()} disabled={busy || (editor === "rename" ? !name.trim() || name.trim() === (device.displayName || device.name) : targetRoomId === device.roomId)}>{busy ? <LoaderCircle className="spin" size={17} /> : <CheckCircle2 size={17} />}保存</button></div></div>
     <div className={feedback ? "dialog-feedback " + feedback.kind : "dialog-feedback"} aria-live="polite">{feedback ? <>{feedback.kind === "error" ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}<span>{feedback.message}</span></> : null}</div></section></div>;

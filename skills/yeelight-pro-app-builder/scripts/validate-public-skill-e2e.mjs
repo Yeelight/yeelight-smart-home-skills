@@ -50,7 +50,7 @@ function validateProduct(product) {
   const outputRoot = path.join(appsRoot, product.id);
   step(`${product.id}:build-app`, process.execPath, buildProductArgs(product, { stageRoot: summary.stage.stageRoot, runtimeBin, outputRoot }), { cwd: summary.stage.stageRoot, timeoutMs: 600000 });
   step(`${product.id}:validate-app`, process.execPath, [path.join(summary.stage.stageRoot, "scripts/validate-app.mjs"), outputRoot], { cwd: summary.stage.stageRoot });
-  step(`${product.id}:npm-install`, "npm", ["install", "--workspaces", "--include-workspace-root"], { cwd: outputRoot, timeoutMs: 600000 });
+  step(`${product.id}:npm-install`, "npm", ["ci", "--workspaces", "--include-workspace-root"], { cwd: outputRoot, timeoutMs: 600000 });
   step(`${product.id}:npm-build`, "npm", ["run", "build"], { cwd: outputRoot, timeoutMs: 600000 });
   const inspection = inspectGeneratedProduct(outputRoot, product.id);
   summary.products.push({ ...summarizePublicProduct(product, inspection, outputRoot), inspection });
@@ -63,18 +63,21 @@ function validateJourneys() {
     if (!product) throw new Error(`综合旅程缺少产品：${journey.productId}`);
     const targetEvidence = path.join(evidenceDir, "journeys", journey.id);
     const script = path.join(skillRoot, "scripts", journey.script);
-    const result = step(`journey:${journey.id}`, process.execPath, [script, "--app", product.outputRoot, "--evidence-dir", targetEvidence], { cwd: skillRoot, timeoutMs: 600000 });
+    const result = step(`journey:${journey.id}`, process.execPath, [script, "--app", product.outputRoot, "--evidence-dir", targetEvidence], { cwd: skillRoot, timeoutMs: 600000, allowFailure: true });
     const evidenceFile = findSummary(targetEvidence);
     const evidence = JSON.parse(fs.readFileSync(evidenceFile, "utf8"));
     const checks = Array.isArray(evidence.browser?.checks) ? evidence.browser.checks.length : Array.isArray(evidence.checks) ? evidence.checks.length : 0;
-    summary.journeys.push({ id: journey.id, script: journey.script, productId: journey.productId, status: evidence.status === "passed" && result.status === 0 ? "passed" : "failed", checks, evidenceFile });
+    const entry = { id: journey.id, script: journey.script, productId: journey.productId, status: evidence.status === "passed" && result.status === 0 ? "passed" : "failed", checks, evidenceFile };
+    summary.journeys.push(entry);
+    if (entry.status !== "passed") throw new Error(`journey:${journey.id} failed: ${result.stderr || result.stdout || evidence.error || "unknown error"}`);
   }
 }
 
 function step(id, command, commandArgs, options = {}) {
-  const result = runCommand(command, commandArgs, options);
+  const { allowFailure = false, ...commandOptions } = options;
+  const result = runCommand(command, commandArgs, commandOptions);
   summary.commands.push({ id, command: result.command, status: result.status, stdout: result.stdout.slice(-12000), stderr: result.stderr.slice(-12000) });
-  if (result.status !== 0) throw new Error(`${id} failed: ${result.stderr || result.stdout}`);
+  if (result.status !== 0 && !allowFailure) throw new Error(`${id} failed: ${result.stderr || result.stdout}`);
   return result;
 }
 

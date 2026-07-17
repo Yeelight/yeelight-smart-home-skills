@@ -66,7 +66,7 @@ async function validateTarget(item, chromium) {
       "--runtime-bin", runtimeBin,
       "--out", appRoot,
     ]);
-    runStep(`${item.id}:npm-install`, "npm", ["install"], { cwd: appRoot });
+    runStep(`${item.id}:npm-install`, "npm", ["ci"], { cwd: appRoot });
     runStep(`${item.id}:npm-build`, "npm", ["run", "build"], { cwd: appRoot });
     result.spec = JSON.parse(fs.readFileSync(path.join(appRoot, "product.spec.json"), "utf8"));
     result.manifest = JSON.parse(fs.readFileSync(path.join(appRoot, "generation-manifest.json"), "utf8"));
@@ -75,7 +75,7 @@ async function validateTarget(item, chromium) {
     const bridgePort = await freePort(); let webPort = await freePort(); while (webPort === bridgePort) webPort = await freePort();
     const bridgeOrigin = `http://127.0.0.1:${bridgePort}`; const baseUrl = `http://127.0.0.1:${webPort}/`;
     const runtimeEnv = { YEELIGHT_API_BASE_URL: mockServer.apiBaseUrl, YEELIGHT_HOME_ACCESS_TOKEN: mockServer.credential, YEELIGHT_HOME_AUTHENTICATED: "1", YEELIGHT_HOME_HOUSE_ID: mockServer.homeId, YEELIGHT_HOME_DIR: runtimeHome, YEELIGHT_CLOUD_REGION: "dev", YEELIGHT_HOME_BIN: runtimeBin };
-    bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+    bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
     web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
     await waitForUrl(`${bridgeOrigin}/health`); await waitForUrl(baseUrl);
     result.browser = await runShellCanaryBrowserE2E({ chromium, baseUrl, target: item, evidenceDir: targetEvidence });

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0",
+  "shapes": [
+    { "id": "sharp", "radius": 2, "borderWidth": 1 },
+    { "id": "precise", "radius": 4, "borderWidth": 1 },
+    { "id": "balanced", "radius": 6, "borderWidth": 1 },
+    { "id": "soft", "radius": 8, "borderWidth": 1 }
+  ]
+}

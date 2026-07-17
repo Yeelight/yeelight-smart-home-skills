@@ -4,6 +4,7 @@ export function knobsHookSource(spec, operations = {}) {
   const availability = Object.fromEntries(Object.entries(operations).map(([name, operation]) => [name, { enabled: operation.enabled, message: operation.userMessage }]));
   return `import { useCallback, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type KnobAction = { id: string; index: number; configType: string; mode: string; model: string; alias: string; sensitivity: number; targetType: string; targetId: string; targetName: string; resettable: boolean; currentRow: Record<string, unknown> };
 export type KnobItem = { id: string; name: string; roomName: string; online: boolean; editable: boolean; unsupportedReason?: string; actions: KnobAction[] };
@@ -22,7 +23,7 @@ export const knobTargets: KnobTarget[] = [
 
 async function invoke(intent: string, parameters: Record<string, unknown>, options: Record<string, unknown> = {}) {
   if (!intent) throw new Error("当前应用未启用此操作。");
-  const response = await fetch("/api/operations/" + intent, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "管理智能旋钮", parameters, options }) });
+  const response = await requestAction(intent, { locale: "zh-CN", utterance: "管理智能旋钮", parameters, options });
   const payload = await response.json();
   if (!response.ok || payload.status !== "success") throw new Error(payload.userMessage || "智能旋钮操作失败。");
   return payload?.result?.data || payload?.result || {};

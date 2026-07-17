@@ -39,7 +39,7 @@ try {
       "--theme-pack", "daylight-minimal", "--palette", "teal-blue", "--mode", "light",
       "--mock-home", "reference-home", "--runtime-bin", runtimeBin, "--out", appRoot,
     ]);
-    runStep("npm-install", "npm", ["install"], { cwd: appRoot });
+    runStep("npm-install", "npm", ["ci"], { cwd: appRoot });
   }
   runStep("validate-app", process.execPath, [path.join(skillRoot, "scripts/validate-app.mjs"), appRoot]);
   runStep("npm-build", "npm", ["run", "build"], { cwd: appRoot });
@@ -60,7 +60,7 @@ try {
     YEELIGHT_HOME_BIN: runtimeBin,
     YPA_RUNTIME_TIMEOUT_MS: "3000",
   };
-  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
   web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
   await waitForUrl(`${bridgeOrigin}/health`);
   await waitForUrl(baseUrl);

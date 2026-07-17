@@ -1,5 +1,7 @@
 import path from "node:path";
 
+import { requestBridgePath } from "./e2e-browser-boundary.mjs";
+
 const viewports = [
   { id: "mobile-375", width: 375, height: 812 },
   { id: "tablet-768", width: 768, height: 1024 },
@@ -124,11 +126,18 @@ async function runDialogLifecycle(page, report, evidenceDir) {
   await page.waitForFunction(() => document.activeElement?.textContent?.trim() === "取消");
   check(report, "dialog:focus-trap-backward", await dialog.getByRole("button", { name: "取消" }).evaluate((element) => document.activeElement === element), "focus wraps to last enabled control");
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-knob-dialog.png"), fullPage: true });
-  page.once("dialog", (confirmation) => confirmation.dismiss());
   await page.keyboard.press("Escape");
-  check(report, "dialog:unsaved-dismiss", await dialog.isVisible() && await type.inputValue() === "scene", "dirty draft preserved");
-  page.once("dialog", (confirmation) => confirmation.accept());
+  const discardDialog = page.getByRole("dialog", { name: "放弃当前修改？" });
+  await discardDialog.waitFor();
+  await page.waitForFunction(() => document.activeElement?.textContent?.trim() === "继续编辑");
+  check(report, "dialog:discard-first-focus", await discardDialog.getByRole("button", { name: "继续编辑", exact: true }).evaluate((element) => document.activeElement === element), "continue editing focused");
+  await page.screenshot({ path: path.join(evidenceDir, "mobile-375-knob-discard-dialog.png"), fullPage: true });
+  await discardDialog.getByRole("button", { name: "继续编辑", exact: true }).click();
+  await type.waitFor();
+  check(report, "dialog:unsaved-dismiss", await type.inputValue() === "scene", "dirty draft preserved");
   await page.keyboard.press("Escape");
+  await discardDialog.waitFor();
+  await discardDialog.getByRole("button", { name: "放弃修改" }).click();
   await dialog.waitFor({ state: "hidden" });
   await page.waitForFunction(() => document.activeElement?.getAttribute("data-knob-focus-key") === "configure-1");
   check(report, "dialog:focus-restore", await page.evaluate(() => document.activeElement?.getAttribute("data-knob-focus-key") === "configure-1"), "focus restored to configure-1");
@@ -245,7 +254,7 @@ function knobSensitivity(row) { return Number(row?.sensitivity ?? row?.sens ?? 0
 function sameKnobRow(actual, expected) { return String(actual?.id) === String(expected?.id) && Number(actual?.index) === Number(expected?.index) && String(actual?.configType || "") === String(expected?.configType || "") && String(actual?.mode || "") === String(expected?.mode || "") && String(actual?.alias || "") === String(expected?.alias || "") && String(actual?.resId ?? actual?.targetId ?? "") === String(expected?.resId ?? expected?.targetId ?? "") && knobSensitivity(actual) === knobSensitivity(expected); }
 async function waitReady(page) { await page.waitForFunction(() => !document.querySelector('button[aria-label="重新同步家庭状态"]')?.hasAttribute("disabled")); }
 async function armFailure(server, method, apiPath) { const response = await fetch(`${server.origin}/__mock/fail-next`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ method, path: apiPath, status: 503 }) }); if (!response.ok) throw new Error(`failed to arm ${method} ${apiPath}`); }
-async function bridgeRequest(origin, pathname) { const response = await fetch(`${origin}${pathname}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
+async function bridgeRequest(origin, pathname) { const response = await requestBridgePath(origin, pathname); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
 function markLatestActionError(diagnostics) { const item = diagnostics.httpErrors.findLast((entry) => !entry.expected && entry.status === 502 && /^\/api\/actions\/a_[a-f0-9]+$/.test(new URL(entry.url).pathname)); if (item) item.expected = true; }
 async function visibleTexts(page, values) { return (await Promise.all(values.map((value) => page.getByText(value, { exact: true }).first().isVisible()))).every(Boolean); }
 function collectDiagnostics(page) { const value = { consoleMessages: [], pageErrors: [], failedRequests: [], httpErrors: [] }; page.on("console", (message) => value.consoleMessages.push({ type: message.type(), text: message.text() })); page.on("pageerror", (error) => value.pageErrors.push(error.message)); page.on("requestfailed", (request) => value.failedRequests.push({ url: request.url(), failure: request.failure()?.errorText || "unknown" })); page.on("response", (response) => { if (response.status() >= 400) value.httpErrors.push({ url: response.url(), status: response.status(), expected: false }); }); return value; }

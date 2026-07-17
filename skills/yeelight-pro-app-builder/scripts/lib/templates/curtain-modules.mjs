@@ -4,6 +4,7 @@ export function deviceCurtainControlSource(spec) {
 import { useEffect, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import type { CurtainDevice } from "../../runtime/use-curtain-devices";
+import { requestAction } from "../../runtime/request";
 
 type Props = { devices: CurtainDevice[]; loading: boolean; updatePosition: (id: string, position: number) => void };
 type Feedback = { type: "success" | "error"; message: string } | null;
@@ -23,22 +24,18 @@ export function DeviceCurtainControl({ devices, loading, updatePosition }: Props
   async function setPosition(device: CurtainDevice, position: number) {
     const value = Math.max(0, Math.min(100, Math.round(position)));
     if (!device.controls.some((control) => control.intent === "device.property.set" && control.property === "targetPosition")) {
-      setFeedback({ type: "error", message: "当前 Runtime 未证明此窗帘支持位置控制。" });
+      setFeedback({ type: "error", message: "当前家庭系统未证明此窗帘支持位置控制。" });
       return;
     }
     setBusyId(device.id);
     setFeedback(null);
     setRetryAction(null);
     try {
-      const response = await fetch("/api/operations/device.property.set", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const response = await requestAction("device.property.set", {
           locale: "zh-CN",
           utterance: "设置" + (device.displayName || device.name) + "到" + value + "%",
           targets: [{ entityType: "device", id: device.id }],
           parameters: { houseId: ${houseId}, deviceId: device.id, property: "targetPosition", value },
-        }),
       });
       const body = await response.json();
       if (!response.ok || body.status !== "success" || body?.result?.verified !== true) throw new Error(body.userMessage || "窗帘位置写入后验证失败。");

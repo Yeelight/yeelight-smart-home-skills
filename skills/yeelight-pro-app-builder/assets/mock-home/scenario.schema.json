@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/pro-app-builder/mock-home-scenario.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "id", "baseFixture", "baseManifestSha256", "behaviorSha256", "persistentFailures", "capabilityOverrides", "deviceOverlays"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "enum": [1] },
+    "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "baseFixture": { "type": "string", "enum": ["reference-home"] },
+    "baseManifestSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "behaviorSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "persistentFailures": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "method", "path", "businessCode"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "kind": { "type": "string", "enum": ["business-error"] },
+          "method": { "type": "string", "enum": ["POST"] },
+          "path": { "type": "string", "pattern": "^/v[12]/[a-z0-9/-]+$" },
+          "businessCode": { "type": "integer", "minimum": 400, "maximum": 599 }
+        }
+      }
+    },
+    "capabilityOverrides": { "type": "array", "maxItems": 0 },
+    "deviceOverlays": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["deviceId"],
+        "properties": {
+          "deviceId": { "type": "string", "minLength": 1 },
+          "online": { "type": "boolean" },
+          "removeProperties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "pattern": "^[a-zA-Z0-9-]+$" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -27,6 +27,11 @@ export function modulesForProductProfile(profileId) {
   return [...modules];
 }
 
+export function modulesForThemeProductionCase(item) {
+  const modules = modulesForProductProfile("whole-home");
+  return item.target.productProfile === "installer" ? [...modules, "installer.maintenance"] : modules;
+}
+
 export function validateThemeMatrixContracts(plan) {
   const cases = plan.cases.map(validateCase);
   return {
@@ -41,9 +46,53 @@ export function validateThemeMatrixContracts(plan) {
   };
 }
 
+export function validateThemePresetProductionContracts(plan) {
+  const cases = plan.cases.map(validateCase);
+  const familyComparisons = [...new Set(plan.cases.map(({ familyId }) => familyId))].map((familyId) => {
+    const variants = cases.filter((item) => item.familyId === familyId);
+    const baseline = variants[0];
+    const comparable = variants.length === 2
+      && variants.every(({ status }) => status === "passed")
+      && variants.every((item) => item.targetId === baseline.targetId)
+      && variants.every((item) => item.abilityDigest === baseline.abilityDigest);
+    return {
+      familyId,
+      presetIds: variants.map(({ presetId }) => presetId),
+      targetId: baseline?.targetId,
+      modules: baseline?.modules || [],
+      routes: baseline?.routes || [],
+      intents: baseline?.intents || [],
+      bridgeAllowlist: baseline?.bridgeAllowlist || [],
+      abilityDigests: variants.map(({ abilityDigest }) => abilityDigest),
+      status: comparable ? "passed" : "failed",
+    };
+  });
+  return {
+    schemaVersion: 2,
+    status: plan.status === "passed"
+      && cases.every(({ status }) => status === "passed")
+      && familyComparisons.every(({ status }) => status === "passed") ? "passed" : "failed",
+    cases,
+    familyComparisons,
+    summary: {
+      caseCount: cases.length,
+      presetCount: new Set(cases.map(({ presetId }) => presetId)).size,
+      familyCount: familyComparisons.length,
+      productProfiles: [...new Set(cases.map(({ productProfile }) => productProfile))],
+    },
+  };
+}
+
 function validateCase(item) {
   try {
-    const requestedModules = modulesForProductProfile(item.target.productProfile);
+    const requestedModules = item.themePreset ? modulesForThemeProductionCase(item) : modulesForProductProfile(item.target.productProfile);
+    const presetChoices = item.themePreset ? {
+      themePreset: item.themePreset,
+      typography: item.typography,
+      shape: item.shape,
+      motion: item.motion,
+    } : {};
+    const legacyChoices = item.pack ? { themePack: item.pack, palette: item.palette } : {};
     const spec = compileProductSpec({
       request: "只生成明确选择的易来 PRO 功能。",
       title: `矩阵 ${item.id}`,
@@ -52,8 +101,8 @@ function validateCase(item) {
         formFactor: item.target.formFactor,
         navigation: item.target.navigation,
         density: item.density,
-        themePack: item.pack,
-        palette: item.palette,
+        ...presetChoices,
+        ...legacyChoices,
         mode: item.mode,
         homeIds: ["990001"],
       },
@@ -66,19 +115,38 @@ function validateCase(item) {
     const composition = auditPageComposition({ selected, contributions, privateActions, intentOwners: owners });
     const app = appSource(spec, selected, templates);
     const styles = stylesSource(spec);
-    const attributes = `data-form-factor="${item.target.formFactor}" data-navigation="${item.target.navigation}" data-density="${item.density}" data-theme-pack="${item.pack}" data-theme-mode="${item.mode}"`;
+    const attributes = [
+      `data-form-factor="${item.target.formFactor}"`,
+      `data-navigation="${item.target.navigation}"`,
+      `data-density="${item.density}"`,
+      `data-theme-mode="${item.mode}"`,
+      "data-theme-preset=",
+      "data-theme-family=",
+    ];
+    if (item.pack) attributes.push(`data-theme-pack="${item.pack}"`);
+    if (item.themePreset) attributes.push(`data-theme-preset="${item.themePreset}"`, `data-theme-family="${item.familyId}"`);
+    const routes = composition.summary.routes.map(({ route }) => route);
+    const intents = privateActions.map(({ intent }) => intent);
+    const bridgeAllowlist = privateActions.map(({ actionId }) => actionId);
+    const abilityDigest = digest(JSON.stringify({ modules: selected, routes, intents, bridgeAllowlist }));
     const checks = [
-      result("product-spec", spec.target.formFactor === item.target.formFactor && spec.target.navigation === item.target.navigation && spec.target.density === item.density, spec.target),
-      result("theme-contract", spec.theme.pack === item.pack && spec.theme.palette === item.palette && spec.theme.mode === item.mode, spec.theme),
-      result("shell-attributes", app.includes(attributes), attributes),
+      result("product-spec", spec.target.formFactor === item.target.formFactor && spec.target.navigation === item.target.navigation && spec.theme.density === item.density, spec.target),
+      result("theme-contract", spec.theme.preset && spec.theme.mode === item.mode, spec.theme),
+      result("shell-attributes", attributes.every((attribute) => app.includes(attribute)), attributes),
       result("semantic-theme-tokens", ["--color-background", "--color-surface", "--color-foreground", "--color-primary", "--card-radius", "--control-min-height"].every((token) => styles.includes(token)), null),
       result("composition", composition.status === "passed", composition.checks.filter(({ status }) => status === "failed")),
     ];
     return {
       id: item.id,
+      presetId: item.themePreset || spec.theme.preset,
+      familyId: item.familyId,
+      targetId: item.target.id,
       productProfile: item.target.productProfile,
       modules: selected,
-      routes: composition.summary.routes.map(({ route }) => route),
+      routes,
+      intents,
+      bridgeAllowlist,
+      abilityDigest,
       sourceDigest: digest(`${app}\n${styles}`),
       checks,
       status: checks.every(({ status }) => status === "passed") ? "passed" : "failed",

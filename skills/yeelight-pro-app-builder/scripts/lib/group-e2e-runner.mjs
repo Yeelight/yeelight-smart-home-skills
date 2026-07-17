@@ -234,10 +234,9 @@ async function runCrudFlow({ page, report, mockServer, evidenceDir }) {
   const updateSave = page.getByRole("button", { name: "预览并保存" });
   const updatePath = `/apis/iot/v2/thing/manage/house/${mockServer.homeId}/group/${createdId}/w/modify`;
   const updateWriteCount = requestCount(mockServer, "POST", updatePath);
-  const previousUpdateError = await updateAlert.innerText();
   await updateSave.click();
   await waitFor(() => requestCount(mockServer, "POST", updatePath) > updateWriteCount);
-  await waitFor(async () => await updateAlert.innerText() !== previousUpdateError);
+  await waitFor(async () => await updateSave.isEnabled() && (await updateAlert.innerText()).trim().length > 0);
   check(report, "update:mismatch-preserves-draft", mockServer.fixture.groups.find((group) => group.id === createdId)?.name === createdName && await page.getByRole("heading", { name: updatedName, level: 2 }).isVisible(), await updateAlert.innerText());
   const updateRetryCount = requestCount(mockServer, "POST", updatePath);
   await page.getByRole("button", { name: "预览并保存" }).click();
@@ -246,8 +245,27 @@ async function runCrudFlow({ page, report, mockServer, evidenceDir }) {
   await page.getByRole("heading", { name: updatedName, level: 3 }).waitFor();
   check(report, "update:readback", mockServer.fixture.groups.find((group) => group.id === createdId)?.name === updatedName, { createdId });
 
-  await page.getByRole("button", { name: "删除设备组" }).click();
-  const deleteDialog = page.getByRole("dialog", { name: `删除 ${updatedName}` });
+  const deleteOpener = page.getByRole("button", { name: "删除设备组" });
+  await deleteOpener.click();
+  let deleteDialog = page.getByRole("dialog", { name: `删除 ${updatedName}` });
+  const deleteInput = deleteDialog.getByRole("textbox", { name: "输入设备组名称以确认" });
+  await deleteInput.waitFor();
+  await waitForActive(deleteInput);
+  check(report, "delete:dialog-first-focus", await deleteInput.evaluate((element) => document.activeElement === element), "confirmation input receives focus");
+  check(report, "delete:dialog-scroll-lock", await page.evaluate(() => document.body.style.overflow === "hidden"), await page.evaluate(() => document.body.style.overflow));
+  const closeDelete = deleteDialog.getByRole("button", { name: "关闭删除确认" });
+  const cancelDelete = deleteDialog.getByRole("button", { name: "取消" });
+  await closeDelete.focus();
+  await page.keyboard.press("Shift+Tab");
+  const wrapsBackward = await cancelDelete.evaluate((element) => document.activeElement === element);
+  await page.keyboard.press("Tab");
+  const wrapsForward = await closeDelete.evaluate((element) => document.activeElement === element);
+  check(report, "delete:dialog-focus-trap", wrapsBackward && wrapsForward, { wrapsBackward, wrapsForward });
+  await page.keyboard.press("Escape");
+  await deleteDialog.waitFor({ state: "hidden" });
+  check(report, "delete:escape-focus-restore", await deleteOpener.evaluate((element) => document.activeElement === element), "Escape restores delete trigger focus");
+  await deleteOpener.click();
+  deleteDialog = page.getByRole("dialog", { name: `删除 ${updatedName}` });
   await deleteDialog.getByRole("textbox", { name: "输入设备组名称以确认" }).fill(updatedName);
   await armFailure(mockServer, "DELETE", `/apis/iot/v2/thing/manage/house/${mockServer.homeId}/group/${createdId}/w/info`);
   await deleteDialog.getByRole("button", { name: "确认删除" }).click();
@@ -259,6 +277,7 @@ async function runCrudFlow({ page, report, mockServer, evidenceDir }) {
 }
 
 function groupRow(page, name) { return page.locator(".group-row").filter({ hasText: name }); }
+async function waitForActive(locator) { const element = await locator.elementHandle(); if (!element) throw new Error("Cannot wait for focus on a missing element"); await locator.page().waitForFunction((target) => document.activeElement === target, element); }
 function members(server, id) { return [...(server.fixture.groups.find((group) => group.id === id)?.deviceIds || [])]; }
 function eligibleGroupDevices(server, groupId) {
   const group = server.fixture.groups.find((item) => item.id === groupId);

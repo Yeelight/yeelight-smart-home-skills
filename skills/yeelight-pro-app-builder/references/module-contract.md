@@ -14,6 +14,8 @@ Every production module must define:
 
 The compiler copies only selected modules. Do not add a branch to a universal page switch.
 
+Module presence and management depth are separate contracts. A selected `scene.launcher` is an execution surface unless ProductSpec records `options.management=true`. `installer.maintenance` is compositional presentation and must not add `gateway.overview` or `panel.manager`; the ProductSpec must select the intended infrastructure modules explicitly.
+
 ## Completion rule
 
 A module is not implemented when its page merely renders. Its primary workflow must be runnable with proven capabilities or end in a clear unsupported state. E2E may not skip every unavailable primary action and still pass.

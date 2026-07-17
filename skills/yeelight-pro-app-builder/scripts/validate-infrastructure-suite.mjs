@@ -22,9 +22,9 @@ try {
   runStep("runtime-build", "go", ["build", "-o", runtimeBin, "../yeelight-home/cmd/yeelight-home"], yeelightRoot);
   buildApp("home", homeApp, ["--request", "生成家庭网关、Thread、Matter、DALI、墙面面板和旋钮管理应用。", "--title", "家庭基础设施", "--modules", "gateway.overview,panel.manager", "--device-families", "gateway,panel-screen,knob", "--form-factor", "desktop", "--navigation", "sidebar", "--density", "comfortable", "--theme-pack", "daylight-minimal", "--palette", "teal-blue", "--mode", "light"]);
   buildApp("installer", installerApp, ["--request", "生成易来 PRO 安装维护工作区，覆盖网关协议、面板旋钮、异常设备、版本与诊断。", "--title", "全屋安装维护"]);
-  runStep("home-install", "npm", ["install", "--workspaces", "--include-workspace-root"], homeApp);
+  runStep("home-install", "npm", ["ci", "--workspaces", "--include-workspace-root"], homeApp);
   runStep("home-build", "npm", ["run", "build"], homeApp);
-  runStep("installer-install", "npm", ["install", "--workspaces", "--include-workspace-root"], installerApp);
+  runStep("installer-install", "npm", ["ci", "--workspaces", "--include-workspace-root"], installerApp);
   compareApplications();
   runStep("installer-e2e", process.execPath, [path.join(skillRoot, "scripts/validate-installer-canary.mjs"), "--app", installerApp, "--runtime-bin", runtimeBin, "--evidence-dir", path.join(evidenceDir, "installer")], skillRoot, 600000);
   summary.status = summary.checks.every((item) => item.status === "passed") ? "passed" : "failed";

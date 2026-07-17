@@ -11,7 +11,7 @@ export function sceneStylesSource() {
 .scene-card-heading { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: var(--space-3); }
 .scene-card-heading > div { display: grid; min-width: 0; gap: 2px; }
 .scene-card-heading strong { overflow-wrap: anywhere; }
-.scene-icon { width: 44px; height: 44px; display: grid; flex: 0 0 auto; place-items: center; border-radius: var(--radius-md); color: var(--color-primary); background: var(--scene-icon-bg); box-shadow: inset 0 0 0 1px var(--color-neutral-200); }
+.scene-icon { width: 44px; height: 44px; display: grid; flex: 0 0 auto; place-items: center; border-radius: var(--radius-md); color: var(--color-primary); background: var(--scene-icon-bg); box-shadow: var(--shadow-inset-border); }
 .scene-run-button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 0 var(--space-4); border: 0; border-radius: var(--button-radius); color: var(--scene-action-fg); background: var(--scene-action-bg); }
 .scene-run-button:not(:disabled):active { transform: scale(0.97); }
 .scene-run-button:disabled { cursor: wait; opacity: 0.56; }
@@ -20,8 +20,6 @@ export function sceneStylesSource() {
 .scene-feedback.success { color: var(--color-primary); }
 .scene-feedback.error { color: var(--color-error); }
 .scene-directory { min-height: min(700px, calc(100dvh - 150px)); display: grid; grid-template-columns: minmax(280px, 0.82fr) minmax(360px, 1.18fr); border: 1px solid var(--color-border); border-radius: var(--radius-md); overflow: hidden; background: var(--color-surface); box-shadow: var(--shadow-card); }
-.app-shell:has(.scene-directory) { width: min(100%, 1100px); }
-.app-shell:has(.scene-editor) { width: min(100%, 1180px); }
 .scene-master { min-width: 0; padding: var(--space-5); border-right: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-background) 74%, var(--color-surface)); }
 .scene-filters { display: grid; grid-template-columns: minmax(0, 1fr) minmax(132px, 0.46fr); gap: var(--space-3); margin-top: var(--space-4); }
 .scene-filters label { min-width: 0; display: grid; gap: 5px; color: var(--color-muted); font-size: 12px; }
@@ -69,7 +67,7 @@ export function sceneStylesSource() {
 .scene-detail-error button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 0 12px; border: 1px solid currentColor; border-radius: var(--button-radius); color: var(--color-error); background: var(--color-surface); }
 .scene-detail-actions { display: grid; gap: var(--space-2); margin-top: auto; padding-top: var(--space-6); }
 .scene-heading-actions, .scene-detail-command-row, .scene-editor-footer > div:last-child { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); }
-.scene-create-button, .primary-button, .secondary-button, .danger-button, .ghost-button, .add-action-button, .danger-link { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 0 14px; border-radius: var(--button-radius); font-weight: 650; }
+.scene-create-button, .ghost-button, .add-action-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 0 14px; border-radius: var(--button-radius); font-weight: 650; }
 .scene-create-button, .primary-button { border: 1px solid var(--color-primary); color: var(--color-white); background: var(--color-primary); }
 .secondary-button, .add-action-button { border: 1px solid var(--color-border); color: var(--color-heading); background: var(--color-surface); }
 .ghost-button { border: 1px solid transparent; color: var(--color-muted); background: transparent; }
@@ -123,7 +121,7 @@ export function sceneStylesSource() {
 .scene-editor-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) var(--space-5); border-top: 1px solid var(--color-border); background: var(--color-surface); }
 .scene-editor-feedback { min-width: 0; display: flex; align-items: center; gap: var(--space-2); color: var(--color-error); }
 .scene-editor-feedback:empty { display: none; }
-.scene-guard-backdrop, .scene-delete-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: var(--space-4); background: rgb(15 23 42 / 52%); }
+.scene-guard-backdrop, .scene-delete-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: var(--space-4); background: var(--yp-semantic-overlay); }
 .scene-guard-dialog, .scene-delete-dialog { width: min(100%, 480px); display: grid; gap: var(--space-4); padding: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-foreground); background: var(--color-surface); box-shadow: var(--shadow-overlay); }
 .scene-guard-dialog > div:last-child, .scene-delete-dialog footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-2); }
 .scene-guard-dialog h3, .scene-delete-dialog h3 { margin: 0; }
@@ -137,7 +135,7 @@ export function sceneStylesSource() {
   .scene-stepper { grid-column: 1; grid-row: 2 / 4; display: flex; flex-direction: column; align-items: stretch; padding: var(--space-5) var(--space-3); border-right: 1px solid var(--color-border); border-bottom: 0; background: color-mix(in srgb, var(--color-background) 70%, var(--color-surface)); }
   .scene-stepper button { position: relative; min-height: 56px; justify-content: flex-start; padding: 8px 12px; border-right: 0; border-radius: var(--radius-sm); }
   .scene-stepper button:not(:last-child)::after { position: absolute; top: 42px; left: 25px; width: 1px; height: 28px; content: ""; background: var(--color-border); }
-  .scene-stepper button[aria-current="step"] { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border); }
+  .scene-stepper button[aria-current="step"] { background: var(--color-surface); box-shadow: var(--shadow-inset-border); }
   .scene-editor-body { grid-column: 2; grid-row: 2; padding: var(--space-7) clamp(var(--space-6), 5vw, 72px); }
   .scene-editor-section { max-width: 720px; margin: 0; }
   .scene-editor-footer { grid-column: 2; grid-row: 3; padding-inline: clamp(var(--space-6), 5vw, 72px); }

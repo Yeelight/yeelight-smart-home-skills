@@ -1,0 +1,3 @@
+export function ColorPicker({ label, value, swatches = [], disabled = false, onChange }) {
+  return <div className="yp-color-picker"><span>{label}</span><div className="yp-color-picker-field"><input type="color" value={value} disabled={disabled} aria-label={label} onChange={(event) => onChange?.(event.target.value)} /><output>{value.toUpperCase()}</output></div>{swatches.length ? <div className="yp-color-swatches" role="group" aria-label={`${label}常用颜色`}>{swatches.map((swatch) => <button type="button" key={swatch} disabled={disabled} aria-label={`选择颜色 ${swatch}`} aria-pressed={swatch.toUpperCase() === value.toUpperCase()} style={{ background: swatch }} onClick={() => onChange?.(swatch)} />)}</div> : null}</div>;
+}

@@ -43,7 +43,7 @@ export function HomeSceneSummary({ scenes, loading, execute }: Props) {
 export function SceneLauncher({ scenes, loading, execute }: Props) {
   const { busyId, feedback, run } = useSceneExecution(execute);
   return <section className="scene-module" aria-labelledby="scene-title">
-    <div className="section-heading scene-heading"><div><span className="eyebrow">快捷执行</span><h2 id="scene-title">一键情景</h2><p>执行家庭 Runtime 中已经配置好的情景，不在此页面修改情景内容。</p></div><span className="scene-count">{scenes.length} 个情景</span></div>
+    <div className="section-heading scene-heading"><div><span className="eyebrow">快捷执行</span><h2 id="scene-title">一键情景</h2><p>执行家庭系统中已经配置好的情景，不在此页面修改情景内容。</p></div><span className="scene-count">{scenes.length} 个情景</span></div>
     <div className="scene-grid" aria-busy={loading}>
       {scenes.map((scene) => {
         const itemFeedback = feedback[scene.id];
@@ -73,7 +73,7 @@ function sceneManagementSource(operations) {
   const editButton = canUpdate ? `<button type="button" className="secondary-button" disabled={!detail} onClick={() => onNavigate("scenes/" + scene.id + "/edit")}><Pencil size={17} />编辑情景</button>` : "";
   const testButton = canTest ? `<button type="button" className="secondary-button" disabled={Boolean(operationBusy)} onClick={() => void runTest()}>{operationBusy === "test" ? <LoaderCircle className="spin" size={17} /> : <FlaskConical size={17} />}测试情景</button>` : "";
   const deleteButton = canDelete ? `<button type="button" className="danger-link" onClick={() => setDeleteOpen(true)}><Trash2 size={17} />删除情景</button>` : "";
-  const editorRoute = hasEditor ? `isEditor ? <SceneEditor mode={isCreate ? "create" : "update"} scene={detail} targets={sceneTargetOptions} onPreview={isCreate ? props.previewCreate! : (draft) => props.previewUpdate!(activeId, draft)} onSave={isCreate ? props.createScene! : (draft) => props.updateScene!(activeId, draft)} onCancel={() => onNavigate(isCreate ? "scenes" : "scenes/" + activeId)} onNavigate={onNavigate} /> : ` : "";
+  const editorRoute = hasEditor ? `isEditor ? <SceneEditor mode={isCreate ? "create" : "update"} scene={isCreate ? undefined : detail} targets={sceneTargetOptions} onPreview={isCreate ? props.previewCreate! : (draft) => props.previewUpdate!(activeId, draft)} onSave={isCreate ? props.createScene! : (draft) => props.updateScene!(activeId, draft)} onCancel={() => onNavigate(isCreate ? "scenes" : "scenes/" + activeId)} onNavigate={onNavigate} /> : ` : "";
   const editorRouteClose = "";
   const deleteDialog = canDelete ? `<GuardedSceneDelete scene={scene} busy={operationBusy === "delete"} feedback={operationFeedback} close={() => setDeleteOpen(false)} confirm={runDelete} />` : "";
   return `${editorImport}import { AlertTriangle, ArrowLeft, CheckCircle2, ChevronRight, CircleSlash2, FlaskConical, Layers3, LoaderCircle, MapPin, Pencil, Play, Plus, RefreshCw, Search, Sparkles, Trash2, X, XCircle } from "lucide-react";
@@ -176,7 +176,8 @@ ${canDelete ? `function GuardedSceneDelete({ scene, busy, feedback, close, confi
 }` : ""}
 
 function targetTypeLabel(value?: string) { return ({ device: "设备", group: "设备组", room: "房间", scene: "情景" } as Record<string, string>)[value || ""] || "家庭对象"; }
-function formatValue(key: string, value: unknown) { if (typeof value === "boolean") return value ? "开启" : "关闭"; if (key === "brightness" || key === "targetPercent") return String(value) + "%"; if (key === "colorTemperature") return String(value) + " K"; return String(value); }
+function formatValue(key: string, value: unknown) { if (typeof value === "boolean") return value ? "开启" : "关闭"; if (key === "color") return formatColor(value); if (key === "brightness" || key === "targetPercent") return String(value) + "%"; if (key === "colorTemperature") return String(value) + " K"; return String(value); }
+function formatColor(value: unknown) { const number = Number(value); return Number.isFinite(number) ? "#" + Math.min(0xFFFFFF, Math.max(0, Math.round(number))).toString(16).padStart(6, "0").toUpperCase() : "-"; }
 `;
 }
 

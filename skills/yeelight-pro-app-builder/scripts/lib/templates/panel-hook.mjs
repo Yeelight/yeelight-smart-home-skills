@@ -4,6 +4,7 @@ export function panelsHookSource(spec, operations = {}) {
   const availability = Object.fromEntries(Object.entries(operations).map(([name, operation]) => [name, { enabled: operation.enabled, message: operation.userMessage }]));
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type PanelEvent = { id: string; name: string; alias: string; type: number; details: { resId: string; typeId: number }[] };
 export type PanelButton = { id: string; name: string; alias: string; index: number; keyValue: number; buttonType: number; targetId: string; targetType: string; currentRow: Record<string, unknown>; events: PanelEvent[] };
@@ -22,7 +23,7 @@ const targets: TargetOption[] = [
 
 async function invoke(intent: string, parameters: Record<string, unknown>, options: Record<string, unknown> = {}) {
   if (!intent) throw new Error("当前应用未启用此操作。");
-  const response = await fetch("/api/operations/" + intent, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "管理墙面面板", parameters, options }) });
+  const response = await requestAction(intent, { locale: "zh-CN", utterance: "管理墙面面板", parameters, options });
   const payload = await response.json();
   if (!response.ok || payload.status !== "success") throw new Error(payload.userMessage || "墙面面板操作失败。");
   return payload?.result?.data || payload?.result || {};

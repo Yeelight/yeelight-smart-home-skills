@@ -1,0 +1,8 @@
+{
+  "$schema": "./schema.json",
+  "schemaVersion": 1,
+  "id": "node-web-2026-07-14",
+  "node": "^20.19.0 || >=22.12.0",
+  "npm": ">=10 <12",
+  "lockfileVersion": 3
+}

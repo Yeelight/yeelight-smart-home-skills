@@ -21,6 +21,7 @@ export function automationsHookSource(spec, operations = {}) {
 
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type AutomationStatusAction = { intent: ${intentType}; evidence: "preview-only" };
 export type AutomationItem = { id: string; name: string; enabled: boolean; actions: AutomationStatusAction[]; statusUnavailableReason?: string };
@@ -36,6 +37,8 @@ export type AutomationCapabilityRegistry = { targets: Record<string, AutomationR
 
 const initialAutomations = (runtimeLock.automations || []) as AutomationItem[];
 const capabilityById = new Map(initialAutomations.map((item) => [item.id, item]));
+const conditionPropertyNames = new Set(["power", "brightness", "colorTemperature", "color", "targetPercent", "targetPosition", "position", "switchPower", "airConditionerPower", "temperature", "currentTemperature", "airConditionerTargetTemperature", "airConditionerCurrentTemperature", "humidity", "occupancy", "occupancyDetected", "motionDetected", "contact", "open", "water", "smoke", "pm25", "co2", "voc", "luminance", "batteryLevel", "battery", "online", "airConditionerOnline"]);
+const actionPropertyNames = new Set(["power", "brightness", "colorTemperature", "color", "targetPercent", "switchPower", "airConditionerPower", "airConditionerTargetTemperature", "airConditionerMode", "airConditionerFanSpeed"]);
 export const automationCapabilityRegistry = buildAutomationRegistry(runtimeLock as Record<string, any>);
 
 function buildAutomationRegistry(lock: Record<string, any>): AutomationCapabilityRegistry {
@@ -48,12 +51,15 @@ function buildAutomationRegistry(lock: Record<string, any>): AutomationCapabilit
     eventsByDevice.set(id, items);
   }
   const targets = Object.fromEntries(Object.values(lock.entities || {}).map((entity: any) => {
-    const writableProperties = [...new Set<string>((entity.controls || []).filter((control: any) => control.evidence === "preview-only" && control.property).map((control: any) => String(control.property)))];
-    const properties = [...new Set<string>([...Object.keys(entity.state || {}), ...writableProperties])];
+    const controlProperties: string[] = (entity.controls || []).filter((control: any) => control.evidence === "preview-only" && control.property).map((control: any) => String(control.property));
+    const writableProperties = [...new Set<string>(controlProperties.map((property) => automationProperty(property)).filter(Boolean))];
+    const properties = [...new Set<string>([...Object.keys(entity.state || {}), ...writableProperties])].filter((property) => conditionPropertyNames.has(property));
     return [String(entity.id), { id: String(entity.id), name: String(entity.displayName || entity.name || entity.id), roomName: String(entity.roomName || ""), properties, writableProperties, events: eventsByDevice.get(String(entity.id)) || [] }];
   }));
   return { targets, supported: [], supportedV2: [] };
 }
+
+function automationProperty(property: string) { if (property === "targetPosition") return "targetPercent"; if (property === "sp" || /^(?:0|[1-6])-sp$/.test(property)) return "switchPower"; return actionPropertyNames.has(property) ? property : ""; }
 
 function enabledFromStatus(status: unknown) { return ["1", "true", "enabled", "on"].includes(String(status ?? "").trim().toLowerCase()); }
 function automationErrorMessage(cause: unknown, fallback: string) {
@@ -61,7 +67,7 @@ function automationErrorMessage(cause: unknown, fallback: string) {
   return /invoke:|endpoint returned HTTP|fetch failed|ECONN|Runtime|Bridge/i.test(detail) ? fallback : detail || fallback;
 }
 async function invokeAutomation(intent: string, payload: Record<string, unknown>) {
-  const response = await fetch("/api/operations/" + intent, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const response = await requestAction(intent, payload);
   const body = await response.json();
   if (!response.ok || body.status !== "success") throw new Error(automationErrorMessage(body.userMessage || body?.error?.message, "家庭服务暂时无法完成此操作，请稍后重试。"));
   return body;

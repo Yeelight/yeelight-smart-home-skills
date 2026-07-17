@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/theme-spec-v1.json",
+  "title": "Yeelight PRO ThemeSpec v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "preset", "mode", "density", "colors", "typography", "shape", "motion"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "preset": {
+      "enum": [
+        "pro-daylight", "pro-graphite", "pure-canvas", "quiet-mist",
+        "linen-home", "amber-evening", "forest-air", "stone-garden",
+        "moonlight-home", "low-light-cinema", "obsidian-focus", "carbon-signal",
+        "command-day", "command-night", "wall-day", "wall-night",
+        "installer-precision", "commissioning-dark", "contrast-clear", "contrast-night",
+        "architect-gallery", "architect-theatre", "universal-home", "unified-fabric"
+      ]
+    },
+    "mode": { "enum": ["light", "dark", "auto"] },
+    "density": { "enum": ["compact", "comfortable", "touch"] },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["brand", "accent"],
+      "properties": {
+        "brand": { "type": "string", "pattern": "^#[0-9A-F]{6}$" },
+        "accent": { "type": "string", "pattern": "^#[0-9A-F]{6}$" }
+      }
+    },
+    "typography": { "enum": ["system-modern", "system-readable", "system-technical", "system-compact"] },
+    "shape": { "enum": ["sharp", "precise", "balanced", "soft"] },
+    "motion": { "enum": ["reduced", "precise", "standard", "expressive"] }
+  }
+}

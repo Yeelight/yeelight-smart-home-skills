@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0",
+  "typography": [
+    { "id": "system-modern", "heading": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "data": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", "scale": "standard" },
+    { "id": "system-readable", "heading": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "data": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", "scale": "readable" },
+    { "id": "system-technical", "heading": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "data": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", "scale": "technical" },
+    { "id": "system-compact", "heading": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", "data": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace", "scale": "compact" }
+  ]
+}

@@ -8,6 +8,39 @@ button:disabled { cursor: not-allowed; }
 .yp-specimen { min-height: 100%; padding: var(--yp-space-5); color: var(--yp-text-body); background: var(--yp-surface-page); }
 .yp-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--yp-space-3); }
 .yp-stack { display: grid; gap: var(--yp-space-3); }
+.yp-form-specimen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--yp-space-4); }
+.yp-field, .yp-slider, .yp-color-picker { min-width: 0; display: grid; align-content: start; gap: 6px; color: var(--yp-text-muted); font-size: var(--yp-font-size-14); }
+.yp-field > span, .yp-color-picker > span { min-height: 20px; display: flex; align-items: center; color: var(--yp-text-body); font-weight: var(--yp-weight-medium); }
+.yp-field input, .yp-field select { width: 100%; min-height: max(44px, var(--yp-input-height)); padding: 0 12px; border: 1px solid var(--yp-input-border); border-radius: var(--yp-radius-6); color: var(--yp-text-heading); background: var(--yp-input-background); }
+.yp-field input:focus-visible, .yp-field select:focus-visible { border-color: var(--yp-action-primary); outline: 0; box-shadow: var(--yp-control-focus-shadow); }
+.yp-field small { color: var(--yp-text-muted); }
+.yp-field--error input, .yp-field--error select { border-color: var(--yp-status-error); }
+.yp-field--error small { color: var(--yp-status-error); }
+.yp-field input:disabled, .yp-field select:disabled { opacity: 0.48; }
+.yp-field input:read-only { color: var(--yp-text-muted); background: var(--yp-surface-subtle); }
+.yp-checkbox { min-height: 52px; display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: center; gap: var(--yp-space-3); color: var(--yp-text-body); cursor: pointer; }
+.yp-checkbox input { width: 22px; height: 22px; margin: 0; accent-color: var(--yp-action-primary); }
+.yp-checkbox span { min-width: 0; display: grid; gap: 2px; }
+.yp-checkbox small { color: var(--yp-text-muted); }
+.yp-switch { min-height: 56px; display: grid; grid-template-columns: 50px minmax(0, 1fr) auto; align-items: center; gap: var(--yp-space-3); width: 100%; padding: 6px 12px 6px 6px; border: 1px solid var(--yp-border-default); border-radius: var(--yp-radius-6); color: var(--yp-text-body); text-align: left; background: var(--yp-surface-raised); }
+.yp-switch-track { position: relative; width: 46px; height: 30px; border-radius: var(--yp-radius-8); background: var(--yp-switch-track); transition: background var(--yp-duration-fast) var(--yp-ease-standard); }
+.yp-switch-track i { position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: var(--yp-radius-6); background: var(--yp-switch-thumb); box-shadow: var(--yp-control-thumb-shadow); transition: transform var(--yp-duration-fast) var(--yp-ease-standard); }
+.yp-switch--on .yp-switch-track { background: var(--yp-switch-track-active); }
+.yp-switch--on .yp-switch-track i { transform: translateX(16px); }
+.yp-switch-copy { min-width: 0; display: grid; gap: 2px; }
+.yp-switch-copy small { color: var(--yp-text-muted); }
+.yp-switch > b { color: var(--yp-text-muted); font-size: var(--yp-font-size-12); }
+.yp-slider > span { display: flex; align-items: center; justify-content: space-between; gap: var(--yp-space-3); }
+.yp-slider output { color: var(--yp-text-heading); font-weight: var(--yp-weight-medium); font-variant-numeric: tabular-nums; }
+.yp-slider input { width: 100%; min-height: 44px; margin: 0; accent-color: var(--yp-action-primary); }
+.yp-slider-specimen { min-width: 0; display: grid; gap: var(--yp-space-1); }
+.yp-slider-specimen > small { color: var(--yp-text-muted); font-variant-numeric: tabular-nums; }
+.yp-color-picker-field { min-height: 52px; display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: var(--yp-space-2); padding: 4px 10px 4px 4px; border: 1px solid var(--yp-border-default); border-radius: var(--yp-radius-6); background: var(--yp-surface-raised); }
+.yp-color-picker-field input { width: 44px; height: 44px; padding: 5px; border: 0; background: transparent; }
+.yp-color-picker-field output { color: var(--yp-text-heading); font-family: var(--yp-font-mono); }
+.yp-color-swatches { display: flex; flex-wrap: wrap; gap: var(--yp-space-1); }
+.yp-color-swatches button { width: 44px; height: 44px; padding: 8px; border: 8px solid var(--yp-surface-page); border-radius: 50%; box-shadow: var(--yp-control-inset-shadow); }
+.yp-color-swatches button[aria-pressed="true"] { box-shadow: var(--yp-control-focus-shadow); transform: scale(0.9); }
 .yp-button { min-height: var(--yp-button-height); display: inline-flex; align-items: center; justify-content: center; gap: var(--yp-space-2); padding: 0 var(--yp-space-4); border: 1px solid transparent; border-radius: var(--yp-button-radius); font-weight: var(--yp-weight-medium); transition: color var(--yp-duration-fast) var(--yp-ease-standard), background var(--yp-duration-fast) var(--yp-ease-standard), border-color var(--yp-duration-fast) var(--yp-ease-standard); }
 .yp-button--primary { color: var(--yp-text-on-action); background: var(--yp-action-primary); }
 .yp-button--primary:hover { background: var(--yp-action-primary-hover); }

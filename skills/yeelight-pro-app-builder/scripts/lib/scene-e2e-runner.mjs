@@ -180,8 +180,9 @@ async function runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidence
   check(report, "api:strict-execution-contract", executionCalls.length === 3 && executionCalls.every((entry) => entry.method === "POST" && Object.keys(entry.body || {}).length === 0), executionCalls.map(({ path, method, body, status }) => ({ path, method, body, status })));
   const preservationResponse = await requestBrowserAction(bridgeOrigin, "scene.detail.get", { locale: "zh-CN", utterance: "验证情景动作保留", targets: [{ entityType: "scene", id: "994012" }], parameters: { houseId: mockServer.homeId, sceneId: "994012" } });
   const preservationBody = await preservationResponse.json();
-  const custom = preservationBody?.result?.data?.editablePayload?.actions?.[1]?.custom;
-  check(report, "api:editable-payload-lossless", preservationResponse.ok && custom?.vendorMode === "slow-breathe" && custom?.transition === 12 && !JSON.stringify(preservationBody).includes('"params"'), preservationBody?.result?.data?.editablePayload);
+  const editablePayload = editablePayloadFromSceneResponse(preservationBody);
+  const custom = editablePayload?.actions?.[1]?.custom;
+  check(report, "api:editable-payload-lossless", preservationResponse.ok && custom?.vendorMode === "slow-breathe" && custom?.transition === 12 && !JSON.stringify(preservationBody).includes('"params"'), editablePayload);
   const boundary = await probeBrowserBoundary(bridgeOrigin, "automation.enable");
   check(report, "bridge:semantic-route-404", boundary.semanticRoute.status === 404, boundary.semanticRoute);
   check(report, "bridge:unknown-action-403", boundary.unknownAction.status === 403 && boundary.unknownAction.body.status === "blocked", boundary.unknownAction);
@@ -195,6 +196,11 @@ async function runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidence
   check(report, "restore:deterministic", Object.keys(mockServer.fixture.sceneExecutions).length === 0 && mockServer.fixture.scenes.length === 12, { executions: mockServer.fixture.sceneExecutions, scenes: mockServer.fixture.scenes.length });
 }
 
+export function editablePayloadFromSceneResponse(body) {
+  const data = body?.result?.data || body?.result || {};
+  return data?.editablePayload || data?.detail?.editablePayload;
+}
+
 async function verifyCreateFlow({ page, report, mockServer, baseUrl, evidenceDir }) {
   await page.goto(`${baseUrl}#scenes/new`, { waitUntil: "domcontentloaded" });
   const next = page.getByRole("button", { name: "下一步" });
@@ -202,10 +208,14 @@ async function verifyCreateFlow({ page, report, mockServer, baseUrl, evidenceDir
   check(report, "create:inline-validation", await page.getByRole("alert").filter({ hasText: "请输入情景名称" }).isVisible(), "empty name blocked");
   const name = page.getByLabel("情景名称");
   await name.fill("E2E 阅读灯光");
-  await waitFor(async () => await name.inputValue() === "E2E 阅读灯光");
+  await page.getByRole("heading", { name: "E2E 阅读灯光", level: 2 }).waitFor({ state: "visible" });
   const description = page.locator(".scene-form-grid textarea");
   await description.fill("真实 Runtime 创建与回读验证");
-  await waitFor(async () => await description.inputValue() === "真实 Runtime 创建与回读验证");
+  try {
+    await waitFor(async () => await description.inputValue() === "真实 Runtime 创建与回读验证");
+  } catch {
+    throw new Error(`scene description did not settle: ${JSON.stringify({ route: new URL(page.url()).hash, count: await description.count(), values: await description.evaluateAll((elements) => elements.map((element) => element.value)), visible: await description.isVisible() })}`);
+  }
   const fieldValues = { name: await name.inputValue(), description: await description.inputValue() };
   if (fieldValues.name !== "E2E 阅读灯光" || fieldValues.description !== "真实 Runtime 创建与回读验证") throw new Error(`scene create fields crossed: ${JSON.stringify(fieldValues)}`);
   check(report, "create:field-integrity", true, fieldValues);
@@ -213,12 +223,31 @@ async function verifyCreateFlow({ page, report, mockServer, baseUrl, evidenceDir
   await page.getByRole("button", { name: "下一步" }).click();
   check(report, "create:action-validation", await page.getByRole("alert").filter({ hasText: "至少保留或添加一个情景动作" }).isVisible(), "empty actions blocked");
   await page.getByRole("button", { name: "添加动作" }).click();
-  const targetSelect = page.locator(".scene-action-editor-row select").nth(0);
+  const actionRow = page.locator(".scene-action-editor-row").first();
+  const targetSelect = actionRow.locator("select").nth(0);
+  const propertySelect = actionRow.locator("select").nth(1);
   const targetLabels = await targetSelect.locator("option").allTextContents();
   check(report, "create:evidence-backed-targets", targetLabels.some((value) => value.includes("全屋窗帘")) && !targetLabels.some((value) => /环境传感器|安防传感器|基础设施/.test(value)), targetLabels);
+  check(report, "create:boolean-control-target", await selectTargetWithProperty(actionRow, "开关"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "开关" });
+  const propertyToggle = actionRow.getByRole("switch");
+  check(report, "create:boolean-semantic-switch", await propertyToggle.isVisible() && await propertyToggle.getAttribute("aria-checked") === "true", await actionRow.innerText());
+  await propertyToggle.click();
+  check(report, "create:boolean-switch-updates", await propertyToggle.getAttribute("aria-checked") === "false", await propertyToggle.getAttribute("aria-label"));
+  await propertyToggle.click();
+  check(report, "create:color-control-target", await selectTargetWithProperty(actionRow, "颜色"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "颜色" });
+  const colorInput = actionRow.locator('input[type="color"]');
+  await colorInput.fill("#4d96ff");
+  check(report, "create:color-picker-converts-rgb", await colorInput.inputValue() === "#4d96ff" && await actionRow.getByText("#4D96FF").isVisible() && await actionRow.locator('input[type="number"]').count() === 0, await actionRow.innerText());
+  const colorLayout = await actionRow.evaluate((element) => { const control = element.querySelector(".property-color-control"); const remove = element.querySelector(".icon-button"); const controlRect = control?.getBoundingClientRect(); const removeRect = remove?.getBoundingClientRect(); return { clientWidth: element.clientWidth, scrollWidth: element.scrollWidth, controlRight: controlRect?.right || 0, removeLeft: removeRect?.left || 0 }; });
+  check(report, "create:color-control-no-overlap", colorLayout.scrollWidth <= colorLayout.clientWidth && colorLayout.controlRight <= colorLayout.removeLeft, colorLayout);
   const curtainValue = await targetSelect.locator("option").evaluateAll((options) => options.find((option) => option.textContent?.includes("全屋窗帘"))?.value || "");
   await targetSelect.selectOption(curtainValue);
-  check(report, "create:curtain-property", await page.locator(".scene-action-editor-row select").nth(1).locator("option").allTextContents().then((items) => items.includes("开合度")), await page.locator(".scene-action-editor-row").innerText());
+  check(report, "create:curtain-property", await propertySelect.locator("option").allTextContents().then((items) => items.includes("开合度")), await actionRow.innerText());
+  const positionSlider = actionRow.locator('input[type="range"]');
+  await positionSlider.fill("64");
+  check(report, "create:curtain-semantic-slider", await positionSlider.inputValue() === "64" && await actionRow.getByText("64%").isVisible(), await actionRow.innerText());
   await page.getByRole("button", { name: "下一步" }).click();
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-create-review.png"), fullPage: true });
 
@@ -233,8 +262,18 @@ async function verifyCreateFlow({ page, report, mockServer, baseUrl, evidenceDir
   const created = mockServer.fixture.scenes.find((scene) => scene.name === "E2E 阅读灯光");
   await page.waitForURL((url) => url.hash === `#scenes/${created.id}`);
   await page.locator(".scene-detail").getByRole("heading", { name: "E2E 阅读灯光", level: 2 }).waitFor();
-  check(report, "create:write-list-detail-readback", Boolean(created) && mockServer.fixture.scenes.length === 13 && page.url().endsWith(`#scenes/${created?.id}`), { sceneId: created?.id, count: mockServer.fixture.scenes.length, url: page.url() });
+  check(report, "create:write-list-detail-readback", Boolean(created) && created?.editablePayload?.actions?.[0]?.set?.targetPercent === 64 && mockServer.fixture.scenes.length === 13 && page.url().endsWith(`#scenes/${created?.id}`), { sceneId: created?.id, actions: created?.editablePayload?.actions, count: mockServer.fixture.scenes.length, url: page.url() });
   return created;
+}
+
+async function selectTargetWithProperty(row, propertyLabel) {
+  const targetSelect = row.locator("select").nth(0);
+  const propertySelect = row.locator("select").nth(1);
+  for (const value of await targetSelect.locator("option").evaluateAll((options) => options.map((option) => option.value))) {
+    await targetSelect.selectOption(value);
+    if ((await propertySelect.locator("option").allTextContents()).includes(propertyLabel)) return true;
+  }
+  return false;
 }
 
 async function verifyUpdateAndGuardFlow({ page, report, mockServer, baseUrl, evidenceDir }) {

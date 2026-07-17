@@ -7,6 +7,17 @@
     "cli-proven",
     "generated-e2e-passed"
   ],
+  "scenarios": [
+    {
+      "id": "reference-home-degraded",
+      "baseFixture": "reference-home",
+      "status": "generated-degraded-e2e-passed",
+      "proves": ["schema-and-digest", "api-business-failure", "real-cli", "strict-failure", "explicit-partial", "readonly-scene", "production-build", "bridge-and-chromium", "launcher-cleanup"],
+      "doesNotProve": ["write-proven", "ideal-generated-e2e-passed"],
+      "verifiedBy": ["mock-home-scenario.test.mjs", "mock-home-cli.test.mjs", "run-mock-app.test.mjs"],
+      "evidenceFile": ".trellis/tasks/archive/2026-07/07-16-builder-degraded-mock-launcher/validation/evidence/degraded-e2e-summary.json"
+    }
+  ],
   "modules": [
     {
       "id": "home.lighting-summary",

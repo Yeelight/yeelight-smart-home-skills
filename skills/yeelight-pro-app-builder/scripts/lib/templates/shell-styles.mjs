@@ -18,10 +18,12 @@ export function shellStylesSource() {
 .shell-notice { margin: var(--space-4) var(--shell-gutter) 0; }
 .shell-main { width: min(100%, 1240px); min-height: 0; margin: 0 auto; padding: var(--space-5) var(--shell-gutter) var(--space-7); outline: 0; }
 .page-stack { display: grid; gap: var(--space-6); }
+.route-loading { min-height: min(420px, calc(100dvh - 220px)); display: grid; place-content: center; justify-items: center; gap: var(--space-3); color: var(--color-muted); }
+.route-loading-indicator { width: 28px; height: 28px; border: 3px solid var(--color-neutral-200); border-top-color: var(--color-primary); border-radius: 50%; animation: spin var(--duration-standard) linear infinite; }
 .module-section { min-width: 0; }
 .mobile-navigation { display: none; }
-.more-sheet-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--space-4); background: rgb(10 25 29 / 0.54); }
-.more-sheet { width: min(100%, 480px); max-height: calc(100dvh - 32px); overflow: auto; padding: var(--space-5); border-radius: var(--radius-md); color: var(--color-foreground); background: var(--color-surface); box-shadow: 0 24px 64px rgb(10 25 29 / 0.24); }
+.more-sheet-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--space-4); background: var(--yp-semantic-overlay-strong); }
+.more-sheet { width: min(100%, 480px); max-height: calc(100dvh - 32px); overflow: auto; padding: var(--space-5); border-radius: var(--radius-md); color: var(--color-foreground); background: var(--color-surface); box-shadow: var(--shadow-overlay); }
 .more-sheet > header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
 .more-sheet h2 { margin-top: 2px; }
 .more-sheet-list { display: grid; gap: var(--space-2); margin-top: var(--space-4); }

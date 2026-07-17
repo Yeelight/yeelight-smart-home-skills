@@ -1,4 +1,6 @@
-export async function inspectGroupManagement(spec, groups, entities, run) {
+import { managementPreviewDiagnostic } from "./capability-management-diagnostics.mjs";
+
+export async function inspectGroupManagement(spec, groups, entities, run, diagnostics = []) {
   const houseId = spec.scope?.homeIds?.[0] || "";
   const group = groups[0];
   const member = entities.find((entity) => entity.family === "light") || entities[0];
@@ -15,11 +17,12 @@ export async function inspectGroupManagement(spec, groups, entities, run) {
     const payload = parseCapabilityJSON(result.stdout); const preview = payload?.result?.preview || payload?.result?.planned;
     const noWrite = payload?.result?.dryRun === true && payload?.warnings?.includes("dry_run_no_cloud_write");
     if (result.code === 0 && payload?.status === "success" && noWrite && preview?.intent === probe.intent) proven.push(probe.intent);
+    else diagnostics.push(managementPreviewDiagnostic({ result, payload, subject: { id: group.id, name: group.name, type: "group" }, probeId: probe.intent }));
   }
   return proven;
 }
 
-export async function inspectGroupMemberUpdates(spec, groups, entities, run) {
+export async function inspectGroupMemberUpdates(spec, groups, entities, run, diagnostics = []) {
   const houseId = spec.scope?.homeIds?.[0] || "";
   const entityById = new Map(entities.map((entity) => [entity.id, entity]));
   const schemaByDevice = new Map();
@@ -41,6 +44,7 @@ export async function inspectGroupMemberUpdates(spec, groups, entities, run) {
     const payload = parseCapabilityJSON(result.stdout); const preview = payload?.result?.preview; const plannedIds = preview?.payloadPreview?.deviceIds;
     const noWrite = payload?.result?.dryRun === true && payload?.traceId === "invoke-preview" && payload?.warnings?.includes("dry_run_no_cloud_write");
     const editable = result.code === 0 && payload?.status === "success" && noWrite && preview?.intent === request.intent && String(preview?.payloadPreview?.groupId || "") === group.id && Array.isArray(plannedIds);
+    if (!editable) diagnostics.push(managementPreviewDiagnostic({ result, payload, subject: { id: group.id, name: group.name, type: "group" }, probeId: request.intent }));
     inspected.push({ ...group, eligibleDeviceIds: eligible, editable, ...(editable ? { evidence: "preview-only" } : {}) });
   }
   return inspected;

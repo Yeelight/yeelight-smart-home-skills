@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "preset": "pro-daylight",
+  "mode": "auto",
+  "density": "comfortable",
+  "colors": {
+    "brand": "#087F8C",
+    "accent": "#1BA8A0"
+  },
+  "typography": "system-modern",
+  "shape": "balanced",
+  "motion": "standard"
+}

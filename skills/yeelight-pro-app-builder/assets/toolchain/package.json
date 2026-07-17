@@ -1,0 +1,17 @@
+{
+  "name": "yeelight-pro-generated-app",
+  "private": true,
+  "packageManager": "npm@10.9.8",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0",
+    "npm": ">=10 <12"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n bridge,web \"npm --workspace @app/bridge run dev\" \"npm --workspace @app/web run dev\"",
+    "build": "npm --workspace @app/web run build"
+  },
+  "workspaces": ["apps/*"],
+  "devDependencies": {
+    "concurrently": "9.2.4"
+  }
+}

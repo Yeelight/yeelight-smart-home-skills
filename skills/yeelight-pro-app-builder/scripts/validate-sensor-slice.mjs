@@ -24,7 +24,7 @@ try {
   runStep("runtime-build", "go", ["build", "-o", runtimeBin, "../yeelight-home/cmd/yeelight-home"], { cwd: yeelightRoot });
   if (!args.app) {
     runStep("build-app", process.execPath, [path.join(skillRoot, "scripts/build-app.mjs"), "--request", "全屋传感器环境监测，移动端，简洁明亮，蓝绿色。", "--title", "家庭环境", "--mock-home", "comprehensive", "--runtime-bin", runtimeBin, "--out", appRoot]);
-    runStep("npm-install", "npm", ["install"], { cwd: appRoot });
+    runStep("npm-install", "npm", ["ci"], { cwd: appRoot });
   }
   runStep("npm-build", "npm", ["run", "build"], { cwd: appRoot });
   mockServer = await startMockHomeServer({ fixtureId: "comprehensive" });
@@ -32,7 +32,7 @@ try {
   const bridgeOrigin = `http://127.0.0.1:${bridgePort}`; const baseUrl = `http://127.0.0.1:${webPort}/`;
   runtimeHome = fs.mkdtempSync(path.join(os.tmpdir(), "ypa-sensor-e2e-runtime-"));
   const runtimeEnv = { YEELIGHT_API_BASE_URL: mockServer.apiBaseUrl, YEELIGHT_HOME_ACCESS_TOKEN: mockServer.credential, YEELIGHT_HOME_AUTHENTICATED: "1", YEELIGHT_HOME_HOUSE_ID: mockServer.homeId, YEELIGHT_HOME_DIR: runtimeHome, YEELIGHT_CLOUD_REGION: "dev", YEELIGHT_HOME_BIN: runtimeBin };
-  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
   web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
   await waitForUrl(`${bridgeOrigin}/health`); await waitForUrl(baseUrl);
   const { chromium } = await import(pathToFileURL(path.join(resolvePlaywrightModuleDir(), "playwright", "index.mjs")).href);

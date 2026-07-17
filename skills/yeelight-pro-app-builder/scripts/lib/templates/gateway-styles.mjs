@@ -1,6 +1,6 @@
 export function gatewayStylesSource() {
   return `/* GATEWAY COMPONENT TOKENS */
-:root { --gateway-icon-bg: var(--color-neutral-100); --gateway-online-bg: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface)); --gateway-attention-bg: var(--color-warning-bg); --gateway-scrim: rgb(8 20 24 / 0.52); }
+:root { --gateway-icon-bg: var(--color-neutral-100); --gateway-online-bg: color-mix(in srgb, var(--color-accent) 12%, var(--color-surface)); --gateway-attention-bg: var(--color-warning-bg); --gateway-scrim: var(--yp-semantic-overlay); }
 .gateway-module, .gateway-detail { padding-top: var(--space-2); }
 .gateway-heading { align-items: end; }
 .gateway-heading p, .gateway-settings > p { max-width: 64ch; color: var(--color-muted); }
@@ -17,7 +17,7 @@ export function gatewayStylesSource() {
 .gateway-row:last-child { border-bottom: 0; }
 .gateway-row:hover, .gateway-row:focus-visible { background: var(--color-background); }
 .gateway-row.offline { background: var(--color-neutral-100); }
-.gateway-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-md); color: var(--color-primary); background: var(--gateway-icon-bg); box-shadow: inset 0 0 0 1px var(--color-neutral-200); }
+.gateway-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-md); color: var(--color-primary); background: var(--gateway-icon-bg); box-shadow: var(--shadow-inset-border); }
 .gateway-row-copy { min-width: 0; display: grid; gap: 2px; }
 .gateway-row-copy strong, .gateway-row-copy small, .gateway-row-copy > span { overflow-wrap: anywhere; }
 .gateway-row-copy small, .gateway-row-copy > span { color: var(--color-muted); }
@@ -51,11 +51,6 @@ export function gatewayStylesSource() {
 .diagnosis-list li { min-height: 48px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px var(--space-3); border-bottom: 1px solid var(--color-neutral-100); }
 .diagnosis-list small { grid-column: 1 / -1; color: var(--color-muted); }
 .gateway-settings { grid-column: 1 / -1; }
-.primary-action, .secondary-action, .danger-action { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 0 16px; border-radius: var(--button-radius); }
-.primary-action { border: 1px solid var(--button-bg); color: var(--button-fg); background: var(--button-bg); }
-.secondary-action { border: 1px solid var(--color-border); color: var(--color-primary); background: var(--color-surface); }
-.danger-action { border: 1px solid var(--color-error); color: var(--color-surface); background: var(--color-error); }
-.danger-action:disabled { opacity: 0.48; cursor: not-allowed; }
 .gateway-settings > .primary-action { margin-top: var(--space-4); }
 .gateway-terminal, .gateway-feedback { min-height: 52px; display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-4); padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-neutral-100); }
 .gateway-danger-zone { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-top: var(--space-5); padding-top: var(--space-4); border-top: 1px solid color-mix(in srgb, var(--color-error) 24%, var(--color-border)); }
@@ -67,7 +62,7 @@ export function gatewayStylesSource() {
 .gateway-error span { overflow-wrap: anywhere; }
 .gateway-error button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 0 12px; border: 1px solid currentColor; border-radius: var(--button-radius); color: var(--color-error); background: var(--color-surface); }
 .gateway-dialog-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: var(--space-4); background: var(--gateway-scrim); }
-.gateway-dialog { width: min(100%, 560px); max-height: calc(100dvh - 32px); overflow: auto; padding: var(--space-5); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: 0 20px 56px rgb(15 35 40 / 0.22); }
+.gateway-dialog { width: min(100%, 560px); max-height: calc(100dvh - 32px); overflow: auto; padding: var(--space-5); border-radius: var(--radius-md); background: var(--color-surface); box-shadow: var(--shadow-overlay); }
 .gateway-dialog > header, .gateway-dialog > footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .gateway-dialog h3 { margin: 0; font-size: 18px; }
 .gateway-dialog > label, .gateway-dialog fieldset { display: grid; gap: var(--space-2); margin-top: var(--space-4); font-weight: 700; }

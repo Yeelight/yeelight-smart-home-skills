@@ -20,6 +20,7 @@ export function gatewaysHookSource(spec, operations = {}) {
   const deleteBinding = operations.delete?.enabled ? ", deleteGateway" : "";
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type GatewayErrors = Record<string, string>;
 type Room = { id: string; name: string };
@@ -31,7 +32,7 @@ const intents = ${JSON.stringify(intents)} as Record<string, string>;
 
 async function invoke(intent: string, parameters: Record<string, unknown>, options: Record<string, unknown> = {}, includeMeta = false) {
   if (!intent) throw new Error("当前应用未启用此操作。");
-  const response = await fetch("/api/operations/" + intent, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "管理家庭网关", parameters, options }) });
+  const response = await requestAction(intent, { locale: "zh-CN", utterance: "管理家庭网关", parameters, options });
   const payload = await response.json();
   if (!response.ok || !["success", "partial"].includes(payload.status)) throw new Error(payload.userMessage || "网关操作失败。");
   const data = payload?.result?.data || payload?.result || {};

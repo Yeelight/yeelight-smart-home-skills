@@ -9,6 +9,8 @@ const mockRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 
 export function loadReferenceHomeFixture(fixtureId = "reference-home") {
   if (!/^[a-z0-9-]+$/i.test(fixtureId)) throw new Error("invalid mock fixture id");
+  const scenarioFile = path.join(mockRoot, "scenarios", `${fixtureId}.json`);
+  if (fs.existsSync(scenarioFile)) return loadScenarioFixture(fixtureId, scenarioFile);
   const largeHome = fixtureId === "reference-home-large";
   const alias = fixtureId === "comprehensive" || largeHome ? "reference-home" : fixtureId;
   const fixtureDir = path.join(mockRoot, alias);
@@ -34,6 +36,26 @@ export function loadReferenceHomeFixture(fixtureId = "reference-home") {
   return fixture;
 }
 
+function loadScenarioFixture(fixtureId, scenarioFile) {
+  const scenario = readJSON(scenarioFile);
+  const fixture = validateMockHomeScenario(scenario, { expectedId: fixtureId });
+  applyScenarioDeviceOverlays(fixture, scenario.deviceOverlays);
+  fixture.mockScenario = structuredClone(scenario);
+  validateReferenceHomeFixture(fixture);
+  return fixture;
+}
+
+export function validateMockHomeScenario(scenario, { expectedId = scenario?.id } = {}) {
+  validateJSONSchema(readJSON(path.join(mockRoot, "scenario.schema.json")), scenario, "mockHomeScenario");
+  if (scenario.id !== expectedId) throw new Error(`mock scenario id mismatch: ${expectedId}`);
+  const baseManifestFile = path.join(mockRoot, scenario.baseFixture, "manifest.json");
+  verifyDigest(baseManifestFile, scenario.baseManifestSha256, "mock scenario base manifest");
+  verifyScenarioBehaviorDigest(scenario);
+  const fixture = loadReferenceHomeFixture(scenario.baseFixture);
+  validateScenarioReferences(scenario, fixture);
+  return fixture;
+}
+
 function expandLargeHome(fixture) {
   const targetCount = 108;
   const sourceDevices = structuredClone(fixture.devices);
@@ -54,8 +76,56 @@ function expandLargeHome(fixture) {
 
 function verifyFragmentDigest(file, fragmentName, expected) {
   if (!/^[a-f0-9]{64}$/.test(String(expected || ""))) throw new Error(`reference home fragment ${fragmentName} has no valid sha256`);
+  verifyDigest(file, expected, `reference home fragment ${fragmentName}`);
+}
+
+function verifyDigest(file, expected, label) {
   const actual = crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
-  if (actual !== expected) throw new Error(`reference home fragment digest mismatch: ${fragmentName}`);
+  if (actual !== expected) throw new Error(`${label} digest mismatch`);
+}
+
+function verifyScenarioBehaviorDigest(scenario) {
+  const behavior = {
+    persistentFailures: scenario.persistentFailures,
+    capabilityOverrides: scenario.capabilityOverrides,
+    deviceOverlays: scenario.deviceOverlays,
+  };
+  const actual = crypto.createHash("sha256").update(JSON.stringify(sortObject(behavior))).digest("hex");
+  if (actual !== scenario.behaviorSha256) throw new Error("mock scenario behavior digest mismatch");
+}
+
+function sortObject(value) {
+  if (Array.isArray(value)) return value.map(sortObject);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.keys(value).sort().map((key) => [key, sortObject(value[key])]));
+}
+
+function validateScenarioReferences(scenario, fixture) {
+  const deviceIds = new Set(fixture.devices.map((device) => device.id));
+  const sceneIds = new Set(fixture.scenes.map((scene) => scene.id));
+  const allowedPaths = new Set([
+    ...fixture.devices.flatMap((device) => device.schemaProperties.map((property) => `/v1/controll/device/${device.id}/r/properties/${property}`)),
+    ...[...sceneIds].map((id) => `/v1/scene/${id}/r/detail`),
+  ]);
+  for (const failure of scenario.persistentFailures) {
+    if (!allowedPaths.has(failure.path)) throw new Error(`mock scenario failure path is not allowlisted: ${failure.path}`);
+  }
+  for (const overlay of scenario.deviceOverlays) {
+    if (!deviceIds.has(overlay.deviceId)) throw new Error(`mock scenario overlay references unknown device ${overlay.deviceId}`);
+  }
+}
+
+function applyScenarioDeviceOverlays(fixture, overlays) {
+  const devices = new Map(fixture.devices.map((device) => [device.id, device]));
+  for (const overlay of overlays) {
+    const device = devices.get(overlay.deviceId);
+    if (overlay.online !== undefined) device.online = overlay.online;
+    for (const property of overlay.removeProperties || []) {
+      if (!Object.hasOwn(device.properties, property)) throw new Error(`mock scenario cannot remove missing property ${property}`);
+      delete device.properties[property];
+      device.schemaProperties = device.schemaProperties.filter((item) => item !== property);
+    }
+  }
 }
 
 export function validateReferenceHomeFixture(fixture) {

@@ -1,5 +1,7 @@
 import path from "node:path";
 
+import { requestBridgePath } from "./e2e-browser-boundary.mjs";
+
 const viewports = [
   { id: "mobile-375", width: 375, height: 812 },
   { id: "tablet-768", width: 768, height: 1024 },
@@ -44,7 +46,7 @@ export async function runGatewayBrowserE2E({ chromium, baseUrl, bridgeOrigin, mo
       await context.close();
     }
   } finally { await browser.close(); }
-  const blocked = await fetch(`${bridgeOrigin}/api/actions/a_not_allowed`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+  const blocked = await requestBridgePath(bridgeOrigin, "/api/actions/a_not_allowed");
   check(report, "bridge:delete-blocked", blocked.status === 403 && (await blocked.json()).status === "blocked", blocked.status);
   const gatewayIds = new Set(mockServer.fixture.devices.filter((device) => device.family === "gateway").map((device) => String(device.id)));
   const genericReads = mockServer.requestLog().filter((entry) => {
@@ -84,7 +86,20 @@ async function runEditorFlows({ page, report, mockServer, diagnostics, evidenceD
   markLatestActionError(diagnostics);
   check(report, "editor:failure-retains-input", await failureInput.inputValue() === "失败保留名称", await failureInput.inputValue());
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-configure-failure.png"), fullPage: true });
-  page.once("dialog", (nativeDialog) => nativeDialog.accept()); await failureDialog.getByRole("button", { name: "取消" }).click(); await failureDialog.waitFor({ state: "hidden" });
+  await failureDialog.getByRole("button", { name: "取消" }).click();
+  const discardDialog = page.getByRole("dialog", { name: "放弃当前修改？" });
+  await discardDialog.waitFor();
+  await waitForFocus(discardDialog.getByRole("button", { name: "继续编辑", exact: true }));
+  check(report, "editor:discard-first-focus", await discardDialog.getByRole("button", { name: "继续编辑", exact: true }).evaluate((element) => element === document.activeElement), "continue editing focused");
+  await discardDialog.getByRole("button", { name: "继续编辑", exact: true }).click();
+  await failureInput.waitFor();
+  check(report, "editor:discard-keeps-draft", await failureInput.inputValue() === "失败保留名称", await failureInput.inputValue());
+  await failureDialog.getByRole("button", { name: "取消" }).click();
+  await discardDialog.waitFor();
+  await discardDialog.getByRole("button", { name: "放弃修改" }).click();
+  await failureDialog.waitFor({ state: "hidden" });
+  await waitForFocus(trigger);
+  check(report, "editor:discard-focus-restored", await trigger.evaluate((element) => element === document.activeElement), "edit trigger focused after discard");
 }
 
 async function runFailureFlows({ page, report, mockServer, diagnostics, evidenceDir }) {

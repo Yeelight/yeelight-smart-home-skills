@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://yeelight.com/schemas/product-spec-v3.json",
-  "title": "Yeelight PRO ProductSpec v3",
+  "$id": "https://yeelight.com/schemas/product-spec-v4.json",
+  "title": "Yeelight PRO ProductSpec v4",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "product", "target", "scope", "modules", "deviceFamilies", "theme", "runtime", "diagnostics"],
   "properties": {
-    "schemaVersion": { "const": 3 },
+    "schemaVersion": { "const": 4 },
     "product": {
       "type": "object",
       "additionalProperties": false,
@@ -20,12 +20,17 @@
     "target": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["formFactor", "navigation", "density"],
+      "required": ["formFactor", "navigation"],
       "properties": {
         "formFactor": { "enum": ["desktop", "tablet", "mobile", "wall"] },
-        "navigation": { "enum": ["sidebar", "adaptive-rail", "bottom-tabs", "touch-rail"] },
-        "density": { "enum": ["comfortable", "compact", "touch"] }
-      }
+        "navigation": { "enum": ["sidebar", "adaptive-rail", "bottom-tabs", "touch-rail"] }
+      },
+      "allOf": [
+        { "if": { "properties": { "formFactor": { "const": "desktop" } } }, "then": { "properties": { "navigation": { "const": "sidebar" } } } },
+        { "if": { "properties": { "formFactor": { "const": "tablet" } } }, "then": { "properties": { "navigation": { "const": "adaptive-rail" } } } },
+        { "if": { "properties": { "formFactor": { "const": "mobile" } } }, "then": { "properties": { "navigation": { "const": "bottom-tabs" } } } },
+        { "if": { "properties": { "formFactor": { "const": "wall" } } }, "then": { "properties": { "navigation": { "const": "touch-rail" } } } }
+      ]
     },
     "scope": {
       "type": "object",
@@ -48,21 +53,16 @@
       }
     },
     "deviceFamilies": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
-    "theme": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["pack", "palette", "mode"],
-      "properties": {
-        "pack": { "enum": ["daylight-minimal", "warm-residential", "obsidian-console", "installer-contrast"] },
-        "palette": { "enum": ["teal-blue", "sunset-amber", "neutral-graphite", "forest-cyan"] },
-        "mode": { "enum": ["light", "dark", "auto"] }
-      }
-    },
+    "theme": { "$ref": "theme-spec.schema.json" },
     "runtime": {
       "type": "object",
       "additionalProperties": false,
       "required": ["contractVersion", "dataMode", "bridgeMode"],
-      "properties": { "contractVersion": { "const": "1.0" }, "dataMode": { "enum": ["live", "mock"] }, "bridgeMode": { "const": "local" } }
+      "properties": {
+        "contractVersion": { "const": "1.0" },
+        "dataMode": { "enum": ["live", "mock"] },
+        "bridgeMode": { "const": "local" }
+      }
     },
     "diagnostics": { "type": "array", "items": { "type": "object" } }
   }

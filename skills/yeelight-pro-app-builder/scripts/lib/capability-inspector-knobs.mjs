@@ -1,17 +1,20 @@
 import { parseCapabilityJSON as parseJSON } from "./capability-inspector-groups.mjs";
+import { managementPreviewDiagnostic } from "./capability-management-diagnostics.mjs";
 
 export async function inspectKnobs({ spec, knobs, run }) {
   const inspected = [];
+  const diagnostics = [];
   let configureProven = false;
   let resetProven = false;
   for (const knob of knobs) {
-    const result = await inspectKnob({ spec, knob, run });
+    const result = await inspectKnob({ spec, knob, run, diagnostics });
     inspected.push(result);
     configureProven ||= result.editable;
     resetProven ||= result.actions.some((action) => action.resettable);
   }
   return {
     knobs: inspected,
+    diagnostics,
     intents: {
       ...(configureProven ? { "knob.configure": { status: "proven", evidence: "preview-only" } } : {}),
       ...(resetProven ? { "knob.reset": { status: "proven", evidence: "preview-only" } } : {}),
@@ -19,7 +22,7 @@ export async function inspectKnobs({ spec, knobs, run }) {
   };
 }
 
-async function inspectKnob({ spec, knob, run }) {
+async function inspectKnob({ spec, knob, run, diagnostics }) {
   const actions = (knob.actions || []).map((action) => ({ ...action, resettable: false }));
   const terminal = (unsupportedReason, extra = {}) => ({ ...knob, ...extra, actions, editable: false, unsupportedReason });
   if (!knob.detailComplete) return terminal(knob.unsupportedReason || "当前旋钮缺少完整配置，暂时无法编辑。");
@@ -43,6 +46,7 @@ async function inspectKnob({ spec, knob, run }) {
   const configuredRows = configure.payload?.result?.preview?.payloadPreview?.actions;
   const editable = configure.proven && String(configure.payload?.result?.preview?.payloadPreview?.deviceId || "") === knob.id
     && sameKnobRows(configuredRows, configureRows);
+  if (!editable) diagnostics.push(managementPreviewDiagnostic({ result: configure.result, payload: configure.payload, subject: { id: knob.id, name: knob.name, type: "knob" }, probeId: "knob.configure" }));
 
   const inspectedActions = [];
   for (const action of actions) {
@@ -56,9 +60,11 @@ async function inspectKnob({ spec, knob, run }) {
       parameters: { houseId, deviceId: knob.id, index: action.index },
     });
     const payloadPreview = reset.payload?.result?.preview?.payloadPreview;
+    const resettable = reset.proven && String(payloadPreview?.deviceId || "") === knob.id && Number(payloadPreview?.index) === action.index;
+    if (!resettable) diagnostics.push(managementPreviewDiagnostic({ result: reset.result, payload: reset.payload, subject: { id: knob.id, name: knob.name, type: "knob" }, probeId: `knob.reset:${action.index}` }));
     inspectedActions.push({
       ...action,
-      resettable: reset.proven && String(payloadPreview?.deviceId || "") === knob.id && Number(payloadPreview?.index) === action.index,
+      resettable,
     });
   }
 
@@ -97,7 +103,7 @@ async function preview(run, request) {
   const noWrite = payload?.result?.persistentWrites === false || (
     payload?.traceId === "invoke-preview" && Array.isArray(payload?.warnings) && payload.warnings.includes("dry_run_no_cloud_write")
   );
-  return { payload, proven: result.code === 0 && payload?.status === "success" && payload?.result?.dryRun === true && noWrite && previewPayload?.intent === request.intent };
+  return { result, payload, proven: result.code === 0 && payload?.status === "success" && payload?.result?.dryRun === true && noWrite && previewPayload?.intent === request.intent };
 }
 
 function editableRow(action) {

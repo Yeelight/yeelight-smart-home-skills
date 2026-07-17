@@ -4,6 +4,7 @@ export function deviceClimateControlSource(spec) {
 	import { useEffect, useRef, useState } from "react";
 	import type { ReactNode } from "react";
 import type { ClimateControl, ClimateDevice } from "../../runtime/use-climate-devices";
+import { requestAction } from "../../runtime/request";
 
 type Props = { devices: ClimateDevice[]; loading: boolean; updateProperty: (id: string, property: string, value: boolean | number) => void };
 type Retry = { device: ClimateDevice; control: ClimateControl; value: boolean | number } | null;
@@ -25,10 +26,10 @@ export function DeviceClimateControl({ devices, loading, updateProperty }: Props
     const key = device.id + ":" + control.property;
     setBusyKey(key); setFeedback(null); setRetry(null);
     try {
-      const response = await fetch("/api/operations/device.property.set", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+      const response = await requestAction("device.property.set", {
         locale: "zh-CN", utterance: "调整" + (device.displayName || device.name), targets: [{ entityType: "device", id: device.id }],
         parameters: { houseId: ${houseId}, deviceId: device.id, property: control.property, value },
-      }) });
+      });
       const body = await response.json();
       if (!response.ok || body.status !== "success" || body?.result?.verified !== true) throw new Error();
       const verified = body.result.verifiedValue ?? value;
@@ -55,7 +56,7 @@ export function DeviceClimateControl({ devices, loading, updateProperty }: Props
       return <article className={offline ? "climate-card offline" : "climate-card"} key={device.id}>
         <header className="climate-card-heading"><span className="climate-device-icon"><Thermometer size={22} /></span><div><strong>{device.displayName || device.name}</strong><small>{device.roomName} · {offline ? "离线" : isOn ? "运行中" : "已关闭"}</small></div>{power && <button type="button" className={isOn ? "climate-power on" : "climate-power"} aria-label={isOn ? "关闭温控" : "开启温控"} aria-pressed={isOn} disabled={offline || Boolean(busyKey)} onClick={() => void setProperty(device, power, !isOn)}>{busyKey.endsWith(power.property) ? <LoaderCircle className="spin" size={18} /> : <Power size={18} />}</button>}</header>
         <div className="temperature-status"><span><small>当前温度</small><strong>{Number(device.state.airConditionerCurrentTemperature)}<sup>℃</sup></strong></span><span><small>目标温度</small><output>{targetValue}<sup>℃</sup></output></span></div>
-        {target ? <div className="temperature-stepper" aria-label="目标温度"><button type="button" aria-label="降低目标温度" disabled={offline || !isOn || targetValue <= 16 || Boolean(busyKey)} onClick={() => void setProperty(device, target, targetValue - 1)}><Minus size={20} /></button><input aria-label="目标温度范围" type="range" min="16" max="32" step="1" value={targetValue} disabled={offline || !isOn || Boolean(busyKey)} onChange={(event) => updateProperty(device.id, target.property, Number(event.target.value))} onPointerUp={(event) => void setProperty(device, target, Number(event.currentTarget.value))} /><button type="button" aria-label="提高目标温度" disabled={offline || !isOn || targetValue >= 32 || Boolean(busyKey)} onClick={() => void setProperty(device, target, targetValue + 1)}><Plus size={20} /></button></div> : <div className="readonly-note"><AlertCircle size={18} />当前 Runtime 未证明目标温度可写。</div>}
+        {target ? <div className="temperature-stepper" aria-label="目标温度"><button type="button" aria-label="降低目标温度" disabled={offline || !isOn || targetValue <= 16 || Boolean(busyKey)} onClick={() => void setProperty(device, target, targetValue - 1)}><Minus size={20} /></button><input aria-label="目标温度范围" type="range" min="16" max="32" step="1" value={targetValue} disabled={offline || !isOn || Boolean(busyKey)} onChange={(event) => updateProperty(device.id, target.property, Number(event.target.value))} onPointerUp={(event) => void setProperty(device, target, Number(event.currentTarget.value))} /><button type="button" aria-label="提高目标温度" disabled={offline || !isOn || targetValue >= 32 || Boolean(busyKey)} onClick={() => void setProperty(device, target, targetValue + 1)}><Plus size={20} /></button></div> : <div className="readonly-note"><AlertCircle size={18} />当前家庭系统未证明目标温度可写。</div>}
         {mode && <ControlGroup label="运行模式" icon={<Thermometer size={17} />} values={modes} current={Number(device.state.airConditionerMode)} disabled={offline || !isOn || Boolean(busyKey)} onSelect={(value) => void setProperty(device, mode, value)} />}
         {fan && <ControlGroup label="风速" icon={<Fan size={17} />} values={fanSpeeds} current={Number(device.state.airConditionerFanSpeed)} disabled={offline || !isOn || Boolean(busyKey)} onSelect={(value) => void setProperty(device, fan, value)} />}
         {offline && <div className="offline-note"><WifiOff size={17} />设备当前离线，恢复连接后可继续控制。</div>}

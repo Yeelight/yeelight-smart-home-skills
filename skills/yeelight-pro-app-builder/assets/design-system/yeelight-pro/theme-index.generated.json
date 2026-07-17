@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0",
+  "presets": [
+    {
+      "id": "pro-daylight",
+      "name": "易来日光",
+      "familyId": "pro-core",
+      "defaultMode": "auto",
+      "density": "comfortable",
+      "resolvedDigest": "b34266c28a4957cfa1bcdaeadf17d28713bc2f231a626336f8bd9e2b077f2c83"
+    },
+    {
+      "id": "pro-graphite",
+      "name": "易来石墨",
+      "familyId": "pro-core",
+      "defaultMode": "dark",
+      "density": "compact",
+      "resolvedDigest": "eec80025032001ebe0110fac7f93f42a62ae992319a90c48a2e4c5ef778d9deb"
+    },
+    {
+      "id": "pure-canvas",
+      "name": "纯净画布",
+      "familyId": "pure-minimal",
+      "defaultMode": "light",
+      "density": "comfortable",
+      "resolvedDigest": "21efad492eb2337c1caddf32e62ed2b51a1d8b42ac4a407bc9103ae03e71326a"
+    },
+    {
+      "id": "quiet-mist",
+      "name": "静谧薄雾",
+      "familyId": "pure-minimal",
+      "defaultMode": "auto",
+      "density": "touch",
+      "resolvedDigest": "b69919d3c210d011172452f8122ae11b756fe595f76e05c903604f11c5501d1b"
+    },
+    {
+      "id": "linen-home",
+      "name": "亚麻暖居",
+      "familyId": "warm-residential",
+      "defaultMode": "light",
+      "density": "comfortable",
+      "resolvedDigest": "4d9ba66dd00e7a08ed6c5437140b2c2a91914942d994272060c96831ad62f28c"
+    },
+    {
+      "id": "amber-evening",
+      "name": "琥珀晚居",
+      "familyId": "warm-residential",
+      "defaultMode": "dark",
+      "density": "touch",
+      "resolvedDigest": "5852464ed3cbeb43082f09d0fb86e6b737a0badb185b8ba78f7c39227edb2356"
+    },
+    {
+      "id": "forest-air",
+      "name": "林间清氧",
+      "familyId": "natural-comfort",
+      "defaultMode": "auto",
+      "density": "comfortable",
+      "resolvedDigest": "5b41a1b3622fc6bcb5d97e816a556ff2557661abc7ff2b4510ac79ba07a164d0"
+    },
+    {
+      "id": "stone-garden",
+      "name": "石庭自然",
+      "familyId": "natural-comfort",
+      "defaultMode": "light",
+      "density": "compact",
+      "resolvedDigest": "d43cba506d53ae0fe77186ec72f4e2614f801fe56de07108d4924c6ed52a9807"
+    },
+    {
+      "id": "moonlight-home",
+      "name": "月光夜居",
+      "familyId": "night-ambience",
+      "defaultMode": "dark",
+      "density": "touch",
+      "resolvedDigest": "450e424445e4846556322e04408b5ea6b75b195b0f9a041e59fb0a0a92ae9f1f"
+    },
+    {
+      "id": "low-light-cinema",
+      "name": "微光影院",
+      "familyId": "night-ambience",
+      "defaultMode": "dark",
+      "density": "comfortable",
+      "resolvedDigest": "2f41f4cbb35754ecf0a07633cfa258c4ece70d13ce894b64a4b937c7ad7d3f1b"
+    },
+    {
+      "id": "obsidian-focus",
+      "name": "黑曜专注",
+      "familyId": "immersive-console",
+      "defaultMode": "dark",
+      "density": "compact",
+      "resolvedDigest": "b3f37c62660eea8499dbaf3e25f0b82dc56512d95338eadd20236969ffefd6e1"
+    },
+    {
+      "id": "carbon-signal",
+      "name": "碳素信号",
+      "familyId": "immersive-console",
+      "defaultMode": "dark",
+      "density": "comfortable",
+      "resolvedDigest": "091d9c8dafa379d636669fc8572d73022f9ed513a42fd0412355d2a71b91323f"
+    },
+    {
+      "id": "command-day",
+      "name": "中控日间",
+      "familyId": "command-center",
+      "defaultMode": "light",
+      "density": "compact",
+      "resolvedDigest": "e0319ccf8357f757ef0311186b7e8184258cb1f065c3a897caba9b281c5a8cb5"
+    },
+    {
+      "id": "command-night",
+      "name": "中控夜间",
+      "familyId": "command-center",
+      "defaultMode": "dark",
+      "density": "comfortable",
+      "resolvedDigest": "fa82c88ce9f2cb4b511cdce51b1b8641fd548e60300a7369c9e89c4931700f64"
+    },
+    {
+      "id": "wall-day",
+      "name": "墙屏日常",
+      "familyId": "wall-touch",
+      "defaultMode": "light",
+      "density": "touch",
+      "resolvedDigest": "5ee6e3b7fc713fb9a526f3727b5ae31f500cc5f367a213b277c2bd176025f326"
+    },
+    {
+      "id": "wall-night",
+      "name": "墙屏夜航",
+      "familyId": "wall-touch",
+      "defaultMode": "dark",
+      "density": "touch",
+      "resolvedDigest": "47bf0e34e2e79fa7d9cfe27a6c5a2f955c6ca790f97378f62c9a22a0b78770b1"
+    },
+    {
+      "id": "installer-precision",
+      "name": "安装精密",
+      "familyId": "installer",
+      "defaultMode": "light",
+      "density": "compact",
+      "resolvedDigest": "cf59508a9fdf3b50a3fab5a3fb1b377ac10eff378cc1da91f95492b3e5572e0a"
+    },
+    {
+      "id": "commissioning-dark",
+      "name": "暗场调试",
+      "familyId": "installer",
+      "defaultMode": "dark",
+      "density": "comfortable",
+      "resolvedDigest": "ba6311b9537dbe00dd4b035d85618c20fadff303b3fb8c71edb8f515e428894a"
+    },
+    {
+      "id": "contrast-clear",
+      "name": "清晰高对比",
+      "familyId": "high-contrast",
+      "defaultMode": "light",
+      "density": "touch",
+      "resolvedDigest": "5b619cc6526a5bdfefebdfab3fddf462605e0ca02293fcd744279e18edadc9da"
+    },
+    {
+      "id": "contrast-night",
+      "name": "夜间高对比",
+      "familyId": "high-contrast",
+      "defaultMode": "dark",
+      "density": "comfortable",
+      "resolvedDigest": "60d4bd38f4bc1408a199dd59d6ee26190c743075dd3e9622a10e8137e39a98e0"
+    },
+    {
+      "id": "architect-gallery",
+      "name": "建筑画廊",
+      "familyId": "architectural-lighting",
+      "defaultMode": "light",
+      "density": "comfortable",
+      "resolvedDigest": "6a27644ed0e63fa02e4a91a82453c1d7af69f977a8b8e62faf01583ea3aeb078"
+    },
+    {
+      "id": "architect-theatre",
+      "name": "建筑剧场",
+      "familyId": "architectural-lighting",
+      "defaultMode": "dark",
+      "density": "compact",
+      "resolvedDigest": "ae00dd077cb1793aa911d602a7a6aecf7d45c12a82b6835752085c75af4985ac"
+    },
+    {
+      "id": "universal-home",
+      "name": "全域互联",
+      "familyId": "universal-connectivity",
+      "defaultMode": "auto",
+      "density": "comfortable",
+      "resolvedDigest": "f1a7ec285e65ed08ee2014b7cf4763a4edef150bd8563a6fef2ca58fd11f5624"
+    },
+    {
+      "id": "unified-fabric",
+      "name": "统一织网",
+      "familyId": "universal-connectivity",
+      "defaultMode": "dark",
+      "density": "compact",
+      "resolvedDigest": "a892aeacc3bbfd7c5236710eab8575eed7e46c965d81f3027fec1f1ef68756ec"
+    }
+  ],
+  "cssSha256": "28d013ca1d3f18f8b66054845c863424b3817be6eafbfd94a91e4667ea192fbd"
+}

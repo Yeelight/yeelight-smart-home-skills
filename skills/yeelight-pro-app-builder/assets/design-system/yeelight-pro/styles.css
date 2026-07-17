@@ -1,4 +1,6 @@
 @import "./tokens/primitives.css";
 @import "./tokens/semantic.css";
 @import "./tokens/components.css";
+@import "./tokens/themes.generated.css";
 @import "./foundations.css";
+@import "./component-patterns.css";

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0",
+  "motions": [
+    { "id": "reduced", "fastMs": 100, "standardMs": 120, "easing": "ease-out", "reducedMotionMs": 1 },
+    { "id": "precise", "fastMs": 120, "standardMs": 180, "easing": "cubic-bezier(0.2, 0, 0, 1)", "reducedMotionMs": 1 },
+    { "id": "standard", "fastMs": 150, "standardMs": 220, "easing": "cubic-bezier(0.2, 0, 0, 1)", "reducedMotionMs": 1 },
+    { "id": "expressive", "fastMs": 180, "standardMs": 300, "easing": "cubic-bezier(0.2, 0, 0, 1)", "reducedMotionMs": 1 }
+  ]
+}

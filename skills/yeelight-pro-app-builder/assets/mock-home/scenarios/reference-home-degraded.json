@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "reference-home-degraded",
+  "baseFixture": "reference-home",
+  "baseManifestSha256": "2c8cda3bcd17a459b7188f5ee580809fcf169cfc570996664c668d5b5786aa42",
+  "behaviorSha256": "d996ac00d7cbd03cdd9462546d09bbb6c8c9c4f830d5e4f5c6ca3b338dd8d138",
+  "persistentFailures": [
+    { "id": "climate-state-992301-acp", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992301/r/properties/acp", "businessCode": 500 },
+    { "id": "climate-state-992301-acm", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992301/r/properties/acm", "businessCode": 500 },
+    { "id": "climate-state-992301-actt", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992301/r/properties/actt", "businessCode": 500 },
+    { "id": "climate-state-992301-acf", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992301/r/properties/acf", "businessCode": 500 },
+    { "id": "climate-state-992301-acct", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992301/r/properties/acct", "businessCode": 500 },
+    { "id": "climate-state-992301-aco", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992301/r/properties/aco", "businessCode": 500 },
+    { "id": "climate-state-992302-acp", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992302/r/properties/acp", "businessCode": 500 },
+    { "id": "climate-state-992302-acm", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992302/r/properties/acm", "businessCode": 500 },
+    { "id": "climate-state-992302-actt", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992302/r/properties/actt", "businessCode": 500 },
+    { "id": "climate-state-992302-acf", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992302/r/properties/acf", "businessCode": 500 },
+    { "id": "climate-state-992302-acct", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992302/r/properties/acct", "businessCode": 500 },
+    { "id": "climate-state-992302-aco", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992302/r/properties/aco", "businessCode": 500 },
+    { "id": "climate-state-992303-acp", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992303/r/properties/acp", "businessCode": 500 },
+    { "id": "climate-state-992303-acm", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992303/r/properties/acm", "businessCode": 500 },
+    { "id": "climate-state-992303-actt", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992303/r/properties/actt", "businessCode": 500 },
+    { "id": "climate-state-992303-acf", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992303/r/properties/acf", "businessCode": 500 },
+    { "id": "climate-state-992303-acct", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992303/r/properties/acct", "businessCode": 500 },
+    { "id": "climate-state-992303-aco", "kind": "business-error", "method": "POST", "path": "/v1/controll/device/992303/r/properties/aco", "businessCode": 500 },
+    { "id": "scene-detail-994001", "kind": "business-error", "method": "POST", "path": "/v1/scene/994001/r/detail", "businessCode": 501 }
+  ],
+  "capabilityOverrides": [],
+  "deviceOverlays": [
+    { "deviceId": "992302", "online": false, "removeProperties": ["acct"] }
+  ]
+}

@@ -41,7 +41,7 @@ try {
       "--runtime-bin", runtimeBin,
       "--out", appRoot,
     ]);
-    runStep("npm-install", "npm", ["install"], { cwd: appRoot });
+    runStep("npm-install", "npm", ["ci"], { cwd: appRoot });
   }
   runStep("npm-build", "npm", ["run", "build"], { cwd: appRoot });
 
@@ -62,7 +62,7 @@ try {
     YEELIGHT_HOME_BIN: runtimeBin,
   };
 
-  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
   web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
   await waitForUrl(`${bridgeOrigin}/health`);
   await waitForUrl(baseUrl);
@@ -80,7 +80,7 @@ try {
     YEELIGHT_HOME_HOUSE_ID: largeMockServer.homeId,
     YEELIGHT_HOME_DIR: fs.mkdtempSync(path.join(os.tmpdir(), "ypa-space-large-runtime-")),
   };
-  largeBridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...largeRuntimeEnv, YPA_BRIDGE_PORT: String(largeBridgePort) } });
+  largeBridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...largeRuntimeEnv, YPA_BRIDGE_PORT: String(largeBridgePort), YPA_TRUSTED_WEB_ORIGINS: largeBaseUrl } });
   largeWeb = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(largeWebPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: largeBridgeOrigin } });
   await waitForUrl(`${largeBridgeOrigin}/health`);
   await waitForUrl(largeBaseUrl);

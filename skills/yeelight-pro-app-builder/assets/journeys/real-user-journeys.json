@@ -1,0 +1,317 @@
+{
+  "schemaVersion": 1,
+  "journeys": [
+    {
+      "id": "J01",
+      "request": "使用 Yeelight PRO 给我做一个一楼墙屏控制中心，要能管灯光、窗帘、空调、常用情景和环境传感器，夜间高对比，大按钮，接我的 dev 家庭。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "墙屏目标、五类家庭能力、夜间高对比和大触控区域均已明确；总览承载房间、环境和常用情景，真实家庭温控不可用时只在用户允许后省略。",
+        "clarifications": [{ "question": "真实家庭温控能力不可用时是否允许省略温控，其余模块继续生成？", "answer": "允许省略不可用的温控，但必须明确说明原因。" }],
+        "userMessage": "先检查真实家庭能力；严格模式保留完整需求，得到允许后才生成显式 partial 版本。",
+        "choices": {
+          "title": "一楼墙屏控制中心",
+          "modules": ["home.space-summary", "home.lighting-summary", "room.lighting-control", "device.curtain-control", "device.climate-control", "scene.launcher", "sensor.environment"],
+          "deviceFamilies": ["light", "curtain", "climate", "sensor"],
+          "roomNames": [],
+          "formFactor": "wall",
+          "navigation": "touch-rail",
+          "density": "touch",
+          "theme": { "preset": "contrast-night", "mode": "dark", "typography": "system-readable", "shape": "balanced", "motion": "reduced" },
+          "sceneManagement": false,
+          "allowPartial": true
+        }
+      },
+      "runtime": { "mode": "live-readonly", "fixture": "", "homeId": "200171", "region": "dev" },
+      "expected": { "generatedModules": ["home.space-summary", "home.lighting-summary", "room.lighting-control", "device.curtain-control", "scene.launcher", "sensor.environment"], "omittedModules": ["device.climate-control"] },
+      "coverage": { "deviceFamilies": ["light", "curtain", "climate", "sensor"], "protocols": [], "themeDirections": ["yeelight-pro", "dark", "high-contrast"] },
+      "browser": { "validator": "live-readonly", "primaryRoute": "#overview", "representativeControl": "一键情景" }
+    },
+    {
+      "id": "J02",
+      "request": "我只想在手机上快速控制客厅灯和回家、观影情景，界面清爽，白天晚上都能跟随系统。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "请求聚焦客厅灯光与两个常用情景，使用移动端底部导航、触控密度和跟随系统明暗模式。",
+        "clarifications": [],
+        "userMessage": "生成只包含客厅灯光和情景快捷执行的移动应用。",
+        "choices": {
+          "title": "客厅快捷控制",
+          "modules": ["home.lighting-summary", "room.lighting-control", "scene.launcher"],
+          "deviceFamilies": ["light"],
+          "roomNames": ["客厅"],
+          "formFactor": "mobile",
+          "navigation": "bottom-tabs",
+          "density": "touch",
+          "theme": { "preset": "pro-daylight", "mode": "auto", "motion": "standard" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["home.lighting-summary", "room.lighting-control", "scene.launcher"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["light"], "protocols": [], "themeDirections": ["yeelight-pro"] },
+      "browser": { "validator": "lighting", "primaryRoute": "#overview", "representativeControl": "客厅全光谱吸顶灯" }
+    },
+    {
+      "id": "J03",
+      "request": "做一个主卧床头控制器，主要开合窗帘、调灯光，晚上不要刺眼。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "床头场景适合移动触控布局，只保留主卧灯光和窗帘，并采用低亮暗色住宅主题。",
+        "clarifications": [],
+        "userMessage": "生成主卧夜间灯光和窗帘控制器。",
+        "choices": {
+          "title": "主卧床头控制",
+          "modules": ["room.lighting-control", "device.curtain-control"],
+          "deviceFamilies": ["light", "curtain"],
+          "roomNames": ["主卧"],
+          "formFactor": "mobile",
+          "navigation": "bottom-tabs",
+          "density": "touch",
+          "theme": { "preset": "moonlight-home", "mode": "dark", "typography": "system-readable", "motion": "reduced" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["room.lighting-control", "device.curtain-control"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["light", "curtain"], "protocols": [], "themeDirections": ["residential", "dark"] },
+      "browser": { "validator": "curtain", "primaryRoute": "#rooms", "representativeControl": "目标位置" }
+    },
+    {
+      "id": "J04",
+      "request": "平板上做全屋总览，按区域和房间看设备、环境状态，也能给设备改名和换房间。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "全屋空间、设备目录和环境状态组成平板工作区，设备改名与移房间由已证明的管理能力提供。",
+        "clarifications": [],
+        "userMessage": "生成适合平板的空间、设备和环境管理应用。",
+        "choices": {
+          "title": "全屋空间与设备",
+          "modules": ["home.space-summary", "room.device-management", "sensor.environment"],
+          "deviceFamilies": ["light", "curtain", "switch-relay", "climate", "sensor"],
+          "roomNames": [],
+          "formFactor": "tablet",
+          "navigation": "adaptive-rail",
+          "density": "comfortable",
+          "theme": { "preset": "linen-home", "mode": "light", "shape": "soft", "motion": "standard" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["home.space-summary", "room.device-management", "sensor.environment"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["light", "curtain", "switch-relay", "climate", "sensor"], "protocols": [], "themeDirections": ["residential"] },
+      "browser": { "validator": "space", "primaryRoute": "#overview", "representativeControl": "全屋目录" }
+    },
+    {
+      "id": "J05",
+      "request": "我需要电脑端集中维护情景、自动化和设备组，信息要紧凑，编辑失败时不要丢草稿。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "桌面紧凑工作区承载情景、自动化和设备组管理，沿用各自已证明的编辑、失败恢复与草稿保护能力。",
+        "clarifications": [],
+        "userMessage": "生成情景、自动化和设备组管理控制台。",
+        "choices": {
+          "title": "家庭规则管理",
+          "modules": ["scene.launcher", "automation.manager", "group.manager"],
+          "deviceFamilies": ["light", "curtain", "switch-relay"],
+          "roomNames": [],
+          "formFactor": "desktop",
+          "navigation": "sidebar",
+          "density": "compact",
+          "theme": { "preset": "command-day", "mode": "light", "typography": "system-compact", "shape": "precise", "motion": "precise" },
+          "sceneManagement": true,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["scene.launcher", "automation.manager", "group.manager"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["light", "curtain", "switch-relay"], "protocols": [], "themeDirections": ["yeelight-pro"] },
+      "browser": { "validator": "management", "primaryRoute": "#scenes", "representativeControl": "新建情景" }
+    },
+    {
+      "id": "J06",
+      "request": "给安装人员做一个桌面中控，查看网关、Thread、Matter、DALI 关系和诊断状态，不提供没有证明的升级按钮。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "安装人员需要网关拓扑、协议关系和诊断信息，使用安装维护模块并明确保持固件与协议写操作只读。",
+        "clarifications": [],
+        "userMessage": "生成网关、协议关系和安装诊断工作台，不包含升级操作。",
+        "choices": {
+          "title": "安装与网络诊断",
+          "modules": ["gateway.overview", "installer.maintenance"],
+          "deviceFamilies": ["gateway", "panel-screen", "knob"],
+          "roomNames": [],
+          "formFactor": "desktop",
+          "navigation": "sidebar",
+          "density": "compact",
+          "theme": { "preset": "installer-precision", "mode": "light", "typography": "system-technical", "shape": "sharp", "motion": "precise" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["gateway.overview", "installer.maintenance"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["gateway"], "protocols": ["Matter", "DALI", "Thread"], "themeDirections": ["installer"] },
+      "browser": { "validator": "installer", "primaryRoute": "#maintenance", "representativeControl": "协议关系" }
+    },
+    {
+      "id": "J07",
+      "request": "墙上屏幕要能维护情景面板和旋钮，每个按键动作清楚，适合现场调试。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "墙屏现场调试需要面板、旋钮和情景关联管理，采用触控轨道、触控密度与建筑暗场主题。",
+        "clarifications": [],
+        "userMessage": "生成墙屏面板与旋钮调试工作台。",
+        "choices": {
+          "title": "面板与旋钮调试",
+          "modules": ["scene.launcher", "panel.manager", "installer.maintenance"],
+          "deviceFamilies": ["panel-screen", "knob", "light", "curtain"],
+          "roomNames": [],
+          "formFactor": "wall",
+          "navigation": "touch-rail",
+          "density": "touch",
+          "theme": { "preset": "architect-theatre", "mode": "dark", "typography": "system-technical", "shape": "precise", "motion": "reduced" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["scene.launcher", "panel.manager", "installer.maintenance"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["panel", "knob"], "protocols": [], "themeDirections": ["architectural", "dark", "installer"] },
+      "browser": { "validator": "panel", "primaryRoute": "#panels", "representativeControl": "墙面面板" }
+    },
+    {
+      "id": "J08",
+      "request": "做个简单的手机空调控制器，能看当前温度、设定温度、模式和风速。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "单一空调控制目标明确，采用移动触控布局，只生成温控模块和已证明的温度、模式与风速控件。",
+        "clarifications": [],
+        "userMessage": "生成简洁的移动空调控制器。",
+        "choices": {
+          "title": "空调控制",
+          "modules": ["device.climate-control"],
+          "deviceFamilies": ["climate"],
+          "roomNames": [],
+          "formFactor": "mobile",
+          "navigation": "bottom-tabs",
+          "density": "touch",
+          "theme": { "preset": "pure-canvas", "mode": "auto", "shape": "balanced", "motion": "standard" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["device.climate-control"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["climate"], "protocols": [], "themeDirections": ["yeelight-pro"] },
+      "browser": { "validator": "climate", "primaryRoute": "#climate", "representativeControl": "目标温度" }
+    },
+    {
+      "id": "J09",
+      "request": "给设备间做一个墙屏开关面板，分回路显示状态，离线或只读时要说清原因。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "设备间墙屏聚焦分回路开关状态与明确终端状态，使用多协议暗色墙屏主题和大触控区域。",
+        "clarifications": [],
+        "userMessage": "生成设备间分回路开关墙屏。",
+        "choices": {
+          "title": "设备间回路控制",
+          "modules": ["device.switch-control"],
+          "deviceFamilies": ["switch-relay"],
+          "roomNames": ["设备间"],
+          "formFactor": "wall",
+          "navigation": "touch-rail",
+          "density": "touch",
+          "theme": { "preset": "unified-fabric", "mode": "dark", "typography": "system-technical", "shape": "precise", "motion": "reduced" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["device.switch-control"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["switch-relay"], "protocols": [], "themeDirections": ["multi-protocol", "dark"] },
+      "browser": { "validator": "switch", "primaryRoute": "#switches", "representativeControl": "回路" }
+    },
+    {
+      "id": "J10",
+      "request": "给老人做一个高对比墙屏，只放常用灯光、窗帘和回家离家情景，字和触控区域都大。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "老人墙屏需要严格控制信息量，保留灯光、窗帘和常用情景，并使用高对比、可读字体和减弱动效。",
+        "clarifications": [],
+        "userMessage": "生成大字、大触控区域的常用家庭控制墙屏。",
+        "choices": {
+          "title": "常用家庭控制",
+          "modules": ["home.lighting-summary", "room.lighting-control", "device.curtain-control", "scene.launcher"],
+          "deviceFamilies": ["light", "curtain"],
+          "roomNames": [],
+          "formFactor": "wall",
+          "navigation": "touch-rail",
+          "density": "touch",
+          "theme": { "preset": "contrast-clear", "mode": "light", "typography": "system-readable", "shape": "balanced", "motion": "reduced" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["home.lighting-summary", "room.lighting-control", "device.curtain-control", "scene.launcher"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["light", "curtain"], "protocols": [], "themeDirections": ["high-contrast"] },
+      "browser": { "validator": "lighting", "primaryRoute": "#overview", "representativeControl": "客厅全光谱吸顶灯" }
+    },
+    {
+      "id": "J11",
+      "request": "做一个桌面版全屋管理系统，品牌色用 #087F8C，圆角克制，包含房间、设备、情景和环境。",
+      "resolution": {
+        "decision": "build",
+        "rationale": "桌面全屋管理范围明确，使用空间、设备、情景和环境模块，并将品牌色与克制圆角编译为安全主题字段。",
+        "clarifications": [],
+        "userMessage": "生成使用指定品牌色的桌面全屋管理系统。",
+        "choices": {
+          "title": "Yeelight PRO 全屋管理",
+          "modules": ["home.space-summary", "room.device-management", "scene.launcher", "sensor.environment"],
+          "deviceFamilies": ["light", "curtain", "switch-relay", "climate", "sensor"],
+          "roomNames": [],
+          "formFactor": "desktop",
+          "navigation": "sidebar",
+          "density": "comfortable",
+          "theme": { "preset": "pro-graphite", "mode": "auto", "brandColor": "#087F8C", "accentColor": "#1BA8A0", "typography": "system-modern", "shape": "precise", "motion": "standard" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "reference", "fixture": "reference-home", "homeId": "", "region": "dev" },
+      "expected": { "generatedModules": ["home.space-summary", "room.device-management", "scene.launcher", "sensor.environment"], "omittedModules": [] },
+      "coverage": { "deviceFamilies": ["light", "curtain", "switch-relay", "climate", "sensor"], "protocols": [], "themeDirections": ["yeelight-pro", "custom-brand"] },
+      "browser": { "validator": "composition", "primaryRoute": "#overview", "representativeControl": "全屋目录" }
+    },
+    {
+      "id": "J12",
+      "request": "帮我做一个全屋能耗历史和趋势看板，按设备比较每天、每月耗电量。",
+      "resolution": {
+        "decision": "reject",
+        "rationale": "当前 Runtime 没有证明设备级能耗历史、聚合或趋势契约，环境传感器不能替代能耗数据。",
+        "clarifications": [{ "question": "是否接受改为展示当前环境温湿度和空气质量？", "answer": "不替换原需求；保留能耗历史需求并明确当前不支持。" }],
+        "userMessage": "当前不支持全屋设备能耗历史与趋势，不能用环境传感器数据冒充；本次不会生成应用。",
+        "choices": {
+          "title": "能耗历史",
+          "modules": [],
+          "deviceFamilies": [],
+          "roomNames": [],
+          "formFactor": "desktop",
+          "navigation": "sidebar",
+          "density": "comfortable",
+          "theme": { "preset": "pro-daylight", "mode": "auto" },
+          "sceneManagement": false,
+          "allowPartial": false
+        }
+      },
+      "runtime": { "mode": "none", "fixture": "", "homeId": "", "region": "" },
+      "expected": { "generatedModules": [], "omittedModules": [] },
+      "coverage": { "deviceFamilies": [], "protocols": [], "themeDirections": [] },
+      "browser": { "validator": "", "primaryRoute": "", "representativeControl": "" }
+    }
+  ]
+}

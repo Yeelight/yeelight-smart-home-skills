@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "runtime": "yeelight-home",
+  "contractVersion": "1.0",
+  "minimumVersion": "0.1.21",
+  "supportedMajor": 0,
+  "knownIncompatible": [
+    {
+      "version": "0.1.20",
+      "reasonId": "light-shortcut-target-regression",
+      "message": "This Runtime drops the explicit device target used by Builder lighting shortcut validation."
+    }
+  ]
+}

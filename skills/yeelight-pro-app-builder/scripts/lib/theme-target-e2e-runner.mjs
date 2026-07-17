@@ -1,5 +1,8 @@
 import path from "node:path";
 
+import { runThemeInteractionSmoke } from "./theme-interaction-e2e-runner.mjs";
+import { captureThemeScreenshotEvidence } from "./theme-production-matrix.mjs";
+
 export async function runThemeTargetBrowserE2E({ chromium, baseUrl, target, evidenceDir }) {
   const report = { id: target.id, startedAt: new Date().toISOString(), checks: [] };
   const browser = await launchBrowser(chromium);
@@ -38,8 +41,9 @@ export async function runThemeTargetBrowserE2E({ chromium, baseUrl, target, evid
       const navRect = nav.getBoundingClientRect(); const mainRect = main.getBoundingClientRect();
       const linkRects = [...nav.querySelectorAll("a")].map((element) => { const rect = element.getBoundingClientRect(); return { width: rect.width, height: rect.height }; });
       return {
-        attributes: { formFactor: root.dataset.formFactor, navigation: root.dataset.navigation, density: root.dataset.density, themePack: root.dataset.themePack, themeMode: root.dataset.themeMode },
+        attributes: { formFactor: root.dataset.formFactor, navigation: root.dataset.navigation, density: root.dataset.density, themePack: root.dataset.themePack, themePreset: root.dataset.themePreset, themeFamily: root.dataset.themeFamily, themeMode: root.dataset.themeMode, surfaceStyle: root.dataset.surfaceStyle, navigationStyle: root.dataset.navigationStyle, collectionStyle: root.dataset.collectionStyle, controllerStyle: root.dataset.controllerStyle, dataStyle: root.dataset.dataStyle, elevationStyle: root.dataset.elevationStyle },
         tokens: { background: styles.getPropertyValue("--color-background").trim(), surface: styles.getPropertyValue("--color-surface").trim(), foreground: styles.getPropertyValue("--color-foreground").trim(), primary: styles.getPropertyValue("--color-primary").trim(), onPrimary: styles.getPropertyValue("--color-on-primary").trim(), radius: styles.getPropertyValue("--card-radius").trim(), controlHeight: styles.getPropertyValue("--control-min-height").trim() },
+        recipe: { surfaceStyle: styles.getPropertyValue("--yp-family-surface").trim(), navigationStyle: styles.getPropertyValue("--yp-family-navigation").trim(), collectionStyle: styles.getPropertyValue("--yp-family-collection").trim(), controllerStyle: styles.getPropertyValue("--yp-family-controller").trim(), dataStyle: styles.getPropertyValue("--yp-family-data").trim(), elevationStyle: styles.getPropertyValue("--yp-family-elevation").trim() },
         contrast: { text: contrast(styles.color, opaqueBackground(root)), active: contrast(currentStyle.color, opaqueBackground(current)), samples: textContrastSamples() },
         geometry: { scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth, nav: rect(navRect), main: rect(mainRect), linkRects, reservedBottom: parseFloat(getComputedStyle(root).paddingBottom) || 0 },
         focus: { tag: focused.tagName.toLowerCase(), outlineStyle: focus.outlineStyle, outlineWidth: focus.outlineWidth },
@@ -55,6 +59,7 @@ export async function runThemeTargetBrowserE2E({ chromium, baseUrl, target, evid
     });
     check(report, "target-attributes", Object.entries(target.expected).every(([key, value]) => audit.attributes[key] === value), audit.attributes);
     check(report, "semantic-tokens", Object.values(audit.tokens).every(Boolean), audit.tokens);
+    check(report, "family-recipe-contract", Object.entries(audit.recipe).every(([key, value]) => value && audit.attributes[key] === value), { attributes: audit.attributes, recipe: audit.recipe });
     check(report, "no-horizontal-overflow", audit.geometry.scrollWidth <= audit.geometry.clientWidth + 1, audit.geometry);
     const separated = target.navigation === "bottom-tabs" ? audit.geometry.nav.bottom <= target.viewport.height && audit.geometry.reservedBottom >= audit.geometry.nav.height + 10 : audit.geometry.nav.right <= audit.geometry.main.left + 1;
     check(report, "adaptive-navigation-geometry", separated, audit.geometry);
@@ -68,6 +73,13 @@ export async function runThemeTargetBrowserE2E({ chromium, baseUrl, target, evid
     check(report, "reduced-motion", audit.reducedMotion === "none", audit.reducedMotion);
     const screenshot = path.join(evidenceDir, `${target.id}.png`);
     await page.screenshot({ path: screenshot, fullPage: true });
+    report.interactions = await runThemeInteractionSmoke({
+      page,
+      baseUrl,
+      target,
+      evidenceDir,
+      addCheck: (id, passed, detail) => check(report, id, passed, detail),
+    });
     const moreButton = navigation.getByRole("button", { name: /更多/ });
     if (totalPages > 4 && await moreButton.count()) {
       await moreButton.focus();
@@ -105,6 +117,7 @@ export async function runThemeTargetBrowserE2E({ chromium, baseUrl, target, evid
     check(report, "http-errors", diagnostics.httpErrors.length === 0, diagnostics.httpErrors);
     check(report, "console-errors", diagnostics.consoleMessages.filter((item) => item.type === "error").length === 0, diagnostics.consoleMessages);
     report.audit = audit; report.screenshot = path.basename(screenshot); report.dynamicTextScreenshot = path.basename(textScreenshot);
+    report.screenshotEvidence = captureThemeScreenshotEvidence({ evidenceDir, files: [report.screenshot, ...report.interactions.screenshots, report.dynamicTextScreenshot] });
     await context.close();
   } finally { await browser.close(); }
   report.finishedAt = new Date().toISOString(); report.status = report.checks.every((item) => item.status === "passed") ? "passed" : "failed"; return report;

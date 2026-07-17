@@ -8,8 +8,8 @@ const viewports = [
   { id: "desktop-1440", width: 1440, height: 1000 },
 ];
 
-export async function runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, mockServer, evidenceDir }) {
-  const report = { startedAt: new Date().toISOString(), baseUrl, bridgeOrigin, checks: [], viewports: [] };
+export async function runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, mockServer, evidenceDir, expectedSixRelayMode }) {
+  const report = { startedAt: new Date().toISOString(), baseUrl, bridgeOrigin, expectedSixRelayMode, checks: [], viewports: [] };
   const browser = await launchBrowser(chromium);
   try {
     for (const viewport of viewports) {
@@ -26,8 +26,13 @@ export async function runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, moc
       const physicalCircuitSummary = await page.getByText("厨房 · 2 个回路", { exact: true }).isVisible();
       check(report, `${viewport.id}:proven-control-and-circuit-count`, controlCount === 3 && physicalCircuitSummary, { controlCount, physicalCircuitCount: 2, includesMasterControl: true });
       check(report, `${viewport.id}:initial-circuit-state`, await switchStates(switches) === "true,true,false", await switchStates(switches));
-      const readonlyCard = page.getByRole("article").filter({ hasText: "设备间六路继电器" });
-      check(report, `${viewport.id}:readonly-device`, await readonlyCard.getByText("当前 Runtime 未证明此设备有可写回路，已保持只读。", { exact: true }).isVisible(), "version-mismatch relay is explicit read-only");
+      const sixRelayCard = page.getByRole("article").filter({ hasText: "设备间六路继电器" });
+      const sixRelayControls = sixRelayCard.getByRole("switch");
+      const expectedSixRelayCount = expectedSixRelayMode === "write" ? 7 : 6;
+      check(report, `${viewport.id}:six-relay-control-contract`, await sixRelayControls.count() === expectedSixRelayCount && await sixRelayCard.getByText("设备间 · 6 个回路", { exact: true }).isVisible(), { expectedSixRelayMode, controlCount: await sixRelayControls.count(), expectedControlCount: expectedSixRelayCount, physicalCircuitCount: 6 });
+      if (expectedSixRelayMode === "version-mismatch") {
+        check(report, `${viewport.id}:six-relay-version-mismatch`, await allDisabled(sixRelayControls) && await sixRelayCard.getByText("当前本地运行时版本尚未证明此设备的控制能力。", { exact: true }).isVisible(), "six physical circuits remain visible and disabled");
+      }
       check(report, `${viewport.id}:navigation-contract`, await routeNavigationIsValid(page, "开关"), page.url());
       const layout = await inspectLayout(page);
       check(report, `${viewport.id}:no-horizontal-overflow`, layout.scrollWidth <= layout.clientWidth + 1, layout);
@@ -36,7 +41,7 @@ export async function runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, moc
 
       const screenshot = path.join(evidenceDir, `${viewport.id}.png`);
       await page.screenshot({ path: screenshot, fullPage: true });
-      if (viewport.id === "mobile-375") await runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidenceDir });
+      if (viewport.id === "mobile-375") await runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidenceDir, expectedSixRelayMode });
 
       const expectedPaths = viewport.id === "mobile-375" ? browserActionPaths(["device.property.set", "state.query"]) : [];
       const { unexpectedHttpErrors, consoleErrors, unexpectedConsoleErrors } = classifyExpectedFailures(diagnostics, { expectedHttpErrorPaths: expectedPaths });
@@ -55,7 +60,7 @@ export async function runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, moc
   return report;
 }
 
-async function runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidenceDir }) {
+async function runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidenceDir, expectedSixRelayMode }) {
   const relay = () => mockServer.fixture.devices.find((device) => device.id === "992201");
   const relayCard = page.getByRole("article").filter({ hasText: "厨房双路继电器" });
   const channel1 = () => relayCard.getByRole("switch", { name: /回路 1/ });
@@ -91,6 +96,20 @@ async function runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidence
   await waitFor(() => relay().properties["1-sp"] === true);
   check(report, "failure:write-recovered", await page.getByText("回路 1 已开启。", { exact: true }).isVisible(), relay().properties);
 
+  const sixRelay = () => mockServer.fixture.devices.find((device) => device.id === "992905");
+  const sixRelayCard = page.getByRole("article").filter({ hasText: "设备间六路继电器" });
+  const sixthChannel = () => sixRelayCard.getByRole("switch", { name: /回路 6/ });
+  if (expectedSixRelayMode === "write") {
+    await sixthChannel().click();
+    await waitFor(() => sixRelay().properties["6-sp"] === false);
+    check(report, "write:six-relay-channel-off", await sixthChannel().getAttribute("aria-checked") === "false", sixRelay().properties);
+    await sixthChannel().click();
+    await waitFor(() => sixRelay().properties["6-sp"] === true);
+    check(report, "write:six-relay-restore", await sixthChannel().getAttribute("aria-checked") === "true", sixRelay().properties);
+  } else {
+    check(report, "version-mismatch:no-write", await sixthChannel().isDisabled() && sixRelay().properties["6-sp"] === true, "unproven circuit remains visible, disabled, and unchanged");
+  }
+
   relay().online = false;
   relay().properties.o = false;
   await page.getByRole("button", { name: "重新同步家庭状态" }).click();
@@ -118,12 +137,24 @@ async function runPrimaryFlow({ page, report, bridgeOrigin, mockServer, evidence
   check(report, "api:exact-write-contract", successfulWrites.length >= 4 && successfulWrites.every((entry) => Object.keys(entry.body || {}).join(",") === "value" && typeof entry.body.value === "boolean"), writes.map((entry) => ({ path: entry.path, status: entry.status, body: entry.body })));
   const verifies = mockServer.requestLog().filter((entry) => /\/r\/properties\/(?:0|1|2)-sp$/.test(entry.path) && entry.status === 200);
   check(report, "api:write-verification", verifies.length >= successfulWrites.length, { writes: successfulWrites.length, verifies: verifies.length });
-  const readonlyWrites = writes.filter((entry) => ["992204", "992905"].some((deviceId) => entry.path.includes(deviceId)));
+  const sixRelayWrites = mockServer.requestLog().filter((entry) => /\/w\/properties\/6-sp$/.test(entry.path) && entry.path.includes("992905"));
+  const sixRelayContractPassed = expectedSixRelayMode === "write"
+    ? sixRelayWrites.length === 2 && sixRelayWrites.every((entry) => entry.status === 200 && Object.keys(entry.body || {}).join(",") === "value" && typeof entry.body.value === "boolean")
+    : sixRelayWrites.length === 0;
+  check(report, "api:six-relay-exact-write-contract", sixRelayContractPassed, sixRelayWrites.map((entry) => ({ path: entry.path, status: entry.status, body: entry.body })));
+  const readonlyWrites = writes.filter((entry) => entry.path.includes("992204"));
   check(report, "readonly:no-write", readonlyWrites.length === 0, readonlyWrites);
 
   const boundary = await probeBrowserBoundary(bridgeOrigin, "scene.run");
   check(report, "bridge:semantic-route-404", boundary.semanticRoute.status === 404, boundary.semanticRoute);
   check(report, "bridge:unknown-action-403", boundary.unknownAction.status === 403 && boundary.unknownAction.body.status === "blocked", boundary.unknownAction);
+}
+
+export function resolveSixRelayMode(runtimeLock) {
+  const device = runtimeLock?.entities?.["992905"];
+  if (device?.capabilityStatus === "version-mismatch") return "version-mismatch";
+  const controls = Array.isArray(device?.controls) ? device.controls : [];
+  return controls.some((control) => control?.intent === "device.property.set" && control?.property === "6-sp" && control?.evidence === "preview-only") ? "write" : "read-only";
 }
 
 function collectDiagnostics(page) {

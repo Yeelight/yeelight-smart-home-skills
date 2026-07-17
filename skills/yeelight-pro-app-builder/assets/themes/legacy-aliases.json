@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0",
+  "packs": {
+    "daylight-minimal": "pro-daylight",
+    "warm-residential": "linen-home",
+    "obsidian-console": "obsidian-focus",
+    "installer-contrast": "installer-precision"
+  },
+  "palettes": {
+    "teal-blue": { "brand": "#087F8C", "accent": "#1BA8A0" },
+    "sunset-amber": { "brand": "#8A5A14", "accent": "#C98218" },
+    "neutral-graphite": { "brand": "#334155", "accent": "#64748B" },
+    "forest-cyan": { "brand": "#146B5C", "accent": "#188D85" }
+  }
+}

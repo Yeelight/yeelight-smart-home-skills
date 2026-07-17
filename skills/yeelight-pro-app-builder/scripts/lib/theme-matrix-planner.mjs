@@ -3,8 +3,72 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadThemeCatalog } from "./theme-catalog.mjs";
+
 const defaultThemeRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../assets/themes");
 const dimensions = ["theme", "palette", "density", "target"];
+const productionTargetPreference = ["desktop", "tablet", "wall", "mobile", "installer"];
+
+export function loadThemePresetMatrixDefinition(themeRoot = defaultThemeRoot) {
+  const catalog = loadThemeCatalog(themeRoot);
+  return {
+    schemaVersion: 2,
+    catalogVersion: catalog.catalogVersion,
+    families: structuredClone(catalog.families),
+    presets: structuredClone(catalog.presets),
+    targets: structuredClone(catalog.targets),
+    sourceDigests: {
+      families: digest(catalog.families),
+      presets: digest(catalog.presets),
+      targets: digest(catalog.targets),
+      typography: digest(catalog.typography),
+      densities: digest(catalog.densities),
+      shapes: digest(catalog.shapes),
+      motions: digest(catalog.motions),
+    },
+  };
+}
+
+export function planThemePresetProductionMatrix(definition = loadThemePresetMatrixDefinition()) {
+  validatePresetDefinition(definition);
+  const cases = definition.families.flatMap((family, familyIndex) => {
+    const presets = definition.presets.filter(({ familyId }) => familyId === family.id);
+    const target = selectFamilyProductionTarget(family.id, presets, definition.targets);
+    return presets.map((preset, index) => ({
+      id: `${preset.id}--${target.id}`,
+      title: preset.name,
+      batch: Math.floor(familyIndex / 2) + 1,
+      familyId: family.id,
+      themePreset: preset.id,
+      mode: preset.defaults.mode,
+      density: preset.defaults.density,
+      typography: preset.defaults.typography,
+      shape: preset.defaults.shape,
+      motion: preset.defaults.motion,
+      validationRole: index === 0 ? "family-routes" : "accessibility-controls",
+      target: structuredClone(target),
+    }));
+  });
+  const coveredPresets = new Set(cases.map(({ themePreset }) => themePreset));
+  const coveredFamilies = new Set(cases.map(({ familyId }) => familyId));
+  const missingPresets = definition.presets.map(({ id }) => id).filter((id) => !coveredPresets.has(id));
+  const missingFamilies = definition.families.map(({ id }) => id).filter((id) => !coveredFamilies.has(id));
+  return {
+    schemaVersion: 2,
+    strategy: "mandatory-preset-production-v2",
+    sourceDigests: structuredClone(definition.sourceDigests),
+    cases,
+    coverage: {
+      requiredPresetCount: definition.presets.length,
+      coveredPresetCount: coveredPresets.size,
+      missingPresets,
+      requiredFamilyCount: definition.families.length,
+      coveredFamilyCount: coveredFamilies.size,
+      missingFamilies,
+    },
+    status: missingPresets.length === 0 && missingFamilies.length === 0 ? "passed" : "failed",
+  };
+}
 
 export function loadThemeMatrixDefinition(themeRoot = defaultThemeRoot) {
   const sources = {
@@ -130,6 +194,31 @@ function dimensionValues(definition) {
     density: [...definition.densities],
     target: definition.targets.map(({ id }) => id),
   };
+}
+
+function selectFamilyProductionTarget(familyId, presets, targets) {
+  const commonTargets = presets.reduce((shared, preset) => shared.filter((targetId) => preset.targets.includes(targetId)), [...presets[0].targets]);
+  const preference = familyId === "installer"
+    ? ["installer", ...productionTargetPreference]
+    : familyId === "wall-touch"
+      ? ["wall", ...productionTargetPreference]
+      : productionTargetPreference;
+  const targetId = preference.find((id) => commonTargets.includes(id));
+  const target = targets.find(({ id }) => id === targetId);
+  if (!target) throw new Error(`主题家族没有共同支持的生产目标：${familyId}`);
+  return target;
+}
+
+function validatePresetDefinition(definition) {
+  if (definition.schemaVersion !== 2 || definition.families.length !== 12 || definition.presets.length !== 24) {
+    throw new Error("v2 主题生产矩阵定义不完整");
+  }
+  const familyIds = new Set(definition.families.map(({ id }) => id));
+  const targetIds = new Set(definition.targets.map(({ id }) => id));
+  if (familyIds.size !== 12 || targetIds.size !== definition.targets.length) throw new Error("v2 主题生产矩阵 ID 不唯一");
+  for (const preset of definition.presets) {
+    if (!familyIds.has(preset.familyId) || preset.targets.some((id) => !targetIds.has(id))) throw new Error(`v2 主题预设引用无效：${preset.id}`);
+  }
 }
 
 function validateDefinition(definition) {

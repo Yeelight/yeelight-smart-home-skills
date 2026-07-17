@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yeelight.com/schemas/real-user-journey-v1.json",
+  "title": "Yeelight PRO real-user journey catalog v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "journeys"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "enum": [1] },
+    "journeys": {
+      "type": "array",
+      "minItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "request", "resolution", "runtime", "expected", "coverage", "browser"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "request": { "type": "string", "minLength": 1 },
+          "resolution": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["decision", "rationale", "clarifications", "userMessage", "choices"],
+            "properties": {
+              "decision": { "enum": ["build", "reject"] },
+              "rationale": { "type": "string", "minLength": 1 },
+              "clarifications": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["question", "answer"],
+                  "properties": {
+                    "question": { "type": "string", "minLength": 1 },
+                    "answer": { "type": "string", "minLength": 1 }
+                  }
+                }
+              },
+              "userMessage": { "type": "string" },
+              "choices": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["title", "modules", "deviceFamilies", "roomNames", "formFactor", "navigation", "density", "theme", "sceneManagement", "allowPartial"],
+                "properties": {
+                  "title": { "type": "string", "minLength": 1 },
+                  "modules": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+                  "deviceFamilies": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+                  "roomNames": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+                  "formFactor": { "enum": ["desktop", "tablet", "mobile", "wall"] },
+                  "navigation": { "enum": ["sidebar", "adaptive-rail", "bottom-tabs", "touch-rail"] },
+                  "density": { "enum": ["comfortable", "compact", "touch"] },
+                  "theme": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["preset", "mode"],
+                    "properties": {
+                      "preset": { "type": "string", "minLength": 1 },
+                      "mode": { "enum": ["light", "dark", "auto"] },
+                      "brandColor": { "type": "string", "minLength": 1 },
+                      "accentColor": { "type": "string", "minLength": 1 },
+                      "typography": { "type": "string", "minLength": 1 },
+                      "shape": { "type": "string", "minLength": 1 },
+                      "motion": { "type": "string", "minLength": 1 }
+                    }
+                  },
+                  "sceneManagement": { "type": "boolean" },
+                  "allowPartial": { "type": "boolean" }
+                }
+              }
+            }
+          },
+          "runtime": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "fixture", "homeId", "region"],
+            "properties": {
+              "mode": { "enum": ["reference", "live-readonly", "none"] },
+              "fixture": { "type": "string" },
+              "homeId": { "type": "string" },
+              "region": { "type": "string" }
+            }
+          },
+          "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["generatedModules", "omittedModules"],
+            "properties": {
+              "generatedModules": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+              "omittedModules": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+            }
+          },
+          "coverage": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["deviceFamilies", "protocols", "themeDirections"],
+            "properties": {
+              "deviceFamilies": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+              "protocols": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+              "themeDirections": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+            }
+          },
+          "browser": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["validator", "primaryRoute", "representativeControl"],
+            "properties": {
+              "validator": { "type": "string" },
+              "primaryRoute": { "type": "string" },
+              "representativeControl": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

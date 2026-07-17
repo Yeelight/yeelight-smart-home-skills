@@ -208,14 +208,55 @@ async function verifyEditorFlow({ page, report, mockServer, evidenceDir, baseUrl
   await guard.getByRole("button", { name: "继续编辑" }).click();
   await page.getByRole("button", { name: /下一步/ }).click();
   await page.getByRole("heading", { name: "触发方式" }).waitFor();
+  const triggerSection = page.locator(".automation-editor-section");
+  await triggerSection.getByLabel("类型").selectOption("fact");
+  const triggerFields = triggerSection.locator(".automation-condition-fields");
+  check(report, "editor:boolean-condition-target", await selectTargetWithProperty(triggerFields, "人体状态"), await triggerFields.innerText());
+  await triggerFields.locator("select").nth(1).selectOption({ label: "人体状态" });
+  const conditionToggle = triggerFields.getByRole("switch");
+  check(report, "editor:boolean-condition-semantics", await triggerFields.getByText("状态为", { exact: true }).isVisible() && await conditionToggle.getAttribute("aria-checked") === "true" && (await conditionToggle.innerText()).includes("有人") && await triggerFields.getByLabel("比较").count() === 0, await triggerFields.innerText());
+  await conditionToggle.click();
+  check(report, "editor:boolean-condition-updates", await conditionToggle.getAttribute("aria-checked") === "false" && (await conditionToggle.innerText()).includes("无人"), await triggerFields.innerText());
+  await triggerSection.getByLabel("类型").selectOption("alarm");
   await page.getByRole("button", { name: /下一步/ }).click();
   await page.getByRole("heading", { name: "条件" }).waitFor();
+  check(report, "editor:alarm-condition-semantic-row", await page.getByText("定时触发", { exact: true }).isVisible() && await page.getByText("每天 07:00", { exact: true }).isVisible() && await page.getByText("当前属性暂无可用的编辑控件", { exact: true }).count() === 0, await page.locator(".automation-editor-section").innerText());
   await page.getByRole("button", { name: /下一步/ }).click();
   await page.getByRole("heading", { name: "执行动作" }).waitFor();
   const addAction = page.getByRole("button", { name: "添加动作" });
   await addAction.waitFor();
   await addAction.click();
-  check(report, "editor:writable-targets-only", await page.locator(".automation-action-edit").count() === 1 && await page.locator(".automation-action-edit select").first().locator("option").count() > 0, await page.locator(".automation-action-edit").innerText());
+  const actionRow = page.locator(".automation-action-edit").first();
+  const propertySelect = actionRow.locator("select").nth(1);
+  check(report, "editor:writable-targets-only", await page.locator(".automation-action-edit").count() === 1 && await actionRow.locator("select").first().locator("option").count() > 0, await actionRow.innerText());
+  check(report, "editor:boolean-control-target", await selectTargetWithProperty(actionRow, "开关"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "开关" });
+  const propertyToggle = actionRow.getByRole("switch");
+  await propertyToggle.click();
+  check(report, "editor:boolean-semantic-switch", await propertyToggle.getAttribute("aria-checked") === "false" && (await actionRow.innerText()).includes("关闭"), await actionRow.innerText());
+  check(report, "editor:color-control-target", await selectTargetWithProperty(actionRow, "颜色"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "颜色" });
+  const colorInput = actionRow.locator('input[type="color"]');
+  await colorInput.fill("#4d96ff");
+  check(report, "editor:color-picker-converts-rgb", await colorInput.inputValue() === "#4d96ff" && await actionRow.getByText("#4D96FF").isVisible() && await actionRow.locator('input[type="text"], input:not([type])').count() === 0, await actionRow.innerText());
+  const colorLayout = await actionRow.evaluate((element) => { const control = element.querySelector(".property-color-control"); const remove = element.querySelector(".icon-button"); const controlRect = control?.getBoundingClientRect(); const removeRect = remove?.getBoundingClientRect(); return { clientWidth: element.clientWidth, scrollWidth: element.scrollWidth, controlRight: controlRect?.right || 0, removeLeft: removeRect?.left || 0 }; });
+  check(report, "editor:color-control-no-overlap", colorLayout.scrollWidth <= colorLayout.clientWidth && (!colorLayout.removeLeft || colorLayout.controlRight <= colorLayout.removeLeft), colorLayout);
+  check(report, "editor:climate-mode-control-target", await selectTargetWithProperty(actionRow, "运行模式"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "运行模式" });
+  const climateModes = actionRow.getByRole("radiogroup", { name: "运行模式" });
+  await climateModes.getByRole("radio", { name: "制热" }).click();
+  check(report, "editor:climate-mode-semantic-control", await climateModes.getByRole("radio", { name: "制热" }).getAttribute("aria-checked") === "true" && await actionRow.locator('input[type="number"]').count() === 0, await actionRow.innerText());
+  check(report, "editor:climate-fan-control-target", await selectTargetWithProperty(actionRow, "风速"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "风速" });
+  const climateFanSpeeds = actionRow.getByRole("radiogroup", { name: "风速" });
+  await climateFanSpeeds.getByRole("radio", { name: "中风" }).click();
+  check(report, "editor:climate-fan-semantic-control", await climateFanSpeeds.getByRole("radio", { name: "中风" }).getAttribute("aria-checked") === "true" && await actionRow.locator('input[type="number"]').count() === 0, await actionRow.innerText());
+  check(report, "editor:switch-control-target", await selectTargetWithProperty(actionRow, "回路开关"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "回路开关" });
+  check(report, "editor:switch-property-normalized", await actionRow.getByRole("switch").isVisible() && !(await actionRow.innerText()).includes("-sp"), await actionRow.innerText());
+  check(report, "editor:restore-color-control-target", await selectTargetWithProperty(actionRow, "颜色"), await actionRow.innerText());
+  await propertySelect.selectOption({ label: "颜色" });
+  await actionRow.locator('input[type="color"]').fill("#4d96ff");
   await page.getByRole("button", { name: /下一步/ }).click();
   await page.getByRole("heading", { name: createdName, level: 3 }).waitFor();
   await page.screenshot({ path: path.join(evidenceDir, "mobile-375-automation-editor-review.png"), fullPage: true });
@@ -228,7 +269,7 @@ async function verifyEditorFlow({ page, report, mockServer, evidenceDir, baseUrl
   await page.locator(".automation-editor").waitFor({ state: "hidden" });
   await page.getByRole("heading", { name: createdName, level: 2 }).waitFor();
   const created = mockServer.fixture.automations.find((item) => item.name === createdName);
-  check(report, "editor:create-readback", Boolean(created) && mockServer.fixture.automations.length === 13, created);
+  check(report, "editor:create-readback", Boolean(created) && created?.editablePayload?.actions?.[0]?.set?.color === 0x4D96FF && mockServer.fixture.automations.length === 13, created);
 
   if (!page.url().includes("#automations/" + created?.id)) await openAutomation(page, createdName);
   await page.getByRole("button", { name: "编辑自动化" }).click();
@@ -260,6 +301,17 @@ async function verifyEditorFlow({ page, report, mockServer, evidenceDir, baseUrl
   await dialog.getByRole("button", { name: "确认删除" }).click();
   await dialog.waitFor({ state: "hidden" });
   check(report, "editor:delete-absence", !mockServer.fixture.automations.some((item) => item.id === created?.id) && mockServer.fixture.automations.length === 12, mockServer.fixture.automations.map((item) => item.id));
+}
+
+async function selectTargetWithProperty(row, propertyLabel) {
+  const targetSelect = row.locator("select").nth(0);
+  const propertySelect = row.locator("select").nth(1);
+  for (const value of await targetSelect.locator("option").evaluateAll((options) => options.map((option) => option.value))) {
+    await targetSelect.selectOption(value);
+    await new Promise((resolve) => setTimeout(resolve, 60));
+    if ((await propertySelect.locator("option").allTextContents()).includes(propertyLabel)) return true;
+  }
+  return false;
 }
 
 async function verifyPublicRegistry({ report, bridgeOrigin, mockServer }) {

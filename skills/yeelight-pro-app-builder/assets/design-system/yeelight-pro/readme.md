@@ -5,7 +5,7 @@
 ## Sources
 
 - 代码源：`yeelight-smart-home/skill/yeelight-pro-app-builder` 当前生成模板、主题定义和 reference-home。
-- 产品约束：父 Trellis 任务 `07-11-yeelight-pro-app-builder-product-system-rebuild`。
+- 产品约束：Trellis 任务 `07-15-yeelight-pro-app-builder-theme-system-v2` 的 ThemeSpec、token 与真实生成门禁。
 - 行业参考：易来 PRO 为第一基准；HomeKit、米家、Home Assistant、涂鸦仅用于空间层级、状态优先、管理效率、诊断透明和设备标准化的通用模式研究。
 - 未使用竞品截图、品牌素材或专有像素布局作为生产资产。
 
@@ -36,15 +36,34 @@
 
 ## Themes
 
-- `yeelight-pro-light`：默认专业日间体验。
-- `warm-home`：暖色住宅氛围。
-- `night-ambient`：低照度深色体验。
-- `installer-contrast`：安装调试高对比体验。
+- 主题是 Builder 生成阶段的确定性输入；生成后的家庭应用不显示主题配置、CLI、Bridge 或审计页面。
+- `theme-index.generated.json` 与 `tokens/themes.generated.css` 由生产主题目录和编译器生成，是设计系统预览的唯一主题真相源。
+- 24 个 preset 分属 12 个结构家族：易来 PRO 核心、纯净极简、温暖住宅、自然舒适、夜间氛围、沉浸控制台、专业中控、墙面触控、安装调试、高对比无障碍、建筑照明和多协议互联。
+- 每个 preset 同时提供 light/dark token scope；默认模式、密度和摘要见 `theme-index.generated.json`。
+- 目录可解析和 specimen 可预览不等于生产验收完成；只有真实 Skill/CLI 生成、安装、build、Bridge、浏览器交互和截图门禁全部通过后，preset 才能计为生产可用。
+
+## Component Contracts
+
+- Form：Input、Select、Checkbox、Switch、Slider、ColorPicker。布尔值必须用 Switch/Checkbox，灯光颜色必须用色盘或 swatch，不向最终用户暴露 `true/false` 或原始整数颜色字段。
+- Navigation：AppNavigation、Tabs、Menu。顶级导航保持稳定，Tabs 仅切换同级视图，低频命令进入 Menu。
+- Feedback：StatusBadge、InlineNotice、Tooltip、Toast。状态必须有文字，错误包含恢复动作，Toast 不抢焦点。
+- Overlay：Dialog、Sheet、ModalSurface。支持 Esc、焦点圈定、滚动锁、关闭后焦点恢复；移动端 Sheet 从底部呈现。
+- Domain：DeviceTile、ControllerSurface。只渲染 Runtime capability 证明的灯光、窗帘、温控、开关、传感器、网关、面板、旋钮、Matter 或 DALI 控制。
+- Shell：AppShell。desktop、tablet、mobile、wall 共用信息架构，只改变导航呈现和密度。
+
+## Interaction Contracts
+
+- 所有可点击目标至少 44x44px；相邻目标至少保留 8px 间隔。
+- hover、pressed、focus、disabled、loading、error、read-only、offline 均使用语义 token，并保留文字或 ARIA 状态。
+- 动效只表达状态或层级变化，持续 150-300ms，并遵循 `prefers-reduced-motion`。
+- Dialog/Sheet 中未保存的编辑由产品层确认后再关闭；危险操作不得放入普通导航或无说明的快捷控件。
+- mobile 375、tablet 768、wall 1024、desktop 1440 是固定回归视口；不得产生页面级横向滚动或文本遮挡。
 
 ## Index
 
 - `tokens/`：primitive、semantic、component token。
-- `components/`：动作、反馈、导航、overlay 与 app shell 组件。
+- `components/`：动作、表单、反馈、导航、overlay、智能家居领域组件与 app shell。
 - `foundations/`：颜色、排版、间距和状态 specimen。
 - `starting-points/`：desktop、tablet、mobile、wall 应用壳。
+- `theme-index.generated.json`：24 个 preset 的家族、默认模式、密度和 resolved digest。
 - `_ds_manifest.json`、`_ds_bundle.js`、`preview.html`：由 Baoyu Design 工具生成，不手工编辑。

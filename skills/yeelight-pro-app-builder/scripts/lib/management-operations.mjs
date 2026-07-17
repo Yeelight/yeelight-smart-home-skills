@@ -29,10 +29,10 @@ const definitions = {
   },
 };
 
-export function resolveManagementOperations(selected, snapshot) {
-  return Object.fromEntries(selected.filter((moduleId) => definitions[moduleId]).map((moduleId) => [
-    moduleId,
-    Object.fromEntries(Object.entries(definitions[moduleId]).map(([name, definition]) => [
+export function resolveManagementOperations(modules, snapshot) {
+  return Object.fromEntries(normalizeModules(modules).filter(({ id }) => definitions[id]).map((module) => [
+    module.id,
+    Object.fromEntries(Object.entries(definitionsFor(module)).map(([name, definition]) => [
       name,
       resolveOperation(definition, snapshot),
     ])),
@@ -43,7 +43,7 @@ export function generatedManagementIntents(operations) {
   return Object.fromEntries(Object.entries(operations).map(([moduleId, moduleOperations]) => [
     moduleId,
     Object.values(moduleOperations)
-      .filter((item) => item.generated && item.enabled)
+      .filter((item) => item?.generated && item.enabled)
       .map((item) => item.intent),
   ]));
 }
@@ -51,10 +51,16 @@ export function generatedManagementIntents(operations) {
 export function prepareGeneratedManagementOperations(operations) {
   const next = structuredClone(operations);
   const scene = next["scene.launcher"];
-  if (scene?.update.enabled && !scene.detail.enabled) {
-    scene.update.enabled = false;
-    scene.update.terminal = "readback-unavailable";
-    scene.update.userMessage = "当前家庭暂不支持安全读取并保存情景详情。";
+  if (scene?.detail && !scene.detail.enabled) {
+    const messages = {
+      create: "当前家庭暂不支持安全读取并新建情景。",
+      update: "当前家庭暂不支持安全读取并保存情景详情。",
+      test: "当前家庭暂不支持安全读取并测试情景。",
+      delete: "当前家庭暂不支持安全读取并删除情景。",
+    };
+    for (const [name, message] of Object.entries(messages)) {
+      if (scene[name].enabled) disable(scene[name], message);
+    }
   }
   const group = next["group.manager"];
   if (group && !group.detail.enabled) {
@@ -79,12 +85,22 @@ function disable(operation, userMessage) {
   operation.userMessage = userMessage;
 }
 
-export function projectManagementCapabilityProfile(selected, profile) {
+export function projectManagementCapabilityProfile(modules, profile) {
   if (!profile?.capabilities) return {};
-  const ids = new Set(selected.flatMap((moduleId) => Object.values(definitions[moduleId] || {}).map((item) => item.capabilityId)));
+  const ids = new Set(normalizeModules(modules).flatMap((module) => Object.values(definitionsFor(module)).map((item) => item.capabilityId)));
   return Object.fromEntries(profile.capabilities
     .filter((item) => ids.has(item.capabilityId))
     .map((item) => [item.capabilityId, { intent: item.intent, status: item.status }]));
+}
+
+function normalizeModules(modules = []) {
+  return modules.map((module) => typeof module === "string" ? { id: module, options: {} } : { ...module, options: module.options || {} });
+}
+
+function definitionsFor(module) {
+  const moduleDefinitions = definitions[module.id] || {};
+  if (module.id !== "scene.launcher" || module.options.management === true) return moduleDefinitions;
+  return { list: moduleDefinitions.list, execute: moduleDefinitions.execute };
 }
 
 function operation(capabilityId, intent, mode, generated = false) {

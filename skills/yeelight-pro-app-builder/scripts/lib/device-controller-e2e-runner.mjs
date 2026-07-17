@@ -1,5 +1,7 @@
 import path from "node:path";
 
+import { requestBridgePath } from "./e2e-browser-boundary.mjs";
+
 const viewports = [
   { id: "mobile-375", width: 375, height: 812, target: 44 },
   { id: "tablet-768", width: 768, height: 1024, target: 36 },
@@ -249,7 +251,7 @@ function collectDiagnostics(page) {
   return diagnostics;
 }
 
-async function bridgeRequest(origin, pathname) { const response = await fetch(`${origin}${pathname}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" }); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
+async function bridgeRequest(origin, pathname) { const response = await requestBridgePath(origin, pathname); const text = await response.text(); let body = text; try { body = JSON.parse(text); } catch {} return { status: response.status, body }; }
 function markLatestActionError(diagnostics) { const item = diagnostics.httpErrors.findLast((entry) => !entry.expected && entry.status === 502 && /^\/api\/actions\/a_[a-f0-9]+$/.test(new URL(entry.url).pathname)); if (item) item.expected = true; }
 
 async function inspectLayout(page) {

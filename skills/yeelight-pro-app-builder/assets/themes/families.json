@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0",
+  "families": [
+    { "id": "pro-core", "name": "Yeelight PRO 核心", "recipe": { "surfaceStyle": "crisp", "navigationStyle": "standard", "collectionStyle": "hybrid", "controllerStyle": "balanced", "dataStyle": "calm", "elevationStyle": "soft" } },
+    { "id": "pure-minimal", "name": "纯净极简", "recipe": { "surfaceStyle": "quiet", "navigationStyle": "minimal", "collectionStyle": "list", "controllerStyle": "focused", "dataStyle": "calm", "elevationStyle": "flat" } },
+    { "id": "warm-residential", "name": "温暖住宅", "recipe": { "surfaceStyle": "warm", "navigationStyle": "home", "collectionStyle": "cards", "controllerStyle": "balanced", "dataStyle": "calm", "elevationStyle": "soft" } },
+    { "id": "natural-comfort", "name": "自然舒适", "recipe": { "surfaceStyle": "natural", "navigationStyle": "home", "collectionStyle": "hybrid", "controllerStyle": "balanced", "dataStyle": "calm", "elevationStyle": "soft" } },
+    { "id": "night-ambience", "name": "夜间氛围", "recipe": { "surfaceStyle": "nocturnal", "navigationStyle": "ambient", "collectionStyle": "cards", "controllerStyle": "focused", "dataStyle": "calm", "elevationStyle": "layered" } },
+    { "id": "immersive-console", "name": "沉浸控制台", "recipe": { "surfaceStyle": "console", "navigationStyle": "compact", "collectionStyle": "dense", "controllerStyle": "dense", "dataStyle": "technical", "elevationStyle": "outlined" } },
+    { "id": "command-center", "name": "专业中控", "recipe": { "surfaceStyle": "command", "navigationStyle": "command", "collectionStyle": "dense", "controllerStyle": "dense", "dataStyle": "technical", "elevationStyle": "outlined" } },
+    { "id": "wall-touch", "name": "墙面触控", "recipe": { "surfaceStyle": "crisp", "navigationStyle": "touch", "collectionStyle": "tiles", "controllerStyle": "touch", "dataStyle": "standard", "elevationStyle": "flat" } },
+    { "id": "installer", "name": "安装调试", "recipe": { "surfaceStyle": "technical", "navigationStyle": "technical", "collectionStyle": "dense", "controllerStyle": "technical", "dataStyle": "technical", "elevationStyle": "outlined" } },
+    { "id": "high-contrast", "name": "高对比无障碍", "recipe": { "surfaceStyle": "contrast", "navigationStyle": "accessible", "collectionStyle": "list", "controllerStyle": "focused", "dataStyle": "high-contrast", "elevationStyle": "outlined" } },
+    { "id": "architectural-lighting", "name": "建筑照明 / DALI", "recipe": { "surfaceStyle": "gallery", "navigationStyle": "gallery", "collectionStyle": "hybrid", "controllerStyle": "focused", "dataStyle": "technical", "elevationStyle": "flat" } },
+    { "id": "universal-connectivity", "name": "Matter / 多协议互联", "recipe": { "surfaceStyle": "fabric", "navigationStyle": "standard", "collectionStyle": "hybrid", "controllerStyle": "balanced", "dataStyle": "technical", "elevationStyle": "soft" } }
+  ]
+}

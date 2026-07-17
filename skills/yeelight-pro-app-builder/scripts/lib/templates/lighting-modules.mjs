@@ -18,11 +18,12 @@ export function roomLightingControlSource(spec) {
   return `import { useEffect, useMemo, useState } from "react";
 import { AlertCircle, CheckCircle2, Lightbulb, LoaderCircle, Power, Search } from "lucide-react";
 import type { LightDevice } from "../../runtime/use-light-devices";
+import { requestAction } from "../../runtime/request";
 
 const rangeCommitKeys = new Set(["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"]);
 
 async function invoke(intent: string, parameters: Record<string, unknown>) {
-  const response = await fetch("/api/operations/" + encodeURIComponent(intent), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "控制客厅灯光", parameters }) });
+  const response = await requestAction(intent, { locale: "zh-CN", utterance: "控制客厅灯光", parameters });
   const body = await response.json();
   if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "操作没有完成。");
   return body;

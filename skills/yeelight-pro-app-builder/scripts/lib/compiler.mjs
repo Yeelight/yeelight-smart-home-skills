@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 
 import { homeLightingSummarySource, roomLightingControlSource } from "./templates/lighting-modules.mjs";
 import { deviceCurtainControlSource } from "./templates/curtain-modules.mjs";
@@ -14,10 +15,11 @@ import { gatewayOverviewSource } from "./templates/gateway-modules.mjs";
 import { panelManagerSource } from "./templates/panel-modules.mjs";
 import { installerMaintenanceSource } from "./templates/installer-modules.mjs";
 import { homeSpaceSummarySource, roomDeviceManagementSource } from "./templates/space-modules.mjs";
-import { appSource, bridgePackageJson, bridgeSource, faviconSource, indexHtml, mainSource, packageJson, viteConfigSource, webPackageJson, webTsconfig } from "./templates/project.mjs";
+import { appSource, bridgePackageJson, bridgeSource, browserRequestSource, faviconSource, indexHtml, mainSource, packageJson, viteConfigSource, webPackageJson, webTsconfig } from "./templates/project.mjs";
 import { climateDevicesHookSource, curtainDevicesHookSource, homeModelHookSource, lightDevicesHookSource, sensorEnvironmentHookSource, switchDevicesHookSource } from "./templates/runtime-hook.mjs";
 import { scenesHookSource } from "./templates/scene-hook.mjs";
 import { sceneEditorSource } from "./templates/scene-editor.mjs";
+import { propertyValueControlSource } from "./templates/property-value-control.mjs";
 import { automationsHookSource } from "./templates/automation-hook.mjs";
 import { groupsHookSource } from "./templates/group-hook.mjs";
 import { gatewaysHookSource } from "./templates/gateway-hook.mjs";
@@ -38,6 +40,12 @@ import { unsavedNavigationGuardHookSource } from "./templates/management-unsaved
 import { prepareInfrastructureOperations, resolveInfrastructureOperations } from "./infrastructure-operations.mjs";
 import { browserValue, resolveBrowserActions, resolvePrivateActions, secureBrowserWorkspace } from "./browser-boundary.mjs";
 import { moduleIntents } from "./templates/project-runtime.mjs";
+import { compileActionPolicies } from "./action-policy.mjs";
+import { generationToolchain, packageLockJson } from "./toolchain.mjs";
+import { generationRuntimeContract } from "./runtime-compatibility.mjs";
+import { normalizeProductSpec, themeInputSourceFromProductSpec } from "./theme-migration.mjs";
+import { compileThemeTokens, themeManifestFromLock } from "./theme-token-compiler.mjs";
+import { assertAvailableModules, evaluateModuleAvailability } from "./module-availability.mjs";
 
 const moduleTemplates = {
   "home.lighting-summary": { directory: "home-lighting-summary", source: homeLightingSummarySource },
@@ -60,13 +68,14 @@ export function moduleDirectory(id) {
   return moduleTemplates[id]?.directory || "";
 }
 
-export function compileApplication({ spec, snapshot, outputRoot }) {
+export function compileApplication({ spec, snapshot, outputRoot, generationPlan = {} }) {
+  spec = normalizeProductSpec(spec);
   assertProductSpec(spec);
   const selected = spec.modules.map((module) => module.id);
   const unknown = selected.filter((id) => !moduleTemplates[id]);
   if (unknown.length > 0) throw new Error(`未实现的模块: ${unknown.join(", ")}`);
   const managementOperations = {
-    ...prepareGeneratedManagementOperations(resolveManagementOperations(selected, snapshot)),
+    ...prepareGeneratedManagementOperations(resolveManagementOperations(spec.modules, snapshot)),
     ...prepareInfrastructureOperations(resolveInfrastructureOperations(selected, snapshot), spec),
   };
   if (selected.includes("installer.maintenance")) managementOperations["installer.maintenance"] = {
@@ -74,26 +83,50 @@ export function compileApplication({ spec, snapshot, outputRoot }) {
     panel: managementOperations["panel.manager"],
   };
   const runtimeSnapshot = applyManagementAvailability(snapshot, managementOperations);
-  assertRequiredCapabilities(selected, runtimeSnapshot, managementOperations);
+  assertAvailableModules(evaluateModuleAvailability({ spec, snapshot: runtimeSnapshot, operations: managementOperations }));
   const privateActions = resolvePrivateActions(runtimeSnapshot, selected, moduleIntents, generatedManagementIntents(managementOperations));
+  const policies = new Map(compileActionPolicies({ privateActions, spec, snapshot: runtimeSnapshot }).map((policy) => [policy.actionId, policy]));
+  const securedActions = privateActions.map((action) => ({ ...action, policy: policies.get(action.actionId) }));
+  if (securedActions.some((action) => !action.policy)) throw new Error("生成 action 缺少安全策略");
   const browserActions = resolveBrowserActions(runtimeSnapshot, privateActions);
+  const sceneEditorEnabled = selected.includes("scene.launcher") && (managementOperations["scene.launcher"]?.create?.enabled || managementOperations["scene.launcher"]?.update?.enabled);
+  const automationEditorEnabled = selected.includes("automation.manager") && (managementOperations["automation.manager"]?.create.enabled || managementOperations["automation.manager"]?.update.enabled);
+  const inputSource = themeInputSourceFromProductSpec(spec);
+  const themeCompilation = compileThemeTokens(spec.theme, { inputSource });
+  const styles = stylesSource(spec, { themeCss: themeCompilation.css });
+  const themeManifest = { ...themeManifestFromLock(themeCompilation.lock), cssDigest: digestText(styles) };
+  const browserSpec = structuredClone(spec);
+  delete browserSpec.diagnostics;
 
   fs.mkdirSync(outputRoot, { recursive: true });
   writeJSON(outputRoot, "product.spec.json", spec);
   writeJSON(outputRoot, "runtime.lock.json", runtimeSnapshot);
-  writeJSON(outputRoot, "generation-manifest.json", { schemaVersion: 1, modules: selected, target: spec.target, theme: spec.theme });
+  writeJSON(outputRoot, "theme.lock.json", themeCompilation.lock);
+  writeJSON(outputRoot, "generation-manifest.json", {
+    schemaVersion: 3,
+    modules: selected,
+    requestedModules: generationPlan.requestedModules || selected,
+    generatedModules: selected,
+    omittedModules: generationPlan.omittedModules || [],
+    target: spec.target,
+    theme: themeManifest,
+    runtime: generationRuntimeContract(spec.runtime.contractVersion),
+    toolchain: generationToolchain(),
+  });
   writeJSON(outputRoot, "package.json", packageJson(spec));
   writeJSON(outputRoot, "apps/web/package.json", webPackageJson());
   writeJSON(outputRoot, "apps/bridge/package.json", bridgePackageJson());
+  writeJSON(outputRoot, "package-lock.json", packageLockJson(spec));
   writeJSON(outputRoot, "apps/web/tsconfig.json", webTsconfig());
-  writeText(outputRoot, "apps/web/index.html", indexHtml(spec));
-  writeText(outputRoot, "apps/web/public/favicon.svg", faviconSource());
+  writeText(outputRoot, "apps/web/index.html", indexHtml(spec, themeCompilation.lock));
+  writeText(outputRoot, "apps/web/public/favicon.svg", faviconSource(themeCompilation.lock));
   writeText(outputRoot, "apps/web/vite.config.ts", viteConfigSource());
-  writeText(outputRoot, "apps/bridge/src/index.mjs", bridgeSource(privateActions));
+  writeText(outputRoot, "apps/bridge/src/index.mjs", bridgeSource(securedActions));
   writeText(outputRoot, "apps/web/src/main.tsx", mainSource());
+  writeText(outputRoot, "apps/web/src/runtime/request.ts", browserRequestSource());
   writeText(outputRoot, "apps/web/src/vite-env.d.ts", '/// <reference types="vite/client" />\n');
   writeText(outputRoot, "apps/web/src/App.tsx", appSource(spec, selected, moduleTemplates, managementOperations));
-  writeText(outputRoot, "apps/web/src/styles.css", stylesSource(spec));
+  writeText(outputRoot, "apps/web/src/styles.css", styles);
   if (selected.some((id) => ["scene.launcher", "automation.manager", "group.manager"].includes(id))) {
     writeText(outputRoot, "apps/web/src/runtime/use-unsaved-navigation-guard.ts", unsavedNavigationGuardHookSource());
   }
@@ -103,11 +136,12 @@ export function compileApplication({ spec, snapshot, outputRoot }) {
   if (selected.includes("device.climate-control")) writeText(outputRoot, "apps/web/src/runtime/use-climate-devices.ts", climateDevicesHookSource(spec));
   if (selected.includes("sensor.environment")) writeText(outputRoot, "apps/web/src/runtime/use-sensor-environment.ts", sensorEnvironmentHookSource(spec));
   if (selected.includes("scene.launcher")) writeText(outputRoot, "apps/web/src/runtime/use-scenes.ts", scenesHookSource(spec, managementOperations["scene.launcher"]));
-  if (selected.includes("scene.launcher") && (managementOperations["scene.launcher"]?.create.enabled || managementOperations["scene.launcher"]?.update.enabled)) {
+  if (sceneEditorEnabled || automationEditorEnabled) writeText(outputRoot, "apps/web/src/components/property-value-control.tsx", propertyValueControlSource());
+  if (sceneEditorEnabled) {
     writeText(outputRoot, "apps/web/src/modules/scene-launcher/scene-editor.tsx", sceneEditorSource(managementOperations["scene.launcher"]));
   }
   if (selected.includes("automation.manager")) writeText(outputRoot, "apps/web/src/runtime/use-automations.ts", automationsHookSource(spec, managementOperations["automation.manager"]));
-  if (selected.includes("automation.manager") && (managementOperations["automation.manager"]?.create.enabled || managementOperations["automation.manager"]?.update.enabled)) {
+  if (automationEditorEnabled) {
     writeText(outputRoot, "apps/web/src/modules/automation-manager/automation-editor.tsx", automationEditorSource(managementOperations["automation.manager"]));
   }
   if (selected.includes("group.manager")) writeText(outputRoot, "apps/web/src/runtime/use-groups.ts", groupsHookSource(spec, managementOperations["group.manager"]));
@@ -118,7 +152,7 @@ export function compileApplication({ spec, snapshot, outputRoot }) {
     writeText(outputRoot, "apps/web/src/modules/panel-manager/knob-detail.tsx", knobDetailSource());
   }
   if (selected.some((id) => ["home.lighting-summary", "room.lighting-control"].includes(id))) writeText(outputRoot, "apps/web/src/runtime/use-light-devices.ts", lightDevicesHookSource(spec));
-  writeJSON(outputRoot, "apps/web/src/generated/product-spec.json", spec);
+  writeJSON(outputRoot, "apps/web/src/generated/product-spec.json", browserSpec);
   writeJSON(outputRoot, "apps/web/src/generated/home-model.json", browserValue(runtimeSnapshot, browserActions));
 
   for (const id of selected) {
@@ -140,58 +174,10 @@ export function compileApplication({ spec, snapshot, outputRoot }) {
   return { outputRoot, modules: selected };
 }
 
-function assertRequiredCapabilities(selected, snapshot, managementOperations) {
-  if (selected.includes("device.curtain-control")) {
-    const proven = Object.values(snapshot?.entities || {}).some((entity) => entity.family === "curtain" && (entity.controls || []).some((control) => (
-      control.intent === "device.property.set"
-      && control.property === "targetPosition"
-      && control.evidence === "preview-only"
-    )));
-    if (!proven) throw new Error("窗帘位置控制缺少 preview-only 能力证据");
-  }
-  if (selected.includes("device.switch-control")) {
-    const proven = Object.values(snapshot?.entities || {}).some((entity) => entity.family === "switch-relay" && (entity.controls || []).some((control) => (
-      control.intent === "device.property.set"
-      && (control.property === "sp" || /^(?:0|[1-6])-sp$/.test(control.property || ""))
-      && control.evidence === "preview-only"
-    )));
-    if (!proven) throw new Error("开关回路控制缺少 preview-only 能力证据");
-  }
-  if (selected.includes("device.climate-control")) {
-    const proven = Object.values(snapshot?.entities || {}).some((entity) => entity.family === "climate" && (entity.controls || []).some((control) => (
-      control.intent === "device.property.set"
-      && control.property === "airConditionerTargetTemperature"
-      && control.evidence === "preview-only"
-    )));
-    if (!proven) throw new Error("温控目标温度缺少 preview-only 能力证据");
-  }
-  if (selected.includes("sensor.environment")) {
-    const proven = Object.values(snapshot?.entities || {}).some((entity) => entity.family === "sensor" && entity.readIntent === "state.query");
-    if (!proven) throw new Error("传感器当前读数缺少 state.query 能力证据");
-  }
-  if (selected.includes("scene.launcher")) {
-    if (!managementOperations["scene.launcher"]?.list.enabled) throw new Error("情景页面缺少列表读取能力证据");
-  }
-  if (selected.includes("automation.manager")) {
-    if (!managementOperations["automation.manager"]?.list.enabled) throw new Error("自动化页面缺少列表读取能力证据");
-  }
-  if (selected.includes("group.manager")) {
-    if (!managementOperations["group.manager"]?.list.enabled) throw new Error("设备组页面缺少列表读取能力证据");
-  }
-  if (selected.includes("gateway.overview")) {
-    const operations = managementOperations["gateway.overview"];
-    const required = ["list", "detail", "stats", "thread", "relations", "diagnose"];
-    if (!required.every((name) => operations?.[name]?.enabled) || !Array.isArray(snapshot?.gateways)) throw new Error("网关总览缺少完整只读能力证据");
-  }
-  if (selected.includes("panel.manager")) {
-    const operations = managementOperations["panel.manager"];
-    if (!["list", "detail", "buttonType", "knobDetail"].every((name) => operations?.[name]?.enabled) || !Array.isArray(snapshot?.panels) || !Array.isArray(snapshot?.knobs)) throw new Error("面板管理缺少完整读取能力证据");
-  }
-}
-
 function applyManagementAvailability(snapshot, operations) {
   const next = structuredClone(snapshot);
   delete next.capabilities;
+  delete next.diagnostics;
   const scene = operations["scene.launcher"];
   if (scene && !scene.execute.enabled) next.scenes = (next.scenes || []).map((item) => ({ ...item, executable: false, unavailableReason: scene.execute.userMessage.replace("此操作", "执行此情景") }));
   const automation = operations["automation.manager"];
@@ -215,7 +201,7 @@ function applyManagementAvailability(snapshot, operations) {
 }
 
 function assertProductSpec(spec) {
-  if (spec?.schemaVersion !== 3) throw new Error("ProductSpec schemaVersion must be 3");
+  if (spec?.schemaVersion !== 4) throw new Error("ProductSpec schemaVersion must be 4 after normalization");
   if (!Array.isArray(spec.modules) || spec.modules.length === 0) throw new Error("ProductSpec requires modules");
 }
 
@@ -227,4 +213,8 @@ function writeText(root, relativePath, value) {
   const file = path.join(root, relativePath);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, value, "utf8");
+}
+
+function digestText(value) {
+  return crypto.createHash("sha256").update(value).digest("hex");
 }

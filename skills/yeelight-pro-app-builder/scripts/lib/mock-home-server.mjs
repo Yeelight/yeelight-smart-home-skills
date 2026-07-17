@@ -67,6 +67,11 @@ export async function startMockHomeServer({ fixtureId = "comprehensive", host = 
         respond(200, { fixtureId: fixture.id, armed: true, noop });
         return;
       }
+      const persistentFailure = matchPersistentFailure(fixture.mockScenario, request.method || "GET", requestUrl.pathname);
+      if (persistentFailure) {
+        respond(200, { success: false, code: persistentFailure.businessCode, message: "mock persistent business error", data: null });
+        return;
+      }
       const failure = await failures.take({ method: request.method || "GET", path: requestUrl.pathname, authorized: request.headers.authorization === `${authorizationScheme} ${credential}` });
       if (failure) {
         respond(failure.status, { success: false, code: "mock_injected_failure", message: `injected failure for ${failure.method} ${failure.path}` });
@@ -150,4 +155,9 @@ function notFound(method, pathname) {
 
 function loadFixture(fixtureId) {
   return loadReferenceHomeFixture(fixtureId);
+}
+
+function matchPersistentFailure(scenario, method, requestPath) {
+  const apiPath = requestPath.startsWith("/apis/iot/") ? requestPath.slice("/apis/iot".length) : requestPath;
+  return scenario?.persistentFailures?.find((failure) => failure.method === method && failure.path === apiPath);
 }

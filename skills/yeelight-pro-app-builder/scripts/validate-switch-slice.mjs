@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "./lib/common.mjs";
 import { freePort, runCommand, startProcess, stopProcess, waitForUrl } from "./lib/lighting-e2e-runner.mjs";
 import { startMockHomeServer } from "./lib/mock-home-server.mjs";
-import { runSwitchBrowserE2E } from "./lib/switch-e2e-runner.mjs";
+import { resolveSixRelayMode, runSwitchBrowserE2E } from "./lib/switch-e2e-runner.mjs";
 
 const scriptFile = fileURLToPath(import.meta.url);
 const args = parseArgs();
@@ -36,7 +36,7 @@ try {
       "--runtime-bin", runtimeBin,
       "--out", appRoot,
     ]);
-    runStep("npm-install", "npm", ["install"], { cwd: appRoot });
+    runStep("npm-install", "npm", ["ci"], { cwd: appRoot });
   }
   runStep("npm-build", "npm", ["run", "build"], { cwd: appRoot });
 
@@ -56,14 +56,17 @@ try {
     YEELIGHT_CLOUD_REGION: "dev",
     YEELIGHT_HOME_BIN: runtimeBin,
   };
-  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
   web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
   await waitForUrl(`${bridgeOrigin}/health`);
   await waitForUrl(baseUrl);
 
   const playwrightFile = path.join(playwrightModuleDir, "playwright", "index.mjs");
   const { chromium } = await import(pathToFileURL(playwrightFile).href);
-  summary.browser = await runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, mockServer, evidenceDir });
+  const runtimeLock = JSON.parse(fs.readFileSync(path.join(appRoot, "runtime.lock.json"), "utf8"));
+  const expectedSixRelayMode = resolveSixRelayMode(runtimeLock);
+  summary.switchCapability = { deviceId: "992905", expectedSixRelayMode };
+  summary.browser = await runSwitchBrowserE2E({ chromium, baseUrl, bridgeOrigin, mockServer, evidenceDir, expectedSixRelayMode });
   summary.mock = { fixtureId: mockServer.fixtureId, homeId: mockServer.homeId, finalState: mockServer.fixture.devices, requestCount: mockServer.requestLog().length };
   summary.status = summary.browser.status;
 } catch (error) {

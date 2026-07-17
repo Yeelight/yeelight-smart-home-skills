@@ -12,9 +12,11 @@ import { startMockHomeServer } from "./lib/mock-home-server.mjs";
 const scriptFile = fileURLToPath(import.meta.url);
 const args = parseArgs();
 const skillRoot = path.resolve(path.dirname(scriptFile), "..");
+const yeelightRoot = path.resolve(skillRoot, "../..");
 const playwrightModuleDir = resolvePlaywrightModuleDir();
 const evidenceDir = path.resolve(String(args["evidence-dir"] || path.join(os.tmpdir(), `ypa-lighting-e2e-${Date.now()}`)));
 const appRoot = path.resolve(String(args.app || fs.mkdtempSync(path.join(os.tmpdir(), "ypa-lighting-app-"))));
+const runtimeBin = path.join(os.tmpdir(), `ypa-lighting-runtime-${process.pid}`);
 const summary = { schemaVersion: 1, startedAt: new Date().toISOString(), appRoot, evidenceDir, commands: [] };
 let mockServer;
 let bridge;
@@ -22,6 +24,7 @@ let web;
 
 fs.mkdirSync(evidenceDir, { recursive: true });
 try {
+  runStep("runtime-build", "go", ["build", "-o", runtimeBin, "../yeelight-home/cmd/yeelight-home"], { cwd: yeelightRoot });
   if (!args.app) {
     runStep("build-app", process.execPath, [
       path.join(skillRoot, "scripts/build-app.mjs"),
@@ -29,9 +32,10 @@ try {
       "--title", "我的客厅灯光",
       "--room", "客厅",
       "--mock-home", "comprehensive",
+      "--runtime-bin", runtimeBin,
       "--out", appRoot,
     ]);
-    runStep("npm-install", "npm", ["install"], { cwd: appRoot });
+    runStep("npm-install", "npm", ["ci"], { cwd: appRoot });
   }
   runStep("npm-build", "npm", ["run", "build"], { cwd: appRoot });
 
@@ -49,9 +53,10 @@ try {
     YEELIGHT_HOME_HOUSE_ID: mockServer.homeId,
     YEELIGHT_HOME_DIR: runtimeHome,
     YEELIGHT_CLOUD_REGION: "dev",
+    YEELIGHT_HOME_BIN: runtimeBin,
   };
 
-  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort) } });
+  bridge = startProcess("npm", ["--workspace", "@app/bridge", "run", "dev"], { cwd: appRoot, env: { ...runtimeEnv, YPA_BRIDGE_PORT: String(bridgePort), YPA_TRUSTED_WEB_ORIGINS: baseUrl } });
   web = startProcess("npm", ["--workspace", "@app/web", "run", "dev", "--", "--host", "127.0.0.1", "--port", String(webPort), "--strictPort"], { cwd: appRoot, env: { YPA_RELAY_ORIGIN: bridgeOrigin } });
   await waitForUrl(`${bridgeOrigin}/health`);
   await waitForUrl(baseUrl);
@@ -75,6 +80,7 @@ try {
   await stopProcess(web);
   await stopProcess(bridge);
   if (mockServer) await mockServer.close();
+  fs.rmSync(runtimeBin, { force: true });
 }
 
 console.log(JSON.stringify({ status: summary.status, appRoot, evidenceDir, checks: summary.browser?.checks?.length || 0 }, null, 2));

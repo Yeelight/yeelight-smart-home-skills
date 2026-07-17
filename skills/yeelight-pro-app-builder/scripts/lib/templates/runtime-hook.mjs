@@ -4,6 +4,7 @@ export function lightDevicesHookSource(spec) {
   const houseId = JSON.stringify(String(spec?.scope?.homeIds?.[0] || ""));
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type LightDevice = {
   id: string;
@@ -15,7 +16,7 @@ export type LightDevice = {
   controls: Array<{ id: string; intent: string; evidence: string }>;
 };
 
-const initialDevices = Object.values(runtimeLock.entities).filter((entity) => entity.family === "light") as LightDevice[];
+const initialDevices = Object.values(runtimeLock.entities as Record<string, LightDevice>).filter((entity) => entity.family === "light");
 
 export function useLightDevices() {
   const [devices, setDevices] = useState<LightDevice[]>(initialDevices);
@@ -26,7 +27,7 @@ export function useLightDevices() {
     setError("");
     try {
       const next = await Promise.all(initialDevices.map(async (device) => {
-        const response = await fetch("/api/operations/state.query", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } }) });
+        const response = await requestAction("state.query", { locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } });
         const body = await response.json();
         if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "设备状态同步失败。");
         const properties = body?.result?.properties;
@@ -50,6 +51,7 @@ export function curtainDevicesHookSource(spec) {
   const houseId = JSON.stringify(String(spec?.scope?.homeIds?.[0] || ""));
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type CurtainDevice = {
   id: string;
@@ -63,7 +65,7 @@ export type CurtainDevice = {
   controls: Array<{ id: string; intent: string; property?: string; evidence: string }>;
 };
 
-const initialDevices = Object.values(runtimeLock.entities).filter((entity) => entity.family === "curtain") as CurtainDevice[];
+const initialDevices = Object.values(runtimeLock.entities as Record<string, CurtainDevice>).filter((entity) => entity.family === "curtain");
 
 export function useCurtainDevices() {
   const [devices, setDevices] = useState<CurtainDevice[]>(initialDevices);
@@ -74,7 +76,7 @@ export function useCurtainDevices() {
     setError("");
     try {
       const next = await Promise.all(initialDevices.map(async (device) => {
-        const response = await fetch("/api/operations/state.query", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } }) });
+        const response = await requestAction("state.query", { locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } });
         const body = await response.json();
         if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "窗帘状态同步失败。");
         const properties = body?.result?.properties;
@@ -100,6 +102,7 @@ export function switchDevicesHookSource(spec) {
   const houseId = JSON.stringify(String(spec?.scope?.homeIds?.[0] || ""));
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type SwitchControl = { id: string; intent: string; property: string; channel: number; evidence: string };
 export type SwitchDevice = {
@@ -108,11 +111,13 @@ export type SwitchDevice = {
   displayName?: string;
   roomName: string;
   family: "switch-relay";
+  readOnly?: boolean;
+  capabilityStatus?: string;
   state: Record<string, unknown>;
   controls: SwitchControl[];
 };
 
-const initialDevices = Object.values(runtimeLock.entities).filter((entity) => entity.family === "switch-relay") as SwitchDevice[];
+const initialDevices = Object.values(runtimeLock.entities as unknown as Record<string, SwitchDevice>).filter((entity) => entity.family === "switch-relay");
 
 export function useSwitchDevices() {
   const [devices, setDevices] = useState<SwitchDevice[]>(initialDevices);
@@ -123,7 +128,7 @@ export function useSwitchDevices() {
     setError("");
     try {
       const next = await Promise.all(initialDevices.map(async (device) => {
-        const response = await fetch("/api/operations/state.query", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } }) });
+        const response = await requestAction("state.query", { locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } });
         const body = await response.json();
         if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "开关状态同步失败。");
         const properties = body?.result?.properties;
@@ -158,10 +163,11 @@ export function climateDevicesHookSource(spec) {
   const houseId = JSON.stringify(String(spec?.scope?.homeIds?.[0] || ""));
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type ClimateControl = { id: string; intent: string; property: string; evidence: string };
 export type ClimateDevice = { id: string; name: string; displayName?: string; roomName: string; family: "climate"; state: Record<string, unknown>; controls: ClimateControl[] };
-const initialDevices = Object.values(runtimeLock.entities).filter((entity) => entity.family === "climate") as ClimateDevice[];
+const initialDevices = Object.values(runtimeLock.entities as unknown as Record<string, ClimateDevice>).filter((entity) => entity.family === "climate");
 
 export function useClimateDevices() {
   const [devices, setDevices] = useState<ClimateDevice[]>(initialDevices);
@@ -171,7 +177,7 @@ export function useClimateDevices() {
     setLoading(true); setError("");
     try {
       const next = await Promise.all(initialDevices.map(async (device) => {
-        const response = await fetch("/api/operations/state.query", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } }) });
+        const response = await requestAction("state.query", { locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "状态", parameters: { houseId: ${houseId}, deviceId: device.id } });
         const body = await response.json();
         if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "温控状态同步失败。");
         const properties = body?.result?.properties;
@@ -191,6 +197,7 @@ export function sensorEnvironmentHookSource(spec) {
   const houseId = JSON.stringify(String(spec?.scope?.homeIds?.[0] || ""));
   return `import { useCallback, useEffect, useState } from "react";
 import runtimeLock from "../generated/runtime-lock.json";
+import { requestAction } from "./request";
 
 export type SensorEvent = { eventId?: string; sensorId?: string; deviceId?: string; name?: string; status?: string; valid?: boolean };
 export type SensorDevice = {
@@ -203,9 +210,17 @@ export type SensorDevice = {
   readingKeys: string[];
   controls: never[];
 };
+type RuntimeEntity = {
+  id: string | number;
+  name?: unknown;
+  displayName?: unknown;
+  roomName?: unknown;
+  family?: string;
+  state?: Record<string, unknown>;
+};
 
 const knownReadingKeys = ["currentTemperature", "humidity", "occupancyDetected", "motionDetected", "luminance", "environmentalBrightnessLevel", "batteryLevel"];
-const initialDevices: SensorDevice[] = Object.values(runtimeLock.entities)
+const initialDevices: SensorDevice[] = Object.values(runtimeLock.entities as Record<string, RuntimeEntity>)
   .filter((entity) => entity.family === "sensor")
   .map((entity) => {
     const state: Record<string, unknown> = { ...(entity.state || {}) };
@@ -235,7 +250,7 @@ export function useSensorEnvironment() {
     setEventError("");
     try {
       const next = await Promise.all(initialDevices.map(async (device) => {
-        const response = await fetch("/api/operations/state.query", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "当前读数", parameters: { houseId: ${houseId}, deviceId: device.id } }) });
+        const response = await requestAction("state.query", { locale: "zh-CN", utterance: "同步" + (device.displayName || device.name) + "当前读数", parameters: { houseId: ${houseId}, deviceId: device.id } });
         const body = await response.json();
         if (!response.ok || !["success", "partial"].includes(String(body.status || ""))) throw new Error(body.userMessage || "当前读数同步失败。");
         const properties = body?.result?.properties;
@@ -250,7 +265,7 @@ export function useSensorEnvironment() {
     }
     if (eventsEnabled) {
       try {
-        const response = await fetch("/api/operations/sensor.event.list", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ locale: "zh-CN", utterance: "同步传感器事件定义", parameters: { houseId: ${houseId} } }) });
+        const response = await requestAction("sensor.event.list", { locale: "zh-CN", utterance: "同步传感器事件定义", parameters: { houseId: ${houseId} } });
         const body = await response.json();
         if (!response.ok || body.status !== "success") throw new Error(body.userMessage || "事件定义同步失败。");
         const candidates = [body?.result?.data?.events, body?.result?.events, body?.result?.data];
