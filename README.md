@@ -25,6 +25,20 @@ Official Yeelight agent Skills for controlling a smart home and generating tailo
 
 Both Skills use the separately installed [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime. They do not embed account credentials or bypass Runtime policy and confirmation checks.
 
+## How The Pieces Fit
+
+- **Yeelight Home is the foundation.** It handles QR sign-in, the selected home,
+  Cloud/LAN execution, safety checks, and verification.
+- **Yeelight Smart Home is the recommended Skill.** It teaches the AI Yeelight
+  rules and lighting best practices, then uses the foundation to do the work.
+- **Metadata MCP and IoT MCP are alternatives for MCP-only clients.** They are
+  not dependencies of either Skill. Start with Metadata and add IoT only for a
+  focused live-control compatibility need.
+
+Choose `yeelight-smart-home` when you want to talk naturally about your home.
+Choose the App Builder only when your goal is to generate a dedicated local
+control application.
+
 ## Install With One Sentence
 
 Give your local AI agent exactly one of these prompts. Each prompt names one Skill so the agent cannot silently install the wrong capability.
@@ -32,7 +46,7 @@ Give your local AI agent exactly one of these prompts. Each prompt names one Ski
 **Yeelight Smart Home:**
 
 ```text
-Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-smart-home` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, restart or refresh my agent host and verify that it discovers `yeelight-smart-home`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
+Install `yeelight-home` from an official Yeelight GitHub Release, official mirror, or supported package manager, then run `yeelight-home setup --lang en-US --mode skill --agent auto`. Guide me to Yeelight Pro app Home -> top-right `+` -> MCP Authorization and wait for my scan. Use only official Yeelight sources and never request or print a token, password, cookie, Client ID, or QR result. Restart the Agent host, confirm that it discovers `yeelight-smart-home`, then run `yeelight-home doctor --json` and read-only home discovery.
 ```
 
 **Yeelight PRO App Builder:**
@@ -93,19 +107,9 @@ Use yeelight-pro-app-builder to generate a compact mobile app for living-room li
 
 See [Usage](docs/usage.md) for common workflows, safety behavior, troubleshooting, and Builder output validation.
 
-## Yeelight AI Capability Matrix
+## Recommended Path
 
-| Project | Role and capabilities | Best for | GitHub |
-| --- | --- | --- | --- |
-| Yeelight Home | Recommended local semantic Runtime with one structured `invoke --stdin` boundary for queries, control, scenes, automations, lighting design, diagnostics, product knowledge, and generated apps. | Agent hosts, local automation, and applications that need a stable and policy-aware smart-home execution layer. | [Yeelight/yeelight-home](https://github.com/Yeelight/yeelight-home) |
-| Yeelight Smart Home Skills | Official Agent Skills: Smart Home turns natural language into safe Runtime operations; PRO App Builder generates focused local apps from proven Runtime capabilities. | Agent hosts that need conversational smart-home workflows or app generation. | [Yeelight/yeelight-smart-home-skills](https://github.com/Yeelight/yeelight-smart-home-skills) |
-| Yeelight AI CLI | Unified terminal workspace and MCP client for Cloud, Metadata, and LAN services, with local profiles, safe shortcuts, diagnostics, scripting, and AI client configuration. | People, scripts, and CI that want one general MCP and automation entry point. | [Yeelight/yeelight-cli](https://github.com/Yeelight/yeelight-cli) |
-| Yeelight Metadata MCP | Recommended cloud MCP entry for new integrations, with guarded workflows for homes, rooms, devices, groups, panels, scenes, automations, favorites, maintenance, accounts, multi-region authorization, and request-scoped home selection. | New MCP integrations and AI clients that need broad discovery, inspection, and management workflows. | [Yeelight/yeelight-metadata-mcp](https://github.com/Yeelight/yeelight-metadata-mcp) |
-| Yeelight IoT MCP | Focused companion MCP for direct topology and live-state access, device control, and scene execution not yet fully covered by Metadata MCP. | Existing integrations or clients that specifically need `control_node`, `execute_scene`, or focused live control. | [Yeelight/yeelight-iot-mcp](https://github.com/Yeelight/yeelight-iot-mcp) |
-
-Yeelight Home also provides system credential storage, local QR login, secret-redacted diagnostics, preview and validation, caller confirmation and Runtime policy/readback behavior, local memory and recommendation support, operation lessons, and machine-readable intent schema/explanations. Cross-platform binaries are distributed through GitHub Releases, npm, and supported package managers.
-
-Typical paths: smart-home agents and generated apps -> Skills -> Yeelight Home; terminal users and scripts -> Yeelight AI CLI; new MCP integrations -> Metadata MCP; add IoT MCP only for focused direct control or scene execution that Metadata MCP does not yet cover.
+`yeelight-home` is the only CLI, sign-in entry, and execution Runtime. `yeelight-smart-home` is the recommended full-intelligence path for ordinary users; use `yeelight-home setup --mode mcp` when a client cannot install Skills; human terminal workflows and scripts use the same `yeelight-home` directly.
 
 ## License
 

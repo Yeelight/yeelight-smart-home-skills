@@ -73,7 +73,7 @@ Never call external tool servers or alternate projects for Yeelight data or acti
 5. Follow Runtime status:
    - `success` or `partial`: explain actual result.
    - `clarification_required`: ask exactly the returned smallest question.
-	- `auth_required`: tell the user to run `yeelight-home auth login --qr`; if they cannot scan, tell them to import an already authorized token in their own terminal with `yeelight-home auth token set --stdin --region <region>`; do not ask for secrets.
+	- `auth_required`: tell the user to run `yeelight-home auth login --qr`; use `--biz-type 1` only when the user says this is a commercial-lighting project. If they cannot scan, tell them to import an already authorized token in their own terminal with `yeelight-home auth token set --stdin --region <region>`; do not ask for secrets.
    - `error` with `runtime_missing`: explain that the local `yeelight-home` CLI is missing; tell the user to install it from the public Yeelight Home Runtime release or a supported package manager, or set `YEELIGHT_HOME_BIN`.
    - `blocked`, `not_supported`, or other `error`: explain the returned safe alternative.
 6. Use `--dry-run` or `options.dryRun=true` only when you intentionally want a no-write preview before asking the user. After the user agrees, resend the same Runtime request without dry-run.
@@ -98,9 +98,11 @@ Do not show full JSON unless the user explicitly asks for technical details.
 - Token import when QR is unavailable: `printf '%s' "$YEELIGHT_TOKEN" | yeelight-home auth token set --stdin --region <region>`
 - Login status: `yeelight-home auth status --json`
 - Optional default home: `yeelight-home home list --json`, then `yeelight-home home select --house-id <id>` only for house-scoped operations.
+- Commercial-lighting project discovery: `yeelight-home home list --biz-type 1 --json`. Ordinary Yeelight Pro homes remain the default (`bizType=0`). Never infer or reuse a House ID across these two types.
 - Runtime health check: `yeelight-home doctor --json --online`
 - Runtime install: GitHub Releases from `yeelight/yeelight-home`, Homebrew, Scoop, Debian package, npm, or another package manager only after the package is actually published there.
 - Runtime override: set `YEELIGHT_HOME_BIN` to an absolute `yeelight-home` executable path.
 
 The model must not request or print tokens. The local Runtime stores tokens in the system credential store or its protected local credential fallback, and stores only profile metadata in ordinary config.
 `houseId` is optional at initial setup. Token-only profiles can use account-level capabilities; home, room, device, scene, automation, gateway, favorite, lighting, and other house-scoped actions need Runtime-provided clarification or a selected default home.
+When the user explicitly identifies a commercial-lighting project, use Runtime `bizType=1` setup and discovery. Otherwise keep the ordinary-home default; do not make the user choose technical terminology unless the account actually uses both types.
