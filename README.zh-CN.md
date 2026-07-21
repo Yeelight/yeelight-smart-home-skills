@@ -27,7 +27,7 @@ CI 和发布的规范源。国内无法稳定访问 GitHub 时，可使用只读
 
 - **Yeelight Home 是底座。**它负责扫码、当前家庭、Cloud/LAN 执行、安全检查和结果验证。
 - **Yeelight Smart Home 是大多数人的推荐 Skill。**它先让 AI 学会易来规则和照明最佳实践，再通过底座完成操作。
-- **Metadata MCP 和 IoT MCP 是 MCP-only 客户端的替代路线。**它们不是两个 Skill 的依赖；先用 Metadata，只有特定实时控制兼容需求才增加 IoT。
+- **Yeelight MCP 是 MCP-only 客户端的标准云端路线。**一次 setup 会同时配置内部 Metadata 与 IoT 两个服务；它们都不是两个 Skill 的依赖。
 
 想用日常语言操作和管理家庭，选择 `yeelight-smart-home`；只有目标是生成一个
 专用本地控制应用时，才选择 App Builder。

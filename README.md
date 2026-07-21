@@ -31,9 +31,9 @@ Both Skills use the separately installed [`yeelight-home`](https://github.com/Ye
   Cloud/LAN execution, safety checks, and verification.
 - **Yeelight Smart Home is the recommended Skill.** It teaches the AI Yeelight
   rules and lighting best practices, then uses the foundation to do the work.
-- **Metadata MCP and IoT MCP are alternatives for MCP-only clients.** They are
-  not dependencies of either Skill. Start with Metadata and add IoT only for a
-  focused live-control compatibility need.
+- **Yeelight MCP is the standard cloud route for MCP-only clients.** One setup
+  configures its Metadata and IoT services together. Neither cloud service is a
+  dependency of either Skill.
 
 Choose `yeelight-smart-home` when you want to talk naturally about your home.
 Choose the App Builder only when your goal is to generate a dedicated local
