@@ -16,6 +16,10 @@ but report issues and contribute changes on GitHub.
 
 Official Yeelight agent Skills for controlling a smart home and generating tailored smart-home applications. This repository contains the installable Skill source. Versioned archives belong in [GitHub Releases](https://github.com/Yeelight/yeelight-smart-home-skills/releases), not in the Git tree.
 
+## Official Smart Home Skill Tutorial
+
+For the recommended full-intelligence path, follow the [official English tutorial](https://ai-tutorials.yeelight.com/en/guides/smart-home-skill/) from the Yeelight Home prerequisite through Skill installation, AI-client refresh, and real home verification. A [Simplified Chinese tutorial](https://ai-tutorials.yeelight.com/zh/guides/smart-home-skill/) is also available.
+
 ## Skills
 
 | Skill | What it provides | Use it when | Runtime |

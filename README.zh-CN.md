@@ -14,6 +14,10 @@ CI 和发布的规范源。国内无法稳定访问 GitHub 时，可使用只读
 
 易来官方智能家居 Agent Skills，用于直接操作智能家居，以及按用户需求生成专属智能家居应用。本仓库只保存可安装的 Skill 源码；带版本的压缩包应位于 [GitHub Releases](https://github.com/Yeelight/yeelight-smart-home-skills/releases)，不重复放入 Git 当前树。
 
+## Smart Home Skill 官方教程
+
+需要推荐的完整智能路线，请跟随[中文官方教程](https://ai-tutorials.yeelight.com/zh/guides/smart-home-skill/)，从检查 Yeelight Home 前置条件开始，完成 Skill 安装、刷新 AI 客户端和真实家庭验证。也可以查看 [English tutorial](https://ai-tutorials.yeelight.com/en/guides/smart-home-skill/)。
+
 ## Skills
 
 | Skill | 能力 | 适用场景 | Runtime |
