@@ -25,6 +25,7 @@ jobs:
             docs/installation.md docs/installation.zh-CN.md \
             docs/usage.md docs/usage.zh-CN.md \
             skills/yeelight-smart-home/SKILL.md \
+            skills/yeelight-wellness-lighting/SKILL.md \
             skills/yeelight-pro-app-builder/SKILL.md; do
             test -f "$file"
           done
@@ -34,6 +35,7 @@ jobs:
           done
 
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-smart-home/LICENSE").read_bytes()'
+          python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-wellness-lighting/LICENSE").read_bytes()'
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-pro-app-builder/LICENSE").read_bytes()'
 
           if rg -n 'Proprietar[y]|gitlab[.]yeelight[.]com|/Users/[^/]+/' README.md README.zh-CN.md docs skills; then
@@ -48,3 +50,89 @@ jobs:
           while IFS= read -r -d '' file; do
             node --check "$file"
           done < <(find skills -type f -name '*.mjs' -print0)
+
+      - name: Validate Wellness POSIX gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          wrapper="skills/yeelight-wellness-lighting/scripts/invoke.sh"
+          missing_runtime="$RUNNER_TEMP/missing-yeelight-home"
+
+          assert_gate() {
+            local expected_exit="$1"
+            local expected_code="$2"
+            local payload="$3"
+            local output status actual_code
+            set +e
+            output=$(printf '%s' "$payload" | YEELIGHT_HOME_BIN="$missing_runtime" "$wrapper")
+            status=$?
+            set -e
+            test "$status" -eq "$expected_exit"
+            actual_code=$(printf '%s' "$output" | python3 -c 'import json, sys; print(json.load(sys.stdin)["error"]["code"])')
+            test "$actual_code" = "$expected_code"
+          }
+
+          assert_gate 0 preview_no_write '{"intent":"lighting.design.apply","preview":true,"executionRequested":false}'
+          assert_gate 0 preview_no_write '{"intent":"light.power.set","preview":false,"executionRequested":false}'
+          assert_gate 65 invalid_request '{"intent":"lighting.design.apply","executionRequested":true'
+          assert_gate 127 runtime_missing '{"intent":"state.query"}'
+
+  validate-wellness-windows-wrapper:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Wellness PowerShell gates
+        shell: pwsh
+        run: |
+          $wrapper = Join-Path $PWD "skills/yeelight-wellness-lighting/scripts/invoke.ps1"
+
+          function Invoke-Wrapper([string] $payload, [string] $runtimePath = "") {
+            $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+            $startInfo.FileName = (Get-Command pwsh).Source
+            $startInfo.ArgumentList.Add("-NoProfile")
+            $startInfo.ArgumentList.Add("-File")
+            $startInfo.ArgumentList.Add($wrapper)
+            $startInfo.UseShellExecute = $false
+            $startInfo.RedirectStandardInput = $true
+            $startInfo.RedirectStandardOutput = $true
+            $startInfo.RedirectStandardError = $true
+            if ($runtimePath) { $startInfo.Environment["YEELIGHT_HOME_BIN"] = $runtimePath }
+
+            $process = [System.Diagnostics.Process]::new()
+            $process.StartInfo = $startInfo
+            [void] $process.Start()
+            $process.StandardInput.Write($payload)
+            $process.StandardInput.Close()
+            $stdout = $process.StandardOutput.ReadToEnd()
+            $stderr = $process.StandardError.ReadToEnd()
+            $process.WaitForExit()
+            return [PSCustomObject]@{ ExitCode = $process.ExitCode; Stdout = $stdout; Stderr = $stderr }
+          }
+
+          function Assert-WrapperResult($result, [int] $exitCode, [string] $errorCode, [string] $label) {
+            if ($result.ExitCode -ne $exitCode) { throw "$label exit $($result.ExitCode): $($result.Stderr)" }
+            if ($result.Stderr) { throw "$label wrote stderr: $($result.Stderr)" }
+            $resultJson = $result.Stdout | ConvertFrom-Json
+            if ($resultJson.error.code -ne $errorCode) { throw "$label returned $($resultJson.error.code)" }
+          }
+
+          $preview = Invoke-Wrapper '{"intent":"lighting.design.apply","preview":true,"executionRequested":false}'
+          Assert-WrapperResult $preview 0 "preview_no_write" "preview gate"
+
+          $implicit = Invoke-Wrapper '{"intent":"light.power.set","preview":false,"executionRequested":false}'
+          Assert-WrapperResult $implicit 0 "preview_no_write" "implicit write gate"
+
+          $invalid = Invoke-Wrapper '{"intent":"lighting.design.apply","executionRequested":true'
+          Assert-WrapperResult $invalid 65 "invalid_request" "invalid request gate"
+
+          $missing = Invoke-Wrapper '{"intent":"state.query"}' (Join-Path $env:RUNNER_TEMP "missing-yeelight-home.exe")
+          Assert-WrapperResult $missing 127 "runtime_missing" "runtime missing read"
+
+          $allowedWrite = Invoke-Wrapper '{"intent":"light.power.set","preview":false,"executionRequested":true}' (Join-Path $env:RUNNER_TEMP "missing-yeelight-home.exe")
+          Assert-WrapperResult $allowedWrite 127 "runtime_missing" "runtime missing allowed write"
+
+          $oversized = Invoke-Wrapper ('{"intent":"state.query","padding":"' + ('x' * 1048576) + '"}')
+          Assert-WrapperResult $oversized 65 "invalid_request" "oversized request gate"
+
+          $oversizedUtf8 = Invoke-Wrapper ('{"intent":"state.query","padding":"' + ('灯' * 350000) + '"}')
+          Assert-WrapperResult $oversizedUtf8 65 "invalid_request" "oversized UTF-8 request gate"

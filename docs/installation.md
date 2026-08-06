@@ -12,6 +12,12 @@ Use one prompt per Skill. The AI must use official sources, verify the Runtime a
 Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-smart-home` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, restart or refresh my agent host and verify that it discovers `yeelight-smart-home`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
 ```
 
+### `yeelight-wellness-lighting`
+
+```text
+Install `yeelight-home >= 0.1.20` and Node.js 22 or later from official Yeelight or supported package-manager sources, then install only the `yeelight-wellness-lighting` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills. Run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`; guide me through the local `yeelight-home auth login --qr` flow if sign-in is required. Restart or refresh the Agent host and confirm that it discovers the exact Skill id. On first use, require me to confirm a city before automatically resolving local time, weather, sunrise, and sunset. Create, pause, or remove a recurring task only when the host exposes a scheduler; otherwise return a validated portable template and clearly say it is not scheduled. After every result, generate a private local HTML report and tell me its path without uploading it. Never request or print a token, password, cookie, Client ID, or QR result.
+```
+
 ### `yeelight-pro-app-builder`
 
 ```text
@@ -20,7 +26,9 @@ Install the official Yeelight Home Runtime for my operating system from Yeelight
 
 ## 1. Install Yeelight Home
 
-Both Skills require the local `yeelight-home` Runtime.
+All three Skills require the local `yeelight-home` Runtime.
+`yeelight-wellness-lighting` and `yeelight-pro-app-builder` also require
+Node.js 22 or later.
 
 ### Homebrew
 
@@ -53,6 +61,7 @@ yeelight-home auth login --qr
 
 ```sh
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
+npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-wellness-lighting
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
 ```
 
@@ -61,7 +70,7 @@ mirror `https://gitee.com/yeelight/yeelight-smart-home-skills` or GitCode mirror
 `https://gitcode.com/Yeelight/yeelight-smart-home-skills`; keep the same
 `--skill` value.
 
-Install only the Skill you need, or run both commands.
+Install only the Skill you need, or run all three commands.
 
 ### OpenClaw / ClawHub
 
@@ -71,7 +80,7 @@ Install the direct-control Skill from Yeelight's official listing:
 clawhub install @yeelight/yeelight-smart-home
 ```
 
-The GitHub repository is the canonical Apache-2.0 source. ClawHub currently displays MIT-0 as platform version metadata; this platform limitation does not change the source license. `yeelight-pro-app-builder` is not listed on ClawHub and must be installed from GitHub with skills.sh or manually.
+The GitHub repository is the canonical Apache-2.0 source. ClawHub currently displays MIT-0 as platform version metadata; this platform limitation does not change the source license. `yeelight-wellness-lighting` and `yeelight-pro-app-builder` are not listed on ClawHub and must be installed from GitHub with skills.sh or manually.
 
 ### Manual installation
 
@@ -87,15 +96,15 @@ Consult your host documentation for its Skill directory. Common hosts can also d
 
 Restart the agent host after installation, then ask it to identify the installed Skill before requesting a device operation.
 
-Ask the host to report the exact discovered Skill id. For example: "List installed Skills and confirm whether `yeelight-smart-home` is available" or "List installed Skills and confirm whether `yeelight-pro-app-builder` is available." Do not accept a generic success message without host discovery evidence.
+Ask the host to report the exact discovered Skill id. For example: "Confirm whether `yeelight-smart-home` is available," "confirm whether `yeelight-wellness-lighting` is available," or "confirm whether `yeelight-pro-app-builder` is available." Do not accept a generic success message without host discovery evidence.
 
-For direct control, verify the Runtime separately:
+For direct control and Wellness lighting, verify the Runtime separately:
 
 ```sh
 yeelight-home doctor --json --online
 ```
 
-For Builder use, confirm Node.js 22 or later:
+For Wellness or Builder use, confirm Node.js 22 or later:
 
 ```sh
 node --version
@@ -112,10 +121,12 @@ After an upgrade, rerun `yeelight-home version --json`, `yeelight-home doctor --
 - Runtime not found: confirm that `yeelight-home version --json` works in the same environment that starts the agent host.
 - Authentication required: run `yeelight-home auth login --qr` locally, then check `yeelight-home auth status --json`; never relay the QR result through chat.
 - Skill not discovered: repeat the install for the exact Skill id, restart or refresh the host, and inspect the host's configured Skill directory.
+- Recurring task unavailable: create a task only when the host actually exposes a scheduler; otherwise the Wellness Skill must return a portable template and clearly say it is not scheduled.
 - Unsupported host or marketplace: use the skills.sh or manual repository path when the host supports standard Agent Skills; otherwise stop and report the unsupported integration.
 
 ## Security
 
 - Never paste a token, password, cookie, or QR login result into chat.
 - The Skills call the local Runtime; browser applications generated by Builder use a loopback Bridge.
+- Wellness reports are private local HTML snapshots and are never uploaded automatically. They default to a temporary directory; retention follows the host or operating-system cleanup policy, and users may delete report files they no longer need.
 - Persistent or sensitive changes remain subject to Runtime validation and confirmation.

@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yeelight-wellness-recipe-catalog-v1",
+  "title": "Yeelight Wellness Recipe Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "skill", "recipes"],
+  "properties": {
+    "schemaVersion": {"const": "yeelight-wellness-recipe-catalog-v1"},
+    "skill": {"const": "yeelight-wellness-lighting"},
+    "recipes": {
+      "type": "array",
+      "minItems": 23,
+      "maxItems": 23,
+      "items": {"$ref": "#/$defs/recipe"}
+    }
+  },
+  "$defs": {
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "priority", "triggerModes", "requiredContext", "optionalContext", "selection", "userInputs", "targetGuidance", "lightingStrategy", "allowedActions", "invariants", "fallback", "explanation"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "title": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["en", "zh-CN"],
+          "properties": {
+            "en": {"type": "string", "minLength": 1, "maxLength": 100},
+            "zh-CN": {"type": "string", "minLength": 1, "maxLength": 80}
+          }
+        },
+        "priority": {"enum": ["P0", "P1", "P2"]},
+        "triggerModes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["scheduled", "manual", "conversation"]}},
+        "requiredContext": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_.-]{0,63}$"}},
+        "optionalContext": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z][A-Za-z0-9_.-]{0,63}$"}},
+        "selection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["principle", "automaticPolicy", "manualPolicy"],
+          "properties": {
+            "principle": {"type": "string", "minLength": 1, "maxLength": 240},
+            "automaticPolicy": {"enum": ["eligible-when-fresh", "always-eligible", "explicit-only", "baseline-required"]},
+            "manualPolicy": {"enum": ["preview-with-unknowns", "eligible-when-fresh", "explicit-only"]}
+          }
+        },
+        "userInputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "optional"],
+          "properties": {
+            "required": {"type": "array", "maxItems": 12, "items": {"type": "string", "maxLength": 80}},
+            "optional": {"type": "array", "maxItems": 12, "items": {"type": "string", "maxLength": 80}}
+          }
+        },
+        "targetGuidance": {"type": "string", "minLength": 1, "maxLength": 320},
+        "lightingStrategy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hierarchy", "spatialDistribution", "contrast", "saturation", "transition", "powerPolicy"],
+          "properties": {
+            "hierarchy": {"type": "string", "minLength": 1, "maxLength": 320},
+            "spatialDistribution": {"enum": ["peripheral", "balanced", "open", "focused", "distributed", "layered", "preserve-current"]},
+            "contrast": {"enum": ["low", "moderate", "clear", "high", "preserve-current"]},
+            "saturation": {"enum": ["none", "low", "restrained", "user-selected", "preserve-current"]},
+            "transition": {"enum": ["slow", "gentle", "steady", "responsive", "user-selected", "preserve-current"]},
+            "powerPolicy": {"enum": ["target-on-off-allowed", "preserve-power", "target-on-only", "target-off-only"]}
+          }
+        },
+        "allowedActions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["power", "brightness", "colorTemperature", "color", "supportedEffect"]}},
+        "invariants": {"type": "array", "minItems": 2, "maxItems": 8, "items": {"type": "string", "minLength": 1, "maxLength": 240}},
+        "fallback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["staleRequiredContext", "unsupportedTarget", "noBaseline"],
+          "properties": {
+            "staleRequiredContext": {"enum": ["skip-automatic", "neutral-clear", "manual-preview-only", "ask"]},
+            "unsupportedTarget": {"enum": ["recompose", "preserve", "partial"]},
+            "noBaseline": {"enum": ["ask", "skip", "manual-preview"]}
+          }
+        },
+        "explanation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["headline", "reason", "claimBoundary"],
+          "properties": {
+            "headline": {"type": "string", "minLength": 1, "maxLength": 160},
+            "reason": {"type": "string", "minLength": 1, "maxLength": 280},
+            "claimBoundary": {"type": "string", "minLength": 1, "maxLength": 240}
+          }
+        },
+        "p0Contract": {"$ref": "#/$defs/p0Contract"}
+      }
+    },
+    "p0Contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baseline", "strategy", "fallback", "rollback"],
+      "properties": {
+        "baseline": {"type": "string", "minLength": 1, "maxLength": 360},
+        "strategy": {"type": "string", "minLength": 1, "maxLength": 480},
+        "fallback": {"type": "string", "minLength": 1, "maxLength": 360},
+        "rollback": {"type": "string", "minLength": 1, "maxLength": 360}
+      }
+    }
+  }
+}
