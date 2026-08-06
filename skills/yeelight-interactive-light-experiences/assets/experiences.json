@@ -1,0 +1,99 @@
+[
+  {
+    "id": "fortune-light",
+    "title": "Fortune Light",
+    "summary": "A Five Elements-inspired light reading shaped by your date and place.",
+    "aiRole": "interpretation",
+    "duration": "02:30",
+    "recommended": true,
+    "accent": "amber"
+  },
+  {
+    "id": "light-dna",
+    "title": "Light DNA",
+    "summary": "Choose what pulls you in. The installation builds a living light signature.",
+    "aiRole": "composition",
+    "duration": "02:00",
+    "accent": "mint"
+  },
+  {
+    "id": "shared-breath",
+    "title": "Shared Breath",
+    "summary": "Two private rhythms become one visible cadence, one turn at a time.",
+    "aiRole": "negotiation",
+    "duration": "02:30",
+    "accent": "sky"
+  },
+  {
+    "id": "sensory-translator",
+    "title": "Sensory Translator",
+    "summary": "Translate a vivid scene into a calmer, more comfortable version.",
+    "aiRole": "semantic translation",
+    "duration": "01:45",
+    "accent": "violet"
+  },
+  {
+    "id": "close-the-day",
+    "title": "Close the Day",
+    "summary": "Sort what you release and what you keep in a four-act light ritual.",
+    "aiRole": "ritual composition",
+    "duration": "02:00",
+    "accent": "rose"
+  },
+  {
+    "id": "light-game-arena",
+    "title": "Light Game Arena",
+    "summary": "Recall, decode, and score the lights themselves. No phone required.",
+    "aiRole": "adaptive game host",
+    "duration": "03:00",
+    "accent": "lime"
+  },
+  {
+    "id": "luma",
+    "title": "Luma / Light Spirit",
+    "summary": "Wake a light character whose temperament follows your choices.",
+    "aiRole": "character composition",
+    "duration": "02:00",
+    "accent": "coral"
+  },
+  {
+    "id": "memory-capsule",
+    "title": "Memory Capsule",
+    "summary": "Turn a small, non-identifying memory into a postcard that lives once.",
+    "aiRole": "abstraction",
+    "duration": "02:15",
+    "accent": "gold"
+  },
+  {
+    "id": "intention-garden",
+    "title": "Intention Garden",
+    "summary": "A bounded collective garden grows from one word at a time.",
+    "aiRole": "collective adaptation",
+    "duration": "01:30",
+    "accent": "leaf"
+  },
+  {
+    "id": "common-ground",
+    "title": "Common Ground",
+    "summary": "Two private preferences find the overlap they can actually share.",
+    "aiRole": "negotiation",
+    "duration": "02:30",
+    "accent": "blue"
+  },
+  {
+    "id": "no-shared-prompt",
+    "title": "No Shared Prompt",
+    "summary": "One agent composes left. Another inspects state and completes right.",
+    "aiRole": "MCP state inspection",
+    "duration": "02:00",
+    "accent": "cyan"
+  },
+  {
+    "id": "impossible-light",
+    "title": "Impossible Light",
+    "summary": "Give the Skill a contradiction. Watch it negotiate a coherent answer.",
+    "aiRole": "constraint resolution",
+    "duration": "02:00",
+    "accent": "orange"
+  }
+]

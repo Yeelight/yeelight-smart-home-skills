@@ -26,6 +26,20 @@ Use yeelight-smart-home to propose a whole-home evening lighting design. Preview
 
 The Skill converts the request into one structured Runtime invocation. When the Runtime returns `clarification_required`, answer the smallest question it provides. Destructive, permission-sensitive, unlinking, transfer, overwrite, or clear-all operations require explicit agreement.
 
+## Yeelight Interactive Light Experiences
+
+Use the exhibition Skill when a visitor should interact with a physical Yeelight installation through a polished local collection page. The AI Host starts or reuses the loopback service automatically; visitors do not run a server command or paste a localhost URL.
+
+```text
+Use yeelight-interactive-light-experiences to start the IFA collection and open Fortune Light first.
+```
+
+The collection contains twelve dedicated routes, with Fortune Light as the recommended entry. Visitor input becomes a bounded AI plan, and only the local executor can call `yeelight-home invoke --stdin`. The service stays on `127.0.0.1`, has one active visitor session, and does not expose a LAN or phone-participant endpoint.
+
+For hardware, `live-auto` revalidates the protected EU binding and resolves to the explicitly bound four-light quadrant proxy or sixteen-light topology. Replacing the four-light binding with the selected sixteen-bulb binding is a one-time operator action; the Host launch command and visitor routes remain unchanged. A missing or invalid live binding fails closed. Mock results are labelled as deterministic sixteen-light parity and must not be presented as live IFA hardware validation.
+
+The visitor fast path reports that the Runtime accepted a successful control and avoids duplicate state reads for responsiveness. A failed, timed-out, or cancelled dispatch performs one reconciliation read. The result label therefore distinguishes command acknowledgement from read-back-verified evidence.
+
 ## Yeelight PRO App Builder
 
 Use Builder when you need a focused application rather than an agent conversation. State the rooms, device types, target screen, desired functions, and visual direction.
@@ -63,4 +77,5 @@ The Runtime owns credentials, policy enforcement, device access, and structured 
 - `auth_required`: run `yeelight-home auth login --qr` in your own terminal.
 - `clarification_required`: answer the returned question; do not guess internal IDs.
 - `blocked` or `not_supported`: follow the Runtime-provided safe alternative.
+- Interactive collection unavailable: confirm that the Agent host can execute local Skill commands, then retry the Skill's automatic `start` action. Do not start a second server manually while a healthy matching service is running.
 - Builder validation failure: keep the generated app and validation output, fix the reported contract, then rerun `validate-app.mjs` before starting the dev server.

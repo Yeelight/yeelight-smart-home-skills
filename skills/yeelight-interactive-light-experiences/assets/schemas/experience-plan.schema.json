@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yeelight-interactive-light-experiences/experience-plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "experienceId", "aiRole", "source", "summary", "phases", "explanation"],
+  "properties": {
+    "version": { "const": 1 },
+    "experienceId": { "type": "string", "pattern": "^[a-z0-9-]{3,48}$" },
+    "aiRole": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "source": { "enum": ["ai", "fallback", "deterministic"] },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 180 },
+    "explanation": { "type": "string", "minLength": 1, "maxLength": 360 },
+    "phases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["phaseId", "label", "durationMs", "targets"],
+        "properties": {
+          "phaseId": { "type": "string", "pattern": "^p[1-8]$" },
+          "label": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "durationMs": { "type": "integer", "minimum": 700, "maximum": 2000 },
+          "targets": {
+            "type": "array",
+            "minItems": 16,
+            "maxItems": 16,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["slot", "hue", "saturation", "brightness", "holdMs"],
+              "properties": {
+                "slot": { "type": "string", "pattern": "^(L[1-8]|R[1-8])$" },
+                "hue": { "type": "integer", "minimum": 0, "maximum": 359 },
+                "saturation": { "type": "integer", "minimum": 0, "maximum": 100 },
+                "brightness": { "type": "integer", "minimum": 1, "maximum": 85 },
+                "holdMs": { "type": "integer", "minimum": 400, "maximum": 12000 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

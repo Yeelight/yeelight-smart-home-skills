@@ -26,6 +26,20 @@
 
 Skill 会把请求转换成一次结构化 Runtime 调用。Runtime 返回 `clarification_required` 时，只回答它提出的最小问题。删除、权限、解绑、转移、覆盖或清空类操作需要明确同意。
 
+## Yeelight Interactive Light Experiences
+
+需要让访客在实体 Yeelight 灯光装置前直接体验时，使用展会 Skill。AI Host 会自动启动或复用本机回环服务，访客不需要运行服务命令，也不需要手动粘贴 localhost 地址。
+
+```text
+使用 yeelight-interactive-light-experiences 启动 IFA 交互合集，并先打开 Fortune Light。
+```
+
+合集包含十二个独立页面，Fortune Light 是推荐入口。访客选择会先变成受约束的 AI 灯光方案，只有本地执行器可以调用 `yeelight-home invoke --stdin`。服务只监听 `127.0.0.1`，同一时间只保留一个访客会话，不开放局域网或手机参与入口。
+
+真实硬件使用 `live-auto` 重新校验受保护的 EU 绑定，然后解析为明确绑定的四灯象限代理或十六灯拓扑。从四灯开发绑定切换到现场十六灯绑定只需操作员替换一次绑定，Host 启动命令和访客页面不变。真实绑定缺失或校验失败会直接停止，不会静默降级。Mock 结果会标记为“十六灯确定性模拟 parity”，不能描述成 IFA 真实硬件验证。
+
+访客快速路径在 Runtime 接受成功控制后直接反馈，避免重复读状态以保持响应速度；写入失败、超时或取消后会执行一次独立协调读取。因此结果标签会明确区分“命令已确认”和“读回已验证”。
+
 ## Yeelight PRO App Builder
 
 需要专用应用而不是 Agent 对话时使用 Builder。请求中说明房间、设备类型、目标屏幕、所需功能和视觉方向。
@@ -63,4 +77,5 @@ Runtime 负责凭据、策略执行、设备访问和结构化写入确认。Ski
 - `auth_required`：在自己的终端执行 `yeelight-home auth login --qr`。
 - `clarification_required`：回答 Runtime 返回的问题，不要猜测内部 ID。
 - `blocked` 或 `not_supported`：按 Runtime 返回的安全替代方案处理。
+- 交互合集无法启动：确认 Agent host 可以执行本地 Skill 命令，再重试 Skill 的自动 `start` 动作；已有健康服务时不要手动再启动第二个服务。
 - Builder 校验失败：保留生成应用和校验输出，修复报告的契约后重新运行 `validate-app.mjs`，通过后再启动开发服务器。

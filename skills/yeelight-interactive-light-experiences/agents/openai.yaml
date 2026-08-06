@@ -1,0 +1,7 @@
+interface:
+  display_name: "Yeelight Interactive Light Experiences"
+  short_description: "Local IFA light installation experiences"
+  default_prompt: "Use $yeelight-interactive-light-experiences to automatically start or reuse the local IFA collection, open its loopback page, and begin with Fortune Light."
+
+policy:
+  allow_implicit_invocation: true

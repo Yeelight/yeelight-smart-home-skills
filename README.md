@@ -26,9 +26,10 @@ For the recommended full-intelligence path, follow the [official English tutoria
 | --- | --- | --- | --- |
 | [`yeelight-smart-home`](skills/yeelight-smart-home/) | Natural-language control, query, diagnostics, organization, scenes, automations, lighting design, product knowledge, memory, and recommendations | You want an AI agent to operate or help design a Yeelight home | `yeelight-home >= 0.1.20` |
 | [`yeelight-wellness-lighting`](skills/yeelight-wellness-lighting/) | Adapts comfortable lighting from a confirmed city, local time, weather, daylight, and explicit preferences, then renders a private result page | You want manual, conversational, or host-scheduled wellness lighting | `yeelight-home >= 0.1.20`, Node.js 22+ |
+| [`yeelight-interactive-light-experiences`](skills/yeelight-interactive-light-experiences/) | Starts a local collection of twelve AI-guided light games and exhibition scenes with Fortune Light as the recommended entry | You are running an IFA-style installation and want a visitor-ready physical-light experience | `yeelight-home >= 0.1.27` |
 | [`yeelight-pro-app-builder`](skills/yeelight-pro-app-builder/) | Generates a modular, local Yeelight application from one request and proven Runtime capabilities | You want a focused mobile, tablet, wall-panel, or desktop control application | `yeelight-home >= 0.1.21`, Node.js 22+ |
 
-All three Skills use the separately installed [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime. They do not embed account credentials or bypass Runtime policy and confirmation checks.
+All four Skills use the separately installed [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime. They do not embed account credentials or bypass Runtime policy and confirmation checks.
 
 ## How The Pieces Fit
 
@@ -40,13 +41,16 @@ All three Skills use the separately installed [`yeelight-home`](https://github.c
   confirmed city before resolving local time, weather, and daylight. When the
   host has no scheduler, it returns a portable template instead of claiming a
   recurring task was created.
+- **Interactive Light Experiences is the exhibition Skill.** It automatically
+  starts or reuses a loopback-only collection host, then lets AI-guided
+  experiences turn visitor choices into bounded physical-light plans.
 - **Yeelight MCP is the standard cloud route for MCP-only clients.** One setup
   configures its Metadata and IoT services together. Neither cloud service is a
-  dependency of the three Skills.
+  dependency of these Skills.
 
-Choose `yeelight-smart-home` when you want to talk naturally about your home.
-Choose `yeelight-wellness-lighting` when lighting should follow seasons,
-weather, or daylight. Choose the App Builder only when your goal is to generate
+Choose `yeelight-smart-home` for everyday home conversations, `yeelight-wellness-lighting`
+when lighting should follow seasons, weather, or daylight, the Interactive Skill
+for a local exhibition collection, and App Builder when your goal is to generate
 a dedicated local control application.
 
 ## Install With One Sentence
@@ -65,7 +69,13 @@ Install `yeelight-home` from an official Yeelight GitHub Release, official mirro
 Install `yeelight-home >= 0.1.20` and Node.js 22 or later from official Yeelight or supported package-manager sources, then install only `yeelight-wellness-lighting` from https://github.com/Yeelight/yeelight-smart-home-skills. Run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`; guide me through the local QR sign-in flow if needed. Restart or refresh the Agent host and confirm that it discovers the exact Skill id. On first use, require me to confirm a city before automatically resolving local time, weather, sunrise, and sunset. Create, pause, or remove a recurring task only when the host exposes a scheduler; otherwise return a validated portable template and clearly say it is not scheduled. After every result, generate a private local HTML report and tell me its path without uploading it. Never request or print a token, password, cookie, Client ID, or QR result.
 ```
 
-**Yeelight PRO App Builder:**
+**Yeelight Interactive Light Experiences:**
+
+```text
+Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-interactive-light-experiences` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, verify Runtime 0.1.27 or later, restart or refresh my agent host, and ask it to start the collection through the Skill so it opens its loopback page; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and report a missing live binding instead of silently switching a real installation to mock mode.
+```
+
+**Yeelight PRO App Builder — one sentence:**
 
 ```text
 Install the official Yeelight Home Runtime for my operating system from Yeelight's GitHub Release or a supported package manager, then install only the `yeelight-pro-app-builder` Skill from https://github.com/Yeelight/yeelight-smart-home-skills; if GitHub is unreachable, use the official read-only mirror at https://gitee.com/yeelight/yeelight-smart-home-skills or https://gitcode.com/Yeelight/yeelight-smart-home-skills; run `yeelight-home version --json`, `yeelight-home doctor --json`, and `yeelight-home auth status --json`, use the local `yeelight-home auth login --qr` flow if sign-in is required, verify Node.js 22 or later, restart or refresh my agent host and verify that it discovers `yeelight-pro-app-builder`; use only official Yeelight sources, never ask me to paste a token, password, cookie, or QR result into chat, and stop with the unsupported host or channel clearly reported instead of inventing commands.
@@ -88,6 +98,7 @@ Then install one or more Skills with skills.sh:
 ```sh
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-wellness-lighting
+npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-interactive-light-experiences
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
 ```
 
@@ -102,7 +113,7 @@ OpenClaw users can install the direct-control Skill from its official ClawHub li
 clawhub install @yeelight/yeelight-smart-home
 ```
 
-The GitHub repository remains the canonical Apache-2.0 source. ClawHub currently displays MIT-0 as platform version metadata; that platform limitation does not change the source license. `yeelight-wellness-lighting` and `yeelight-pro-app-builder` are not listed on ClawHub and should be installed from GitHub with skills.sh.
+The GitHub repository remains the canonical Apache-2.0 source. ClawHub currently displays MIT-0 as platform version metadata; that platform limitation does not change the source license. `yeelight-wellness-lighting`, `yeelight-pro-app-builder`, and `yeelight-interactive-light-experiences` are not listed on ClawHub and should be installed from GitHub with skills.sh.
 
 See [Installation](docs/installation.md) for other operating systems, manual installation, upgrades, and verification.
 
@@ -126,12 +137,16 @@ Use yeelight-wellness-lighting to adapt the selected rooms from the current weat
 Use yeelight-pro-app-builder to generate a compact mobile app for living-room lights and curtains, with a bright green theme.
 ```
 
+```text
+Use yeelight-interactive-light-experiences to start the local IFA collection and open Fortune Light first.
+```
+
 See [Usage](docs/usage.md) for common workflows, safety behavior, troubleshooting, and Builder output validation.
 
 ## Recommended Path
 
-`yeelight-home` is the only CLI, sign-in entry, and execution Runtime. `yeelight-smart-home` is the recommended full-intelligence path for ordinary users; use `yeelight-home setup --mode mcp` when a client cannot install Skills; human terminal workflows and scripts use the same `yeelight-home` directly.
+`yeelight-home` is the only CLI, sign-in entry, and execution Runtime. `yeelight-smart-home` is the recommended full-intelligence path for ordinary home use; use `yeelight-interactive-light-experiences` for the local IFA collection; use `yeelight-home setup --mode mcp` when a client cannot install Skills; human terminal workflows and scripts use the same `yeelight-home` directly.
 
 ## License
 
-Repository-maintained code and all three Skills are licensed under the [Apache License 2.0](LICENSE). Third-party components retain their own licenses and notices.
+Repository-maintained code and all four Skills are licensed under the [Apache License 2.0](LICENSE). Third-party components retain their own licenses and notices.

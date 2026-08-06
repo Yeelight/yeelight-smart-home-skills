@@ -26,7 +26,8 @@ jobs:
             docs/usage.md docs/usage.zh-CN.md \
             skills/yeelight-smart-home/SKILL.md \
             skills/yeelight-wellness-lighting/SKILL.md \
-            skills/yeelight-pro-app-builder/SKILL.md; do
+            skills/yeelight-pro-app-builder/SKILL.md \
+            skills/yeelight-interactive-light-experiences/SKILL.md; do
             test -f "$file"
           done
 
@@ -37,6 +38,7 @@ jobs:
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-smart-home/LICENSE").read_bytes()'
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-wellness-lighting/LICENSE").read_bytes()'
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-pro-app-builder/LICENSE").read_bytes()'
+          python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-interactive-light-experiences/LICENSE").read_bytes()'
 
           if rg -n 'Proprietar[y]|gitlab[.]yeelight[.]com|/Users/[^/]+/' README.md README.zh-CN.md docs skills; then
             echo "Forbidden public content found" >&2
@@ -136,3 +138,10 @@ jobs:
 
           $oversizedUtf8 = Invoke-Wrapper ('{"intent":"state.query","padding":"' + ('灯' * 350000) + '"}')
           Assert-WrapperResult $oversizedUtf8 65 "invalid_request" "oversized UTF-8 request gate"
+
+      - name: Validate Interactive Skill contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node skills/yeelight-interactive-light-experiences/scripts/validate.mjs
+          node skills/yeelight-interactive-light-experiences/scripts/mock-demo.mjs

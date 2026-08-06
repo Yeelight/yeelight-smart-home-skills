@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Yeelight Staff Setup</title>
+    <link rel="stylesheet" href="/styles.css?v=20260805-3">
+  </head>
+  <body>
+    <main class="staff-shell" id="staff-main">
+      <a class="eyebrow" href="/">Visitor collection</a>
+      <h1>Provider setup</h1>
+      <p class="staff-note">Local exhibition setup for the AI provider. This page is outside the visitor flow; settings persist on this computer and visitor sessions use the configured provider automatically.</p>
+      <form id="provider-form" class="staff-form">
+        <label>Base URL<input name="baseUrl" type="url" placeholder="https://api.example.com/v1" required autocomplete="off" spellcheck="false"></label>
+        <label>API key<input name="apiKey" type="password" required autocomplete="new-password"></label>
+        <label>Model<input name="model" required autocomplete="off" spellcheck="false"></label>
+        <label>Protocol<select name="mode"><option value="responses">Responses</option><option value="chat-completions">Chat Completions</option></select></label>
+        <div class="action-row"><button class="button" type="button" id="test-provider">Test connection</button><button class="button primary" type="submit">Save provider</button></div>
+      </form>
+      <div id="staff-status" class="state-box" aria-live="polite">No provider changes made.</div>
+    </main>
+    <script type="module" src="/staff.js"></script>
+  </body>
+</html>

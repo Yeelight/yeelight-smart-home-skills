@@ -1,0 +1,51 @@
+{
+  "runtime": "yeelight-home",
+  "contractVersion": "1.0",
+  "service": {
+    "id": "yeelight-interactive-light-experiences",
+    "protocolVersion": 1,
+    "defaultPort": 8787,
+    "loopbackHost": "127.0.0.1",
+    "healthPath": "/api/health",
+    "visitorPath": "/",
+    "actions": ["start", "status", "stop"],
+    "startBehavior": "reuse-healthy-or-start-one",
+    "modeSelection": "protected-binding-or-mock-16",
+    "bindingFailure": "fail-closed"
+  },
+  "hosts": {
+    "codex": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.sh",
+      "startAction": "start",
+      "openField": "openUrl",
+      "healthField": "healthUrl"
+    },
+    "openclaw": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.sh",
+      "startAction": "start",
+      "openField": "openUrl",
+      "healthField": "healthUrl"
+    },
+    "claude-code": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.sh",
+      "startAction": "start",
+      "openField": "openUrl",
+      "healthField": "healthUrl"
+    },
+    "powershell": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.ps1",
+      "startAction": "start",
+      "openField": "openUrl",
+      "healthField": "healthUrl"
+    }
+  },
+  "responseContract": {
+    "format": "json-line",
+    "successFields": ["status", "serviceStatus", "openUrl", "healthUrl", "mode", "liveReady", "reused"],
+    "errorFields": ["status", "operation", "error.code", "error.message"]
+  }
+}
