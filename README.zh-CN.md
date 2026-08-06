@@ -23,21 +23,18 @@ CI 和发布的规范源。国内无法稳定访问 GitHub 时，可使用只读
 | Skill | 能力 | 适用场景 | Runtime |
 | --- | --- | --- | --- |
 | [`yeelight-smart-home`](skills/yeelight-smart-home/) | 自然语言控制、查询、诊断、整理、场景、自动化、灯光设计、产品知识、记忆和推荐 | 希望 AI Agent 操作或协助设计 Yeelight 智能家居 | `yeelight-home >= 0.1.20` |
-| [`yeelight-wellness-lighting`](skills/yeelight-wellness-lighting/) | 根据城市、当地时间、天气、日光和明确偏好调整视觉舒适灯光，并生成私有结果页面 | 希望手动运行、对话调整，或在宿主支持时创建周期性舒适灯光任务 | `yeelight-home >= 0.1.20`、Node.js 22+ |
-| [`yeelight-pro-app-builder`](skills/yeelight-pro-app-builder/) | 根据一个需求和已验证的 Runtime 能力，生成模块化本地 Yeelight 应用 | 需要面向手机、平板、墙屏或桌面的专用控制应用 | `yeelight-home >= 0.1.21`、Node.js 22+ |
+| [`yeelight-pro-app-builder`](skills/yeelight-pro-app-builder/) | 根据一个需求和已验证的 Runtime 能力，生成模块化本地 Yeelight 应用 | 需要面向手机、平板、墙屏或桌面的专用控制应用 | `yeelight-home >= 0.1.21` |
 
-三个 Skill 都使用单独安装的 [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime，不内置账号凭据，也不会绕过 Runtime 的策略和确认门禁。
+两个 Skill 都使用单独安装的 [`yeelight-home`](https://github.com/Yeelight/yeelight-home) Runtime，不内置账号凭据，也不会绕过 Runtime 的策略和确认门禁。
 
 ## 这些项目怎样配合
 
 - **Yeelight Home 是底座。**它负责扫码、当前家庭、Cloud/LAN 执行、安全检查和结果验证。
 - **Yeelight Smart Home 是大多数人的推荐 Skill。**它先让 AI 学会易来规则和照明最佳实践，再通过底座完成操作。
-- **Yeelight Wellness Lighting 负责随时间与公共环境变化的舒适灯光。**它强制先确认城市，再获取当地时间、天气和日光；宿主没有定时任务能力时只返回可移植模板，不会假装已经创建计划。
-- **Yeelight MCP 是 MCP-only 客户端的标准云端路线。**一次 setup 会同时配置内部 Metadata 与 IoT 两个服务；它们都不是三个 Skill 的依赖。
+- **Yeelight MCP 是 MCP-only 客户端的标准云端路线。**一次 setup 会同时配置内部 Metadata 与 IoT 两个服务；它们都不是两个 Skill 的依赖。
 
 想用日常语言操作和管理家庭，选择 `yeelight-smart-home`；只有目标是生成一个
-专用本地控制应用时，才选择 App Builder；希望灯光随季节、天气和日光自然变化时，
-选择 `yeelight-wellness-lighting`。
+专用本地控制应用时，才选择 App Builder。
 
 ## 让 AI 一句话安装
 
@@ -47,12 +44,6 @@ CI 和发布的规范源。国内无法稳定访问 GitHub 时，可使用只读
 
 ```text
 请从 Yeelight 官方 GitHub Release、国内官方镜像或已支持的包管理器安装 `yeelight-home`，然后运行 `yeelight-home setup --lang zh-CN --mode skill --agent auto`。引导我用 Yeelight Pro APP 首页右上角 `+` -> MCP 授权扫码并等待完成；只使用 Yeelight 官方来源，不要索要或打印 token、密码、Cookie、Client ID 或扫码结果。最后刷新 Agent host，确认它已发现 `yeelight-smart-home`，再运行 `yeelight-home doctor --json` 和只读家庭发现验证。
-```
-
-**Yeelight Wellness Lighting：**
-
-```text
-请从 Yeelight 官方 GitHub Release、国内官方镜像或已支持的包管理器安装 `yeelight-home >= 0.1.20` 和 Node.js 22 或更高版本，然后只从 https://github.com/Yeelight/yeelight-smart-home-skills 安装 `yeelight-wellness-lighting`。运行 `yeelight-home version --json`、`yeelight-home doctor --json` 和 `yeelight-home auth status --json`，需要登录时引导我在本机扫码；刷新 Agent host 并确认它准确发现该 Skill。首次运行必须先询问并确认城市，再自动获取当地时间、天气、日出和日落；宿主支持定时任务时才创建、暂停或删除计划，否则只返回经过验证的可移植模板并明确说明尚未设定。每次结束后生成私有本地 HTML 结果并告诉我路径，不要上传报告，也不要索要或打印 token、密码、Cookie、Client ID 或扫码结果。
 ```
 
 **Yeelight PRO App Builder：**
@@ -73,11 +64,10 @@ yeelight-home auth status --json
 yeelight-home auth login --qr
 ```
 
-再通过 skills.sh 安装一个或多个 Skill：
+再通过 skills.sh 安装一个或两个 Skill：
 
 ```sh
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-smart-home
-npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-wellness-lighting
 npx skills add https://github.com/Yeelight/yeelight-smart-home-skills --skill yeelight-pro-app-builder
 ```
 
@@ -92,7 +82,7 @@ OpenClaw 用户可以从官方 ClawHub listing 安装直控 Skill：
 clawhub install @yeelight/yeelight-smart-home
 ```
 
-GitHub 仓库仍是采用 Apache-2.0 的规范源。ClawHub 当前会把平台版本许可证元数据显示为 MIT-0，但这一平台限制不会改变源码许可证。`yeelight-wellness-lighting` 和 `yeelight-pro-app-builder` 尚未在 ClawHub 上架，应通过 skills.sh 从 GitHub 安装。
+GitHub 仓库仍是采用 Apache-2.0 的规范源。ClawHub 当前会把平台版本许可证元数据显示为 MIT-0，但这一平台限制不会改变源码许可证。`yeelight-pro-app-builder` 尚未在 ClawHub 上架，应通过 skills.sh 从 GitHub 安装。
 
 其他操作系统、手动安装、升级和验证方式见[安装指南](docs/installation.zh-CN.md)。
 
@@ -109,10 +99,6 @@ GitHub 仓库仍是采用 Apache-2.0 的规范源。ClawHub 当前会把平台�
 ```
 
 ```text
-使用 yeelight-wellness-lighting，根据青岛当前的天气和日光调整选定房间的灯光，并生成本次结果页面。
-```
-
-```text
 使用 yeelight-pro-app-builder 生成一个控制客厅灯和窗帘的紧凑移动端应用，使用明亮绿色主题。
 ```
 
@@ -124,4 +110,4 @@ GitHub 仓库仍是采用 Apache-2.0 的规范源。ClawHub 当前会把平台�
 
 ## 许可证
 
-仓库维护的代码以及三个 Skill 均采用 [Apache License 2.0](LICENSE)。第三方组件继续遵循其各自许可证和声明。
+仓库维护的代码以及两个 Skill 均采用 [Apache License 2.0](LICENSE)。第三方组件继续遵循其各自许可证和声明。

@@ -25,7 +25,6 @@ jobs:
             docs/installation.md docs/installation.zh-CN.md \
             docs/usage.md docs/usage.zh-CN.md \
             skills/yeelight-smart-home/SKILL.md \
-            skills/yeelight-wellness-lighting/SKILL.md \
             skills/yeelight-pro-app-builder/SKILL.md; do
             test -f "$file"
           done
@@ -35,7 +34,6 @@ jobs:
           done
 
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-smart-home/LICENSE").read_bytes()'
-          python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-wellness-lighting/LICENSE").read_bytes()'
           python3 -c 'from pathlib import Path; assert Path("LICENSE").read_bytes() == Path("skills/yeelight-pro-app-builder/LICENSE").read_bytes()'
 
           if rg -n 'Proprietar[y]|gitlab[.]yeelight[.]com|/Users/[^/]+/' README.md README.zh-CN.md docs skills; then
@@ -50,50 +48,3 @@ jobs:
           while IFS= read -r -d '' file; do
             node --check "$file"
           done < <(find skills -type f -name '*.mjs' -print0)
-
-  validate-wellness-windows-wrapper:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate Wellness PowerShell gates
-        shell: pwsh
-        run: |
-          $wrapper = Join-Path $PWD "skills/yeelight-wellness-lighting/scripts/invoke.ps1"
-
-          function Invoke-Wrapper([string] $payload, [string] $runtimePath = "") {
-            $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
-            $startInfo.FileName = (Get-Command pwsh).Source
-            $startInfo.ArgumentList.Add("-NoProfile")
-            $startInfo.ArgumentList.Add("-File")
-            $startInfo.ArgumentList.Add($wrapper)
-            $startInfo.UseShellExecute = $false
-            $startInfo.RedirectStandardInput = $true
-            $startInfo.RedirectStandardOutput = $true
-            $startInfo.RedirectStandardError = $true
-            if ($runtimePath) { $startInfo.Environment["YEELIGHT_HOME_BIN"] = $runtimePath }
-
-            $process = [System.Diagnostics.Process]::new()
-            $process.StartInfo = $startInfo
-            [void] $process.Start()
-            $process.StandardInput.Write($payload)
-            $process.StandardInput.Close()
-            $stdout = $process.StandardOutput.ReadToEnd()
-            $stderr = $process.StandardError.ReadToEnd()
-            $process.WaitForExit()
-            return [PSCustomObject]@{ ExitCode = $process.ExitCode; Stdout = $stdout; Stderr = $stderr }
-          }
-
-          $preview = Invoke-Wrapper '{"intent":"lighting.design.apply","preview":true,"executionRequested":false}'
-          if ($preview.ExitCode -ne 0) { throw "preview gate exit $($preview.ExitCode): $($preview.Stderr)" }
-          $previewJson = $preview.Stdout | ConvertFrom-Json
-          if ($previewJson.error.code -ne "preview_no_write") { throw "preview gate did not fail closed" }
-
-          $invalid = Invoke-Wrapper '{"intent":"lighting.design.apply","executionRequested":true'
-          if ($invalid.ExitCode -ne 65) { throw "invalid request exit $($invalid.ExitCode): $($invalid.Stderr)" }
-          $invalidJson = $invalid.Stdout | ConvertFrom-Json
-          if ($invalidJson.error.code -ne "invalid_request") { throw "malformed JSON was not rejected" }
-
-          $missing = Invoke-Wrapper '{"intent":"state.query"}' (Join-Path $env:RUNNER_TEMP "missing-yeelight-home.exe")
-          if ($missing.ExitCode -ne 127) { throw "runtime missing exit $($missing.ExitCode): $($missing.Stderr)" }
-          $missingJson = $missing.Stdout | ConvertFrom-Json
-          if ($missingJson.error.code -ne "runtime_missing") { throw "missing Runtime was not reported" }
