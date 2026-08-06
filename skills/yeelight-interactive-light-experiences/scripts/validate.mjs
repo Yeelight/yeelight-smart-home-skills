@@ -11,7 +11,7 @@ const requiredFiles = ["SKILL.md", "agents/openai.yaml", "assets/experiences.jso
 const errors = [];
 
 for (const relative of requiredFiles) if (!fs.existsSync(path.join(packageRoot, relative))) errors.push(`missing file: ${relative}`);
-const skillText = fs.readFileSync(path.join(packageRoot, "SKILL.md"), "utf8");
+const skillText = fs.readFileSync(path.join(packageRoot, "SKILL.md"), "utf8").replace(/\r\n?/g, "\n");
 if (!skillText.startsWith("---\n") || !skillText.includes("\nname: yeelight-interactive-light-experiences\n") || !skillText.includes("\ndescription:")) errors.push("SKILL.md frontmatter is incomplete");
 let serviceManifest;
 try { serviceManifest = JSON.parse(fs.readFileSync(path.join(packageRoot, "scripts/runtime-manifest.json"), "utf8")); } catch { errors.push("runtime-manifest.json must be valid JSON"); }
