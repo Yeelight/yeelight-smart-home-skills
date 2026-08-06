@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yeelight-wellness-context-v1",
+  "title": "Yeelight Wellness Public Context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "location", "retrievedAt", "sources", "facts", "unknown", "stale"],
+  "properties": {
+    "schemaVersion": {"const": "yeelight-wellness-context-v1"},
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["city", "timezone"],
+      "properties": {
+        "city": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^(?!.*[;&|$()\\u0060{}<>])(?!^(?:https?|file|data|javascript):)[^\\r\\n<>]{1,80}$"},
+        "region": {"type": "string", "maxLength": 40, "pattern": "^(?!.*[;&|$()\\u0060{}<>])(?!^(?:https?|file|data|javascript):)[^\\r\\n<>]{0,40}$"},
+        "timezone": {"type": "string", "minLength": 3, "maxLength": 64, "pattern": "^[A-Za-z0-9._+-]+(?:/[A-Za-z0-9._+-]+)+$"},
+        "holidayRegion": {"type": "string", "maxLength": 32, "pattern": "^[A-Za-z0-9_-]{0,32}$"}
+      }
+    },
+    "retrievedAt": {"type": "string", "format": "date-time"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "retrievedAt", "expiresAt"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"},
+          "kind": {"enum": ["weather", "air-quality", "solar", "timezone", "calendar", "holiday", "alert", "cultural", "moon", "user-fact"]},
+          "retrievedAt": {"type": "string", "format": "date-time"},
+          "expiresAt": {"type": ["string", "null"], "format": "date-time"},
+          "authority": {"$ref": "#/$defs/authorityName"},
+          "issuedAt": {"type": "string", "format": "date-time"},
+          "effectiveAt": {"type": "string", "format": "date-time"},
+          "area": {"$ref": "#/$defs/alertArea"}
+        },
+        "allOf": [{
+          "if": {"properties": {"kind": {"const": "alert"}}, "required": ["kind"]},
+          "then": {"required": ["authority", "area", "issuedAt", "effectiveAt", "expiresAt"]}
+        }]
+      }
+    },
+    "facts": {
+      "type": "object",
+      "additionalProperties": false,
+      "maxProperties": 64,
+      "properties": {
+        "temperature": {"$ref": "#/$defs/temperatureFact"},
+        "apparentTemperature": {"$ref": "#/$defs/temperatureFact"},
+        "cloudCover": {"$ref": "#/$defs/percentFact"},
+        "visibility": {"$ref": "#/$defs/visibilityFact"},
+        "precipitation": {"$ref": "#/$defs/precipitationFact"},
+        "precipitationProbability": {"$ref": "#/$defs/percentFact"},
+        "wind": {"$ref": "#/$defs/windFact"},
+        "humidity": {"$ref": "#/$defs/percentFact"},
+        "weatherCode": {"$ref": "#/$defs/weatherCodeFact"},
+        "dayLength": {"$ref": "#/$defs/dayLengthFact"},
+        "timezoneOffset": {"$ref": "#/$defs/timezoneOffsetFact"},
+        "pm2_5": {"$ref": "#/$defs/pmFact"},
+        "pm10": {"$ref": "#/$defs/pmFact"},
+        "aqi": {"$ref": "#/$defs/aqiFact"},
+        "dust": {"$ref": "#/$defs/pmFact"},
+        "uvIndex": {"$ref": "#/$defs/uvIndexFact"},
+        "solarElevation": {"$ref": "#/$defs/solarElevationFact"},
+        "dstFold": {"$ref": "#/$defs/foldFact"},
+        "weekend": {"$ref": "#/$defs/booleanFact"},
+        "legalHoliday": {"$ref": "#/$defs/booleanFact"},
+        "workday": {"$ref": "#/$defs/booleanFact"},
+        "dstTransition": {"$ref": "#/$defs/booleanFact"},
+        "sunrise": {"$ref": "#/$defs/dateTimeFact"},
+        "sunset": {"$ref": "#/$defs/dateTimeFact"},
+        "solarNoon": {"$ref": "#/$defs/dateTimeFact"},
+        "civilTwilight": {"$ref": "#/$defs/dateTimeFact"},
+        "nauticalTwilight": {"$ref": "#/$defs/dateTimeFact"},
+        "astronomicalTwilight": {"$ref": "#/$defs/dateTimeFact"},
+        "goldenHour": {"$ref": "#/$defs/dateTimeFact"},
+        "blueHour": {"$ref": "#/$defs/dateTimeFact"},
+        "localDate": {"$ref": "#/$defs/dateFact"},
+        "localTime": {"$ref": "#/$defs/timeFact"},
+        "condition": {"$ref": "#/$defs/conditionFact"},
+        "precipitationTransition": {"$ref": "#/$defs/precipitationTransitionFact"},
+        "weekday": {"$ref": "#/$defs/weekdayFact"},
+        "holidayAdjacency": {"$ref": "#/$defs/holidayAdjacencyFact"},
+        "season": {"$ref": "#/$defs/seasonFact"},
+        "solstice": {"$ref": "#/$defs/solsticeFact"},
+        "daylightTrend": {"$ref": "#/$defs/daylightTrendFact"},
+        "smoke": {"$ref": "#/$defs/airConditionFact"},
+        "haze": {"$ref": "#/$defs/airConditionFact"},
+        "authorityAlert": {"$ref": "#/$defs/authorityAlertFact"},
+        "culturalObservance": {"$ref": "#/$defs/culturalObservanceFact"},
+        "moonPhase": {"$ref": "#/$defs/moonPhaseFact"}
+      }
+    },
+    "unknown": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {"type": "string", "maxLength": 64, "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,63}$"}
+    },
+    "stale": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {"type": "string", "maxLength": 64, "pattern": "^[A-Za-z][A-Za-z0-9_.-]{0,63}$"}
+    }
+  },
+  "$defs": {
+    "factEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "sourceId", "timezone", "freshness"],
+      "properties": {
+        "value": {},
+        "unit": {"type": "string", "maxLength": 24, "pattern": "^[A-Za-z0-9%°_ -]{0,24}$"},
+        "sourceId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"},
+        "observedAt": {"type": ["string", "null"], "format": "date-time"},
+        "forecastFor": {"type": ["string", "null"], "format": "date-time"},
+        "timezone": {"type": "string", "minLength": 3, "maxLength": 64, "pattern": "^[A-Za-z0-9._+-]+(?:/[A-Za-z0-9._+-]+)+$"},
+        "freshness": {"enum": ["fresh", "stale", "unknown"]}
+      },
+      "anyOf": [
+        {"required": ["observedAt"], "properties": {"observedAt": {"type": "string"}}},
+        {"required": ["forecastFor"], "properties": {"forecastFor": {"type": "string"}}}
+      ]
+    },
+    "numberFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"type": "number"}}}
+      ]
+    },
+    "temperatureFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": -100, "maximum": 100}, "unit": {"const": "celsius"}}}]},
+    "percentFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 100}, "unit": {"const": "percent"}}}]},
+    "visibilityFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 1000}, "unit": {"const": "kilometers"}}}]},
+    "precipitationFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 2000}, "unit": {"const": "millimeters"}}}]},
+    "windFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 500}, "unit": {"const": "kilometers-per-hour"}}}]},
+    "weatherCodeFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "integer", "minimum": 0, "maximum": 99}, "unit": {"const": "wmo-code"}}}]},
+    "dayLengthFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 86400}, "unit": {"const": "seconds"}}}]},
+    "timezoneOffsetFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "integer", "minimum": -840, "maximum": 840}, "unit": {"const": "minutes"}}}]},
+    "pmFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 10000}, "unit": {"const": "micrograms-per-cubic-meter"}}}]},
+    "aqiFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 1000}, "unit": {"const": "us-aqi"}}}]},
+    "uvIndexFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": 0, "maximum": 30}, "unit": {"const": "uvi"}}}]},
+    "solarElevationFact": {"allOf": [{"$ref": "#/$defs/factEnvelope"}, {"required": ["unit"], "properties": {"value": {"type": "number", "minimum": -90, "maximum": 90}, "unit": {"const": "degrees"}}}]},
+    "foldFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"type": "integer", "minimum": 0, "maximum": 1}}}
+      ]
+    },
+    "booleanFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"type": "boolean"}}}
+      ]
+    },
+    "dateTimeFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"type": "string", "format": "date-time"}}}
+      ]
+    },
+    "dateFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"type": "string", "format": "date"}}}
+      ]
+    },
+    "timeFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"type": "string", "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9])?$"}}}
+      ]
+    },
+    "conditionFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["clear", "partly-cloudy", "cloudy", "fog", "rain", "snow", "storm", "unknown"]}}}
+      ]
+    },
+    "precipitationTransitionFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["none", "starting", "ongoing", "ending", "unknown"]}}}
+      ]
+    },
+    "weekdayFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}}}
+      ]
+    },
+    "holidayAdjacencyFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["none", "before", "during", "after", "unknown"]}}}
+      ]
+    },
+    "seasonFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["spring", "summer", "autumn", "winter", "unknown"]}}}
+      ]
+    },
+    "solsticeFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["spring-equinox", "summer-solstice", "autumn-equinox", "winter-solstice", "unknown"]}}}
+      ]
+    },
+    "daylightTrendFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["lengthening", "shortening", "stable", "unknown"]}}}
+      ]
+    },
+    "airConditionFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["none", "light", "moderate", "heavy", "unknown"]}}}
+      ]
+    },
+    "authorityName": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^(?!.*[;&|$()\\u0060{}<>])(?!^(?:https?|file|data|javascript):)[^\\r\\n<>]{1,80}$"},
+    "alertArea": {"type": "object", "additionalProperties": false, "required": ["city"], "properties": {"city": {"$ref": "#/$defs/authorityName"}, "region": {"type": "string", "maxLength": 40, "pattern": "^(?!.*[;&|$()\\u0060{}<>])(?!^(?:https?|file|data|javascript):)[^\\r\\n<>]{0,40}$"}}},
+    "authorityAlertFact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "sourceId", "timezone", "freshness", "authority", "area", "issuedAt", "effectiveAt", "expiresAt"],
+      "properties": {
+        "value": {"enum": ["none", "advisory", "watch", "warning", "unknown"]},
+        "sourceId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$"},
+        "timezone": {"type": "string", "minLength": 3, "maxLength": 64, "pattern": "^[A-Za-z0-9._+-]+(?:/[A-Za-z0-9._+-]+)+$"},
+        "freshness": {"enum": ["fresh", "stale", "unknown"]},
+        "authority": {"$ref": "#/$defs/authorityName"},
+        "area": {"$ref": "#/$defs/alertArea"},
+        "issuedAt": {"type": "string", "format": "date-time"},
+        "effectiveAt": {"type": "string", "format": "date-time"},
+        "expiresAt": {"type": "string", "format": "date-time"}
+      }
+    },
+    "culturalObservanceFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["none", "public-observance", "unknown"]}}}
+      ]
+    },
+    "moonPhaseFact": {
+      "allOf": [
+        {"$ref": "#/$defs/factEnvelope"},
+        {"properties": {"value": {"enum": ["new", "waxing-crescent", "first-quarter", "waxing-gibbous", "full", "waning-gibbous", "last-quarter", "waning-crescent", "unknown"]}}}
+      ]
+    }
+  }
+}

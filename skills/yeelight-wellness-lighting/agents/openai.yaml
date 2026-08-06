@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yeelight Wellness Lighting"
+  short_description: "Weather-aware seasonal comfort lighting for Yeelight homes"
+  default_prompt: "Use $yeelight-wellness-lighting to adapt target lights from the day context."

@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yeelight-wellness-report-v1",
+  "title": "Yeelight Wellness Terminal Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "reportId",
+    "generatedAt",
+    "status",
+    "mode",
+    "locale",
+    "trigger",
+    "location",
+    "context",
+    "recipe",
+    "summary",
+    "targets",
+    "changes",
+    "timeline"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "yeelight-wellness-report-v1"},
+    "reportId": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z0-9_-]{1,80}$"},
+    "generatedAt": {"$ref": "#/$defs/timestamp"},
+    "status": {"enum": ["preview", "success", "partial", "no-op", "blocked", "uncertain", "stale", "runtime_missing", "runtime_outdated", "auth_required", "clarification_required", "not_supported", "error"]},
+    "mode": {"enum": ["scheduled", "manual", "conversation"]},
+    "locale": {"enum": ["zh-CN", "en-US", "de-DE"]},
+    "homeLabel": {"$ref": "#/$defs/safeText"},
+    "trigger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": {"$ref": "#/$defs/safeText"},
+        "source": {"$ref": "#/$defs/safeText"},
+        "window": {"$ref": "#/$defs/safeText"}
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["city", "timezone", "localDate", "localTime"],
+      "properties": {
+        "city": {"oneOf": [{"const": "unknown"}, {"$ref": "#/$defs/knownCity"}]},
+        "region": {"$ref": "#/$defs/safeText"},
+        "timezone": {"oneOf": [{"const": "unknown"}, {"type": "string", "minLength": 3, "maxLength": 64, "pattern": "^[A-Za-z0-9._+-]+(?:/[A-Za-z0-9._+-]+)+$"}]},
+        "localDate": {"oneOf": [{"const": "unknown"}, {"type": "string", "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}]},
+        "localTime": {"oneOf": [{"const": "unknown"}, {"type": "string", "format": "time", "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$"}]},
+        "sunrise": {"$ref": "#/$defs/safeText"},
+        "sunset": {"$ref": "#/$defs/safeText"}
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["freshness"],
+      "properties": {
+        "freshness": {"enum": ["fresh", "stale", "unknown", "mixed"]},
+        "retrievedAt": {"$ref": "#/$defs/timestamp"},
+        "weather": {"$ref": "#/$defs/weather"},
+        "signals": {"type": "array", "items": {"$ref": "#/$defs/signal"}},
+        "unknown": {"type": "array", "items": {"$ref": "#/$defs/safeText"}},
+        "stale": {"type": "array", "items": {"$ref": "#/$defs/safeText"}}
+      }
+    },
+    "recipe": {"$ref": "#/$defs/recipe"},
+    "ideas": {"type": "array", "items": {"$ref": "#/$defs/recipe"}},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "why", "changed", "untouched", "next", "claimBoundary"],
+      "properties": {
+        "headline": {"$ref": "#/$defs/safeText"},
+        "why": {"$ref": "#/$defs/safeText"},
+        "changed": {"$ref": "#/$defs/safeText"},
+        "untouched": {"$ref": "#/$defs/safeText"},
+        "next": {"$ref": "#/$defs/safeText"},
+        "claimBoundary": {"$ref": "#/$defs/safeText"}
+      }
+    },
+    "principles": {"type": "array", "items": {"$ref": "#/$defs/safeText"}},
+    "targets": {"type": "array", "items": {"$ref": "#/$defs/target"}},
+    "changes": {"type": "array", "items": {"$ref": "#/$defs/change"}},
+    "timeline": {"type": "array", "items": {"$ref": "#/$defs/timeline"}}
+  },
+  "$defs": {
+    "safeText": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:\\b[A-Za-z][A-Za-z0-9+.-]*://|\\b(?:[Hh][Tt][Tt][Pp][Ss]?|[Ff][Ii][Ll][Ee]|[Ff][Tt][Pp]|[Gg][Oo][Pp][Hh][Ee][Rr]|[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]|[Dd][Aa][Tt][Aa]|[Mm][Aa][Ii][Ll][Tt][Oo]|[Uu][Rr][Nn]|[Ss][Ss][Hh]|[Ww][Ss][Ss]?|[Bb][Ll][Oo][Bb]|[Tt][Ee][Ll]|[Ss][Mm][Ss]):))(?!.*[<>`])(?!.*\\b(?:[Ll][Aa][Tt](?:[Ii][Tt][Uu][Dd][Ee])?|[Ll][Oo][Nn](?:[Gg][Ii][Tt][Uu][Dd][Ee]|[Gg])?)\\s*[:=])(?!.*[-+]?\\d{1,3}\\.\\d{3,}\\s*(?:[,;]|\\s+)\\s*[-+]?\\d{1,3}\\.\\d{3,})(?!.*[-+]?\\d{1,3}\\.\\d+\\s*(?:[,;]|\\s+)\\s*[-+]?\\d{1,3}\\.\\d+(?=\\s*(?:$|[.,;!?)]|[。！？；，）”’】》」』])))(?!.*[-+]?\\d{1,3}\\.\\d{3,}\\s*[NnSsEeWw])(?!.*[-+]?\\d{1,3}(?:\\.\\d+)?\\s*°?\\s*[NnSs]\\s*(?:[,;/]|\\s+)\\s*[-+]?\\d{1,3}(?:\\.\\d+)?\\s*°?\\s*[EeWw])(?!.*[-+]?\\d{1,3}(?:\\.\\d+)?\\s*°?\\s*[EeWw]\\s*(?:[,;/]|\\s+)\\s*[-+]?\\d{1,3}(?:\\.\\d+)?\\s*°?\\s*[NnSs])(?!.*[-+]?\\d{1,3}(?:\\.\\d+)?\\s*°\\s*[NnSsEeWw])(?!.*\\d{1,3}\\s*°\\s*\\d{1,2}(?:\\.\\d+)?\\s*['′’](?:\\s*\\d{1,2}(?:\\.\\d+)?\\s*(?:[\"″”])?)?\\s*[NnSsEeWw])(?!.*\\d{1,3}\\s*°\\s*\\d{1,2}(?:\\.\\d+)?\\s*['′’](?:\\s*\\d{1,2}(?:\\.\\d+)?\\s*(?:[\"″”])?)?(?:\\s*[NnSs])?\\s*(?:[,;/]|\\s+)\\s*\\d{1,3}\\s*°\\s*\\d{1,2}(?:\\.\\d+)?\\s*['′’](?:\\s*\\d{1,2}(?:\\.\\d+)?\\s*(?:[\"″”])?)?(?:\\s*[EeWw])?)[^\\r\\n]{0,240}$"
+    },
+    "knownCity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^(?!\\s*[Uu][Nn][Kk][Nn][Oo][Ww][Nn].*$)(?!.*[;&|$()\\u0060{}<>])(?!^(?:[Hh][Tt][Tt][Pp][Ss]?|[Ff][Ii][Ll][Ee]|[Dd][Aa][Tt][Aa]|[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]):)[^\\r\\n<>]{1,80}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "maxLength": 40,
+      "format": "date-time",
+      "pattern": "^\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d{1,6})?(?:Z|[+-](?:(?:0\\d|1[0-3]):[0-5]\\d|14:00))$"
+    },
+    "weather": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "freshness"],
+      "properties": {
+        "label": {"$ref": "#/$defs/safeText"},
+        "temperature": {"type": "number", "minimum": -100, "maximum": 100},
+        "apparentTemperature": {"type": "number", "minimum": -100, "maximum": 100},
+        "cloudCover": {"type": "number", "minimum": 0, "maximum": 100},
+        "precipitation": {"type": "number", "minimum": 0, "maximum": 2000},
+        "unit": {"$ref": "#/$defs/safeText"},
+        "source": {"$ref": "#/$defs/safeText"},
+        "observedAt": {"$ref": "#/$defs/timestamp"},
+        "forecastFor": {"$ref": "#/$defs/timestamp"},
+        "freshness": {"enum": ["fresh", "stale", "unknown"]}
+      }
+    },
+    "signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "value", "freshness"],
+      "properties": {
+        "label": {"$ref": "#/$defs/safeText"},
+        "value": {"$ref": "#/$defs/safeText"},
+        "source": {"$ref": "#/$defs/safeText"},
+        "observedAt": {"$ref": "#/$defs/timestamp"},
+        "forecastFor": {"$ref": "#/$defs/timestamp"},
+        "freshness": {"enum": ["fresh", "stale", "unknown"]}
+      }
+    },
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "priority", "selected"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+        "title": {"$ref": "#/$defs/safeText"},
+        "priority": {"enum": ["P0", "P1", "P2"]},
+        "selected": {"type": "boolean"},
+        "principle": {"$ref": "#/$defs/safeText"},
+        "strategy": {"$ref": "#/$defs/safeText"},
+        "explanation": {"$ref": "#/$defs/safeText"},
+        "claimBoundary": {"$ref": "#/$defs/safeText"}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "state", "change", "before", "after"],
+      "properties": {
+        "label": {"$ref": "#/$defs/safeText"},
+        "area": {"$ref": "#/$defs/safeText"},
+        "state": {"enum": ["online", "offline", "unsupported", "ambiguous", "unknown"]},
+        "change": {"enum": ["changed", "preserved", "protected", "skipped", "offline", "unsupported", "ambiguous", "unknown"]},
+        "before": {"$ref": "#/$defs/safeText"},
+        "after": {"$ref": "#/$defs/safeText"},
+        "note": {"$ref": "#/$defs/safeText"}
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "kind", "summary"],
+      "properties": {
+        "label": {"$ref": "#/$defs/safeText"},
+        "kind": {"enum": ["light", "planned-light", "context", "schedule", "report"]},
+        "summary": {"$ref": "#/$defs/safeText"},
+        "before": {"$ref": "#/$defs/safeText"},
+        "after": {"$ref": "#/$defs/safeText"}
+      }
+    },
+    "timeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["time", "label", "kind"],
+      "properties": {
+        "time": {"$ref": "#/$defs/safeText"},
+        "label": {"$ref": "#/$defs/safeText"},
+        "kind": {"enum": ["input", "decision", "execution", "report", "warning"]},
+        "detail": {"$ref": "#/$defs/safeText"}
+      }
+    }
+  }
+}

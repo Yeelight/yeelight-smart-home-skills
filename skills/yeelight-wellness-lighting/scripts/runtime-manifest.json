@@ -1,0 +1,59 @@
+{
+  "runtime": "yeelight-home",
+  "contractVersion": "1.0",
+  "minVersion": "0.1.20",
+  "publicRepository": "Yeelight/yeelight-home",
+  "command": ["yeelight-home", "invoke", "--stdin"],
+  "readIntents": [
+    "home.summary",
+    "home.list",
+    "home.search",
+    "home.stat.get",
+    "device.weather.get",
+    "entity.list",
+    "entity.capabilities",
+    "state.query",
+    "state.batch.query",
+    "intent.explain"
+  ],
+  "writeIntents": [
+    "light.power.set",
+    "light.brightness.set",
+    "light.color_temperature.set",
+    "light.color.set",
+    "lighting.design.apply"
+  ],
+  "authCommand": ["yeelight-home", "auth", "login", "--qr"],
+  "statusCommand": ["yeelight-home", "auth", "status", "--json"],
+  "healthCommand": ["yeelight-home", "doctor", "--json", "--online"],
+  "storage": {
+    "preferences": "json-file",
+    "credentials": "system-credential-store-or-protected-local-fallback",
+    "sqlite": "optional-advanced-backend"
+  },
+  "hosts": {
+    "codex": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.sh",
+      "smoke": "printf '{\"contractVersion\":\"1.0\",\"requestId\":\"host-smoke\",\"locale\":\"zh-CN\",\"utterance\":\"运行 wellness lighting\",\"intent\":\"entity.list\"}' | scripts/invoke.sh"
+    },
+    "openclaw": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.sh",
+      "smoke": "printf '{\"contractVersion\":\"1.0\",\"requestId\":\"host-smoke\",\"locale\":\"zh-CN\",\"utterance\":\"运行 wellness lighting\",\"intent\":\"entity.list\"}' | scripts/invoke.sh"
+    },
+    "claude-code": {
+      "localCommandRequired": true,
+      "wrapper": "scripts/invoke.sh",
+      "smoke": "printf '{\"contractVersion\":\"1.0\",\"requestId\":\"host-smoke\",\"locale\":\"zh-CN\",\"utterance\":\"运行 wellness lighting\",\"intent\":\"entity.list\"}' | scripts/invoke.sh"
+    }
+  },
+  "supportedPlatforms": [
+    "darwin/arm64",
+    "darwin/amd64",
+    "linux/arm64",
+    "linux/amd64",
+    "windows/arm64",
+    "windows/amd64"
+  ]
+}
