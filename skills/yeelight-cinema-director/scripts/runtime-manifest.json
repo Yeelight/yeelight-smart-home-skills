@@ -1,0 +1,30 @@
+{
+  "runtime": "yeelight-home",
+  "contractVersion": "1.0",
+  "service": {
+    "id": "yeelight-cinema-director",
+    "protocolVersion": 1,
+    "defaultPort": 8789,
+    "loopbackHost": "127.0.0.1",
+    "healthPath": "/api/health",
+    "visitorPath": "/",
+    "actions": ["start", "status", "stop", "host-prepare-validation", "host-run-validation", "host-recover-validation", "host-recover-screening"],
+    "startBehavior": "reuse-healthy-or-start-one",
+    "modeSelection": "mock-default-or-explicit-live-preflight",
+    "liveContext": ["profile", "region", "house-id"],
+    "hostLifecycle": "ai-host-executes-wrapper-and-opens-openUrl",
+    "physicalValidation": "host-token-only-after-conversational-confirmation",
+    "bindingFailure": "fail-closed"
+  },
+  "hosts": {
+    "codex": { "localCommandRequired": true, "wrapper": "scripts/invoke.sh", "startAction": "start", "openField": "openUrl", "healthField": "healthUrl" },
+    "openclaw": { "localCommandRequired": true, "wrapper": "scripts/invoke.sh", "startAction": "start", "openField": "openUrl", "healthField": "healthUrl" },
+    "claude-code": { "localCommandRequired": true, "wrapper": "scripts/invoke.sh", "startAction": "start", "openField": "openUrl", "healthField": "healthUrl" },
+    "powershell": { "localCommandRequired": true, "wrapper": "scripts/invoke.ps1", "startAction": "start", "openField": "openUrl", "healthField": "healthUrl" }
+  },
+  "responseContract": {
+    "format": "json-line",
+    "successFields": ["status", "serviceStatus", "openUrl", "healthUrl", "mode", "reused"],
+    "errorFields": ["status", "operation", "error.code", "error.message"]
+  }
+}

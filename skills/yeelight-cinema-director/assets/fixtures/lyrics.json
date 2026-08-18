@@ -1,0 +1,15 @@
+{
+  "First Contact": {
+    "synced": [
+      { "timeMs": 0, "text": "[Duet] A quiet light arrives" },
+      { "timeMs": 4200, "text": "We hold the warmth together" }
+    ],
+    "plain": "[Duet] A quiet light arrives\nWe hold the warmth together"
+  },
+  "Blue Hour": {
+    "synced": [
+      { "timeMs": 0, "text": "Moon and rain in the blue hour" }
+    ],
+    "plain": "Moon and rain in the blue hour"
+  }
+}

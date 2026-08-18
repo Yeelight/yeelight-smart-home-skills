@@ -1,0 +1,10 @@
+{
+  "movies": [
+    { "id": "fixture-arrival", "title": "Arrival", "year": 2016, "artwork": "https://image.tmdb.org/t/p/w500/fixture-arrival.jpg" },
+    { "id": "fixture-moonlight", "title": "Moonlight", "year": 2016, "artwork": "https://image.tmdb.org/t/p/w500/fixture-moonlight.jpg" }
+  ],
+  "songs": [
+    { "id": "fixture-arrival-theme", "movieTitle": "Arrival", "title": "First Contact", "artist": "Cinema Orchestra", "durationMs": 180000 },
+    { "id": "fixture-moonlight-theme", "movieTitle": "Moonlight", "title": "Blue Hour", "artist": "Cinema Orchestra", "durationMs": 180000 }
+  ]
+}

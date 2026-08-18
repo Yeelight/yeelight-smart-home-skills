@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yeelight-cinema-director/request",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "action": { "type": "string", "enum": ["discover", "start", "tick", "pause", "stop", "clear", "artwork"] },
+    "sessionId": { "type": "string", "pattern": "^[A-Za-z0-9_-]{20,96}$" },
+    "generation": { "type": "integer", "minimum": 1 },
+    "handles": { "type": "array", "maxItems": 160, "items": { "type": "string", "pattern": "^[A-Za-z0-9_-]{20,96}$" } },
+    "roles": {
+      "type": "object",
+      "maxProperties": 160,
+      "additionalProperties": { "type": "string", "enum": ["Accent", "Ambient"] }
+    },
+    "frame": { "$ref": "#/$defs/frame" },
+    "movieQuery": { "type": "string", "maxLength": 160 },
+    "songQuery": { "type": "string", "maxLength": 160 },
+    "artworkHandle": { "type": "string", "pattern": "^[A-Za-z0-9_-]{20,96}$" }
+  },
+  "$defs": {
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["energy", "hue", "saturation", "brightness"],
+      "properties": {
+        "energy": { "type": "number", "minimum": 0, "maximum": 1 },
+        "hue": { "type": "integer", "minimum": 0, "maximum": 359 },
+        "saturation": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "brightness": { "type": "integer", "minimum": 1, "maximum": 100 },
+        "lyricCue": { "type": "string", "enum": ["none", "fire", "warmth", "hope", "cool", "clarity"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="cinema-proof" content="__CINEMA_PAGE_PROOF__">
+  <meta name="color-scheme" content="dark">
+  <title>Yeelight Cinema Director</title>
+  <link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand-mark" aria-hidden="true">CD</div>
+    <div>
+      <p class="eyebrow">PRIVATE SCREENING / YEELIGHT</p>
+      <h1>Cinema Director</h1>
+    </div>
+    <div class="service-state" id="service-state" role="status">Connecting</div>
+  </header>
+  <main class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-art" role="img" aria-label="Opera ceiling reference image"></div>
+      <div class="hero-copy">
+        <p class="eyebrow">A PRIVATE OPERA HOUSE FOR LIGHT</p>
+        <h2 id="hero-title">Let the soundtrack<br><em>take the room.</em></h2>
+        <p class="lede">Choose a film, choose your lights, then let a shared tab or local track become a restrained live score.</p>
+      </div>
+    </section>
+    <section class="workspace" aria-label="Cinema setup and console">
+      <div class="panel setup-panel">
+        <div class="panel-heading"><span>01</span><h2>Cast the screening</h2></div>
+        <label for="movie-query">Film</label>
+        <div class="search-row"><input id="movie-query" maxlength="160" placeholder="Search a film" autocomplete="off"><button id="movie-search" type="button">Search</button></div>
+        <div id="movie-results" class="result-list" aria-live="polite"></div>
+        <div id="movie-selection" class="selection-card" aria-live="polite" hidden></div>
+        <label for="song-query">Soundtrack (choose one)</label>
+        <div class="search-row"><input id="song-query" maxlength="160" placeholder="Choose a film first" autocomplete="off"><button id="song-search" type="button">Find</button></div>
+        <div id="song-results" class="result-list" aria-live="polite"></div>
+        <div id="song-selection" class="selection-card" aria-live="polite" hidden></div>
+        <div id="optional-audio" class="optional-audio" hidden>
+          <div class="optional-heading"><span>Optional audio source</span><span>Not required</span></div>
+          <p id="youtube-note" class="panel-note optional-source"></p>
+          <div id="youtube-results" class="result-list" aria-live="polite"></div>
+          <div id="youtube-selection" class="selection-card" aria-live="polite" hidden></div>
+        </div>
+        <label for="local-audio">Local audio</label>
+        <input id="local-audio" type="file" accept="audio/*">
+      </div>
+      <div class="panel lights-panel">
+        <div class="panel-heading"><span>02</span><h2>Choose the lights</h2></div>
+        <p class="panel-note">Roles are musical. Each selected light is assigned once and stays in this snapshot.</p>
+        <p id="validation-note" class="panel-note validation-note" hidden></p>
+        <div class="selection-toolbar">
+          <div class="selection-actions" role="group" aria-label="Light selection actions">
+            <button id="select-all-lights" class="text-button" type="button">Select all</button>
+            <button id="select-none-lights" class="text-button" type="button">Select none</button>
+          </div>
+        </div>
+        <div id="device-list" class="device-list" aria-live="polite"></div>
+        <div class="selection-summary"><strong id="selection-count">0</strong><span>lights selected</span><span class="role-key"><i class="accent-dot"></i> Accent <i class="ambient-dot"></i> Ambient</span></div>
+        <button id="create-session" class="primary" type="button" disabled>Prepare screening</button>
+      </div>
+      <div class="panel console-panel">
+        <div class="panel-heading"><span>03</span><h2>Run the console</h2><span id="console-status" class="console-status">Standby</span></div>
+        <div class="console-grid">
+          <div class="spectrum" id="spectrum" aria-label="Live audio spectrum"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="console-readout"><div><span>ENERGY</span><strong id="energy">--</strong></div><div><span>LYRIC CUE</span><strong id="lyric-cue">NONE</strong></div><div><span>LAST RECEIPT</span><strong id="last-receipt">--</strong></div></div>
+        </div>
+        <div class="console-actions"><button id="share-audio" type="button">Share tab audio</button><button id="start-show" class="primary" type="button" disabled>Start</button><button id="pause-show" type="button" disabled>Pause</button><button id="stop-show" class="danger" type="button" disabled>Stop</button></div>
+        <p id="console-message" class="console-message" role="status">Select a film, soundtrack, and at least one light.</p>
+        <div id="target-receipts" class="target-receipts" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+  <footer><span>Loopback only</span><span id="hardware-boundary">Mock preview never touches hardware</span><span id="mode-label">Mode: --</span></footer>
+  <script type="module" src="/scripts/app.js"></script>
+</body>
+</html>

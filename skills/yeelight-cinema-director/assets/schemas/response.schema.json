@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "yeelight-cinema-director/response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status"],
+  "properties": {
+    "status": { "type": "string", "enum": ["ok", "preview", "acknowledged", "partial", "uncertain", "blocked", "error"] },
+    "error": { "type": "string", "maxLength": 80 },
+    "session": { "type": "object" },
+    "targets": { "type": "array", "maxItems": 160 },
+    "receipt": { "type": "object" }
+  }
+}

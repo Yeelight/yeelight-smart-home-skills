@@ -1,0 +1,7 @@
+interface:
+  display_name: "Yeelight Cinema Director"
+  short_description: "Direct a local film and light screening"
+  default_prompt: "Use $yeelight-cinema-director to start or reuse the local cinema console yourself, open it for the user, choose a film, soundtrack, and explicitly selected Yeelight lights, then run a safe mock or an explicitly confirmed live validation. Never ask the user to run shell commands."
+
+policy:
+  allow_implicit_invocation: true
