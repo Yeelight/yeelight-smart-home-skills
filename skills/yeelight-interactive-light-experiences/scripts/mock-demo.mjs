@@ -14,7 +14,7 @@ const provider = {
     plan: buildDeterministicPlan(experienceId, input, "fallback"),
   }),
 };
-const app = createInteractiveServer({ port: 0, mode: "mock-16", scenario: "online", provider });
+const app = createInteractiveServer({ port: 0, mode: "mock-18", scenario: "online", provider });
 await app.ready;
 await new Promise((resolve) => app.server.listen(0, "127.0.0.1", resolve));
 const port = app.server.address().port;
@@ -32,7 +32,7 @@ try {
   const catalog = (await json("/api/catalog")).body.experiences;
   assert.equal(catalog.length, 12);
   const runs = [];
-  for (const mode of ["mock-16", "proxy-4"]) {
+  for (const mode of ["mock-18", "proxy-4"]) {
     app.runtime.mode = mode;
     app.runtime.scenario = "online";
     const session = (await json("/api/session", { method: "POST", body: "{}" })).body;
@@ -59,7 +59,7 @@ try {
         result = await json(`/api/experience/${item.id}/run`, { method: "POST", body: JSON.stringify({ sessionId: session.sessionId, input }) });
       }
       assert.equal(result.response.status, 200, `${mode}/${item.id}`);
-      assert.equal(result.body.execution.evidence.logicalCount, 16);
+      assert.equal(result.body.execution.evidence.logicalCount, 18);
       runs.push({ mode, id: item.id, status: result.body.execution.status, evidence: result.body.execution.evidence.label });
     }
     await json("/api/session/finish", { method: "POST", body: JSON.stringify({ sessionId: session.sessionId }) });

@@ -8,7 +8,7 @@ const profile = args.profile;
 const region = args.region;
 const houseId = args["house-id"];
 const runtimeBin = args["runtime-bin"];
-if (!profile || !region || !houseId || !runtimeBin || !args.map) fail("usage: live-bind --runtime-bin <absolute-path> --profile <name> --region <region> --house-id <id> --map alias=name,... [--topology live-proxy-4|live-16]; launch with --mode live-auto");
+if (!profile || !region || !houseId || !runtimeBin || !args.map) fail("usage: live-bind --runtime-bin <absolute-path> --profile <name> --region <region> --house-id <id> --map alias=name,... [--topology live-proxy-4|live-18]; launch with --mode live-auto");
 const bindingPath = assertProductionBindingPath(args["binding-file"] || defaultBindingPath());
 
 const adapter = new YeelightHomeCommandAdapter({ runtimeBin, profile, region, houseId, strictRuntime: true });

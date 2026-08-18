@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import { MAX_PHASE_DURATION_MS, MIN_PHASE_DURATION_MS } from "./contracts.mjs";
+import { LOGICAL_SLOTS, MAX_PHASE_DURATION_MS, MIN_PHASE_DURATION_MS } from "./contracts.mjs";
 
 const ALLOWED_INTENTS = new Set(["lighting.design.apply", "lighting.flow.execute", "state.query"]);
 const READ_INTENTS = new Set(["entity.list", "entity.capabilities", "gateway.list", "state.query"]);
@@ -10,7 +10,7 @@ const REGIONS = new Set(["cn", "sg", "us", "eu", "dev"]);
 const MAX_OUTPUT = 64 * 1024;
 const EVENTUAL_WRITE_CONFIRM_DELAY_MS = 3500;
 const FLOW_SETTLE_BUFFER_MS = 750;
-const MAX_TARGETS = 16;
+const MAX_TARGETS = LOGICAL_SLOTS.length;
 const MAX_CAPABILITY_NAMES = 64;
 const MAX_CAPABILITY_TEXT = 4096;
 const SAFE_FLOW_NAME = /^[A-Za-z0-9._:-]{1,64}$/;
@@ -290,7 +290,7 @@ function isValidObservationValue(property, value) {
 
 export function validateRequest(request) {
   if (!request || typeof request !== "object" || !ALLOWED_INTENTS.has(request.intent)) return { ok: false, reason: "intent_not_allowed" };
-  if (!Array.isArray(request.targets) || request.targets.length < 1 || request.targets.length > 16) return { ok: false, reason: "targets_not_allowed" };
+  if (!Array.isArray(request.targets) || request.targets.length < 1 || request.targets.length > MAX_TARGETS) return { ok: false, reason: "targets_not_allowed" };
   if (!request.targets.every((target) => target && typeof target === "object" && typeof target.id === "string" && /^[A-Za-z0-9._-]{1,80}$/.test(target.id))) return { ok: false, reason: "targets_not_allowed" };
   const targetIds = request.targets.map(({ id }) => id);
   if (new Set(targetIds).size !== targetIds.length) return { ok: false, reason: "targets_not_allowed" };
@@ -309,7 +309,7 @@ export function validateReadRequest(request) {
   const targets = Array.isArray(request.targets) ? request.targets : [];
   if (request.intent === "entity.list" || request.intent === "gateway.list") {
     if (targets.length) return { ok: false, reason: "targets_not_allowed" };
-  } else if (targets.length < 1 || targets.length > 16 || !targets.every((target) => target && typeof target === "object" && typeof target.id === "string" && /^[A-Za-z0-9._-]{1,80}$/.test(target.id))) {
+  } else if (targets.length < 1 || targets.length > MAX_TARGETS || !targets.every((target) => target && typeof target === "object" && typeof target.id === "string" && /^[A-Za-z0-9._-]{1,80}$/.test(target.id))) {
     return { ok: false, reason: "targets_not_allowed" };
   }
   if (targets.length && new Set(targets.map(({ id }) => id)).size !== targets.length) return { ok: false, reason: "targets_not_allowed" };

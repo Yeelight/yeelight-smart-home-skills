@@ -7,7 +7,7 @@ import { aggregatePlan, assertTopologyReady, createTopology } from "./lib/topolo
 import { EXPERIENCE_CATALOG, LOGICAL_SLOTS, validateExperiencePlan } from "./lib/contracts.mjs";
 
 const packageRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
-const requiredFiles = ["SKILL.md", "agents/openai.yaml", "assets/experiences.json", "assets/mock/ifa-16-e20.json", "assets/schemas/experience-plan.schema.json", "scripts/invoke.sh", "scripts/invoke.ps1", "scripts/service.mjs", "scripts/lib/service-contract.mjs", "scripts/runtime-manifest.json", "web/index.html", "web/app.js", "web/styles.css", "web/staff.html", "web/staff.js"];
+const requiredFiles = ["SKILL.md", "agents/openai.yaml", "assets/experiences.json", "assets/mock/ifa-18-e20.json", "assets/schemas/experience-plan.schema.json", "scripts/invoke.sh", "scripts/invoke.ps1", "scripts/service.mjs", "scripts/lib/service-contract.mjs", "scripts/runtime-manifest.json", "web/index.html", "web/app.js", "web/styles.css", "web/staff.html", "web/staff.js"];
 const errors = [];
 
 for (const relative of requiredFiles) if (!fs.existsSync(path.join(packageRoot, relative))) errors.push(`missing file: ${relative}`);
@@ -31,7 +31,7 @@ if (EXPERIENCE_CATALOG.length !== 12) errors.push(`expected 12 experiences, got 
 if (EXPERIENCE_CATALOG[0]?.id !== "fortune-light" || !EXPERIENCE_CATALOG[0]?.recommended) errors.push("fortune-light must be the recommended first experience");
 if (new Set(EXPERIENCE_CATALOG.map((item) => item.id)).size !== EXPERIENCE_CATALOG.length) errors.push("experience ids must be unique");
 
-for (const mode of ["mock-16", "proxy-4"]) {
+for (const mode of ["mock-18", "proxy-4"]) {
   const topology = createTopology(mode, "online");
   const ready = assertTopologyReady(topology, { rgb: true, brightness: true, flow: false });
   if (!ready.ok) errors.push(`${mode} topology not ready: ${ready.reason}`);
@@ -41,7 +41,7 @@ for (const mode of ["mock-16", "proxy-4"]) {
       const checked = validateExperiencePlan(plan, item.id);
       if (!checked.ok) errors.push(`${item.id} plan invalid: ${checked.errors.join(", ")}`);
       const compiled = aggregatePlan(plan, topology);
-      if (compiled.derivedSlots.length !== LOGICAL_SLOTS.length) errors.push(`${item.id} ${mode} does not preserve 16 derived slots`);
+      if (compiled.derivedSlots.length !== LOGICAL_SLOTS.length) errors.push(`${item.id} ${mode} does not preserve 18 derived slots`);
     } catch (error) {
       errors.push(`${item.id} ${mode} failed: ${error.message}`);
     }
@@ -52,5 +52,5 @@ if (errors.length) {
   console.error(errors.map((error) => `FAIL ${error}`).join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(JSON.stringify({ ok: true, experiences: EXPERIENCE_CATALOG.length, logicalSlots: LOGICAL_SLOTS.length, modes: ["mock-16", "proxy-4"], liveMode: "live-auto" }));
+  console.log(JSON.stringify({ ok: true, experiences: EXPERIENCE_CATALOG.length, logicalSlots: LOGICAL_SLOTS.length, modes: ["mock-18", "proxy-4"], liveMode: "live-auto" }));
 }

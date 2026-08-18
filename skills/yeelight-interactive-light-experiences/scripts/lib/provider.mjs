@@ -11,7 +11,7 @@ import { EXPERIENCE_IDS, validateExperiencePlan } from "./contracts.mjs";
 const VERSION = 1;
 const MODES = new Set(["responses", "chat-completions"]);
 const CODING_HUB_HOSTNAME = "coding-hub-api.yeelight.com";
-// Strict 16-slot plans can take several minutes on the exhibition provider.
+// Strict 18-slot plans can take several minutes on the exhibition provider.
 // Keep one finite budget shared by the socket and wall-clock deadlines; session
 // cancellation remains the authoritative way to stop a visitor run early.
 const PROVIDER_TIMEOUT_MS = 10 * 60 * 1000;

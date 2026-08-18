@@ -4,13 +4,13 @@ import { fileURLToPath } from "node:url";
 import { LOGICAL_SLOTS, boundedInteger } from "./contracts.mjs";
 
 const packageRoot = path.resolve(fileURLToPath(new URL("../../", import.meta.url)));
-const fixture = JSON.parse(fs.readFileSync(path.join(packageRoot, "assets", "mock", "ifa-16-e20.json"), "utf8"));
+const fixture = JSON.parse(fs.readFileSync(path.join(packageRoot, "assets", "mock", "ifa-18-e20.json"), "utf8"));
 
 export const QUADRANT_MAP = Object.freeze({
-  "L-upper": Object.freeze({ physicalSlot: "Q-LU", coverage: Object.freeze(["L1", "L2", "L3", "L4"]) }),
-  "L-lower": Object.freeze({ physicalSlot: "Q-LL", coverage: Object.freeze(["L5", "L6", "L7", "L8"]) }),
-  "R-upper": Object.freeze({ physicalSlot: "Q-RU", coverage: Object.freeze(["R1", "R2", "R3", "R4"]) }),
-  "R-lower": Object.freeze({ physicalSlot: "Q-RL", coverage: Object.freeze(["R5", "R6", "R7", "R8"]) }),
+  "L-upper": Object.freeze({ physicalSlot: "Q-LU", coverage: Object.freeze(["L1", "L2", "L3", "L4", "L5"]) }),
+  "L-lower": Object.freeze({ physicalSlot: "Q-LL", coverage: Object.freeze(["L6", "L7", "L8", "L9"]) }),
+  "R-upper": Object.freeze({ physicalSlot: "Q-RU", coverage: Object.freeze(["R1", "R2", "R3", "R4", "R5"]) }),
+  "R-lower": Object.freeze({ physicalSlot: "Q-RL", coverage: Object.freeze(["R6", "R7", "R8", "R9"]) }),
 });
 
 export const QUADRANT_ALIASES = Object.freeze(Object.keys(QUADRANT_MAP));
@@ -23,21 +23,21 @@ export function createFixture(scenario = "online") {
     capabilities: {
       ...slot.capabilities,
       flowNames: Array.isArray(slot.capabilities.flowNames) && slot.capabilities.flowNames.length ? [...slot.capabilities.flowNames] : slot.capabilities.flow ? ["interactive-light-flow"] : [],
-      flow: scenario === "unsupported-capability" && ["R5", "R6", "R7", "R8"].includes(slot.slot) ? false : slot.capabilities.flow,
+      flow: scenario === "unsupported-capability" && ["R6", "R7", "R8", "R9"].includes(slot.slot) ? false : slot.capabilities.flow,
     },
   }));
   return { profile: fixture.profile, region: fixture.region, gateway: { ...fixture.gateway }, slots, scenario };
 }
 
-export function createTopology(mode = "mock-16", scenario = "online") {
-  if (!["mock-16", "proxy-4"].includes(mode)) throw new Error(`Unknown topology mode: ${mode}`);
+export function createTopology(mode = "mock-18", scenario = "online") {
+  if (!["mock-18", "proxy-4"].includes(mode)) throw new Error(`Unknown topology mode: ${mode}`);
   const source = createFixture(scenario);
-  if (mode === "mock-16") {
+  if (mode === "mock-18") {
     return {
       mode,
       reduced: false,
-      physicalCount: 16,
-      logicalCount: 16,
+      physicalCount: LOGICAL_SLOTS.length,
+      logicalCount: LOGICAL_SLOTS.length,
       gateway: { alias: "IFA Gateway", online: source.gateway.online },
       targets: source.slots.map((slot) => ({
         alias: slot.slot,
@@ -47,7 +47,7 @@ export function createTopology(mode = "mock-16", scenario = "online") {
         capabilities: { ...slot.capabilities },
         coverage: [slot.slot],
       })),
-      evidenceLabel: "16-light deterministic mock parity validated",
+      evidenceLabel: "18-light deterministic mock parity validated",
       scenario,
     };
   }
@@ -75,7 +75,7 @@ export function createTopology(mode = "mock-16", scenario = "online") {
     mode: "proxy-4",
     reduced: true,
     physicalCount: 4,
-    logicalCount: 16,
+    logicalCount: LOGICAL_SLOTS.length,
     gateway: { alias: "IFA Gateway", online: source.gateway.online },
     targets,
     evidenceLabel: "4-light deterministic mock quadrant parity validated",
@@ -106,9 +106,10 @@ export function assertTopologyReady(topology, required = { rgb: true, brightness
   if (!topology || !Array.isArray(topology.targets) || topology.targets.length !== topology.physicalCount) {
     return { ok: false, reason: "topology_unavailable" };
   }
-  if (!["mock-16", "proxy-4", "live-16", "live-proxy-4"].includes(topology.mode)) return { ok: false, reason: "unknown_topology_mode" };
+  if (topology.logicalCount !== LOGICAL_SLOTS.length) return { ok: false, reason: "logical_slot_count_invalid" };
+  if (!["mock-18", "proxy-4", "live-18", "live-proxy-4"].includes(topology.mode)) return { ok: false, reason: "unknown_topology_mode" };
   if (!topology.gateway?.online) return { ok: false, reason: "gateway_offline" };
-  if (topology.mode === "mock-16" || topology.mode === "live-16") {
+  if (topology.mode === "mock-18" || topology.mode === "live-18") {
     const slots = topology.targets.map((target) => target.alias);
     if (topology.targets.length !== LOGICAL_SLOTS.length || slots.some((slot, index) => slot !== LOGICAL_SLOTS[index])) return { ok: false, reason: "logical_slot_binding_invalid" };
     if (topology.targets.some((target) => target.coverage?.length !== 1 || target.coverage[0] !== target.alias || target.slot !== target.alias)) return { ok: false, reason: "logical_slot_coverage_invalid" };

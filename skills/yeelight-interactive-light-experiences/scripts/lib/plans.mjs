@@ -120,7 +120,7 @@ export function buildCompactPlanFixture(experienceId, input = {}) {
     p: plan.phases.map((phase) => ({
       d: phase.durationMs,
       t: phase.targets[0].holdMs,
-      q: ["L1", "L5", "R1", "R5"].map((slot) => {
+      q: ["L1", "L6", "R1", "R6"].map((slot) => {
         const target = phase.targets.find((item) => item.slot === slot);
         return { h: target.hue, s: target.saturation, b: target.brightness };
       }),
@@ -167,7 +167,7 @@ function policyPhases(plan, decoded) {
       durationMs: decodedPhase.d,
       targets: phase.targets.map((target) => {
         const numericSlot = Number(target.slot.slice(1));
-        const quadrantIndex = target.slot.startsWith("L") ? (numericSlot <= 4 ? 0 : 1) : (numericSlot <= 4 ? 2 : 3);
+        const quadrantIndex = target.slot.startsWith("L") ? (numericSlot <= 5 ? 0 : 1) : (numericSlot <= 5 ? 2 : 3);
         const color = colors[quadrantIndex];
         return { ...target, hue: color.h, saturation: color.s, brightness: Math.max(EXHIBITION_MIN_BRIGHTNESS, color.b), holdMs: decodedPhase.t };
       }),
@@ -360,8 +360,8 @@ function safeInput(input) {
       colorFamily: String(value.colorFamily || "unknown").slice(0, 16),
       onlineBand: String(value.onlineBand || "unknown").slice(0, 16),
       sampleCoverage: {
-        sampledCount: boundedInteger(value.sampleCoverage?.sampledCount, 0, 16, 0),
-        totalTargets: boundedInteger(value.sampleCoverage?.totalTargets, 0, 16, 0),
+        sampledCount: boundedInteger(value.sampleCoverage?.sampledCount, 0, LOGICAL_SLOTS.length, 0),
+        totalTargets: boundedInteger(value.sampleCoverage?.totalTargets, 0, LOGICAL_SLOTS.length, 0),
         scope: String(value.sampleCoverage?.scope || "state sample").slice(0, 48),
       },
     }];

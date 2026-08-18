@@ -5,7 +5,7 @@ const api = '/api';
 const state = {
   session: null,
   catalog: [],
-  mode: 'mock-16',
+  mode: 'mock-18',
   scenario: 'online',
   taps: [],
   current: null,
@@ -54,16 +54,16 @@ function endpoint(path, options = {}) {
 
 function modeLabel() {
   if (state.mode === 'live-proxy-4') return 'Live installation · four light zones';
-  if (state.mode === 'live-16') return 'Live installation · sixteen lights';
+  if (state.mode === 'live-18') return 'Live installation · eighteen lights';
   if (state.mode === 'proxy-4') return 'Four-zone installation preview';
-  return 'Installation preview · sixteen light positions';
+  return 'Installation preview · eighteen light positions';
 }
 
 function publicEvidenceLabel(topology = {}) {
   if (topology?.mode === 'live-proxy-4') return 'Live installation · four zones ready';
-  if (topology?.mode === 'live-16') return 'Live installation · sixteen lights ready';
+  if (topology?.mode === 'live-18') return 'Live installation · eighteen lights ready';
   if (topology?.mode === 'proxy-4') return 'Four-zone preview · ready';
-  if (topology?.mode === 'mock-16') return 'Installation preview · ready';
+  if (topology?.mode === 'mock-18') return 'Installation preview · ready';
   return 'Light installation · checking readiness';
 }
 
@@ -73,7 +73,7 @@ function setEvidence(value) {
   evidence.textContent = publicEvidenceLabel(topology);
 }
 
-function lightField(count = 16) {
+function lightField(count = 18) {
   return Array.from({ length: count }, (_, index) => `<i data-slot="${index + 1}"></i>`).join('');
 }
 
@@ -135,7 +135,7 @@ function renderHome() {
       <div class="hero-actions"><a class="button primary" href="#/experience/fortune-light">Begin with Fortune Light ${icon('arrowRight')}</a><span class="hero-note">No account · one visitor session · live command acknowledgement</span></div>
     </div>
     <div class="hero-visual" aria-hidden="true">
-      <div class="hero-orbit-label">16 SLOT LIGHT FIELD</div>
+      <div class="hero-orbit-label">18 SLOT LIGHT FIELD</div>
       <div class="hero-constellation">${lightField()}</div>
       <div class="hero-readout"><i></i><i></i><i></i><i></i></div>
       <div class="hero-orbit-caption"><span>AI plan</span><span>4 quadrants</span></div>
@@ -260,7 +260,7 @@ function resultMarkup(item, result) {
       : 'A bounded local light idea was validated, then the installation checked the response.';
   const evidence = execution.evidence || {};
   const lightResponse = execution.status === 'success' || execution.status === 'acknowledged'
-    ? `${Number(evidence.physicalCount) === 4 ? 'Four live zones' : Number(evidence.physicalCount) === 16 ? 'Sixteen lights' : 'The light field'} responded`
+    ? `${Number(evidence.physicalCount) === 4 ? 'Four live zones' : Number(evidence.physicalCount) === 18 ? 'Eighteen lights' : 'The light field'} responded`
     : execution.status === 'partial' ? 'The light field paused part-way' : 'The light field did not complete';
   const interpretationLabel = source === 'ai' ? 'AI-crafted idea' : source === 'fallback' ? 'Local fallback idea' : 'Local idea';
   const statusLabel = execution.status === 'success' ? 'Light response verified' : execution.status === 'acknowledged' ? 'Light command acknowledged' : execution.status === 'partial' ? 'Response needs attention' : 'Response paused';
@@ -269,7 +269,7 @@ function resultMarkup(item, result) {
     : recovery?.needed
       ? `<p>${escapeHtml(recovery.message || 'A trusted restore is unavailable for this run.')}</p>`
       : '';
-  return `<div class="result-intro"><div class="eyebrow">${escapeHtml(interpretationLabel)}</div><h2>${escapeHtml(plan.summary || 'Composition ready')}</h2><p>${escapeHtml(plan.explanation || 'The installation produced a bounded light response.')}</p></div>${sceneResultMarkup(item.id, result)}<div class="result-light-field" aria-hidden="true">${lightField(4)}</div><div class="plan-bars" aria-hidden="true"><i class="bar-primary"></i><i class="bar-secondary"></i><i class="bar-tertiary"></i><i class="bar-quaternary"></i></div><div class="result-ledger"><div><strong>Light response</strong><span>${escapeHtml(lightResponse)}</span></div><div><strong>Field shaped</strong><span>${escapeHtml(`${Number(evidence.logicalCount) || 16} positions`)}</span></div><div><strong>Visit state</strong><span>${escapeHtml(statusLabel)}</span></div></div><div class="state-box"><h3>${escapeHtml(statusLabel)}</h3><p>${interpretation}</p>${recoveryAction}</div><div class="action-row"><button class="button primary" data-finish>Finish and clear</button><button class="button" data-home>Choose another</button></div>`;
+  return `<div class="result-intro"><div class="eyebrow">${escapeHtml(interpretationLabel)}</div><h2>${escapeHtml(plan.summary || 'Composition ready')}</h2><p>${escapeHtml(plan.explanation || 'The installation produced a bounded light response.')}</p></div>${sceneResultMarkup(item.id, result)}<div class="result-light-field" aria-hidden="true">${lightField(4)}</div><div class="plan-bars" aria-hidden="true"><i class="bar-primary"></i><i class="bar-secondary"></i><i class="bar-tertiary"></i><i class="bar-quaternary"></i></div><div class="result-ledger"><div><strong>Light response</strong><span>${escapeHtml(lightResponse)}</span></div><div><strong>Field shaped</strong><span>${escapeHtml(`${Number(evidence.logicalCount) || 18} positions`)}</span></div><div><strong>Visit state</strong><span>${escapeHtml(statusLabel)}</span></div></div><div class="state-box"><h3>${escapeHtml(statusLabel)}</h3><p>${interpretation}</p>${recoveryAction}</div><div class="action-row"><button class="button primary" data-finish>Finish and clear</button><button class="button" data-home>Choose another</button></div>`;
 }
 
 function sceneResultMarkup(id, result) {

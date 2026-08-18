@@ -11,7 +11,7 @@ for (let index = 2; index < process.argv.length; index += 1) {
   args.set(key, process.argv[index + 1] && !process.argv[index + 1].startsWith("--") ? process.argv[++index] : true);
 }
 
-const mode = args.get("mode") || "mock-16";
+const mode = args.get("mode") || "mock-18";
 const bindingPath = mode.startsWith("live") ? assertProductionBindingPath(args.get("binding-file") || defaultBindingPath()) : undefined;
 const app = createInteractiveServer({
   port: args.has("port") ? Number(args.get("port")) : 8787,

@@ -35,9 +35,9 @@ only a developer debugging fallback and is not part of the visitor workflow.
 
 The service uses the fixed loopback endpoint `http://127.0.0.1:8787/` by
 default. If no protected IFA binding exists, it starts deterministic offline
-`mock-16`; it never calls a provider or a real device. If the protected binding
+`mock-18`; it never calls a provider or a real device. If the protected binding
 exists, it starts `live-auto`, verifies the fixed `ifa-eu` EU context and bound
-devices before listening, and resolves to either `live-proxy-4` or `live-16`.
+devices before listening, and resolves to either `live-proxy-4` or `live-18`.
 An invalid binding or failed live verification stops startup; it never silently
 downgrades to mock mode.
 
@@ -54,15 +54,19 @@ exhibition profile. Visitor pages never see the key or provider origin.
 
 For live hardware, an operator creates the protected binding once with
 `scripts/live-bind.mjs`, either for the four named quadrant proxies
-(`live-proxy-4`) or all sixteen named slots (`live-16`) in the fixed EU
+(`live-proxy-4`) or all eighteen named slots (`live-18`) in the fixed EU
 exhibition home. The Host then starts the wrapper normally; it automatically
 uses `live-auto`. The auto mode is only a startup resolver: it revalidates the persisted binding
 and uses its concrete topology. It does not scan by device count, select
 unbound devices, rebind another home, or silently downgrade to mock mode. A
 binding mismatch or failed device check stops startup before any visitor write.
+The canonical full layout is `L1..L9` and `R1..R9`. The four-light proxy maps
+`L-upper`/`L-lower` to `L1..L5`/`L6..L9` and the right bank the same way. A
+previous `live-16` binding is rejected as stale and must be explicitly rebound
+with all eighteen aliases; it is never reinterpreted as an 18-light binding.
 
 Use `node scripts/validate.mjs` for package and closed-plan checks, and
-`node scripts/mock-demo.mjs` for the complete twelve-route `mock-16` / `proxy-4`
+`node scripts/mock-demo.mjs` for the complete twelve-route `mock-18` / `proxy-4`
 and failure-matrix smoke.
 
 ## Visitor Boundary
@@ -91,12 +95,12 @@ offered because the fast path has no trusted pre-state snapshot. The browser,
 Provider, and model cannot select this policy. The `No Shared Prompt` server-side
 state inspection remains a separate MCP input step. In live mode it uses only the
 server-selected left-bank representatives (`L-upper`/`L-lower` for the quadrant
-proxy, `L1`/`L5` for sixteen lights) and fixed Runtime `brightness` and `color`
+proxy, `L1`/`L6` for eighteen lights) and fixed Runtime `brightness` and `color`
 reads. It projects only brightness, color, responsiveness bands, and explicit
 sample coverage; it is never a claim about the full installation. If that closed
 observation API is unavailable, the experience stops before provider or light
 execution and does not fall back to a full snapshot. Mock evidence must remain
-labelled `16-light deterministic mock parity validated`; it is not live
+labelled `18-light deterministic mock parity validated`; it is not live
 installation validation. The adapter may also treat a Runtime
 `lighting.design.apply` response as `dispatched_unverified` only when the
 response is a complete `write_verification_mismatch` receipt: every expanded
@@ -118,7 +122,7 @@ Provider compact phases use four independent `q` values in `L-upper`,
 `L-lower`, `R-upper`, `R-lower` order. The local compiler keeps non-uniform
 provider colors unchanged; only equal or near-equal quadrant colors receive a
 small deterministic hue/saturation (and, when brightness headroom exists,
-brightness) variation before canonical 16-slot expansion. This prevents the
+brightness) variation before canonical 18-slot expansion. This prevents the
 four-light proxy from collapsing into one visual output without moving the
 spatial policy into the topology or Runtime write layer.
 
@@ -138,4 +142,4 @@ is enabled by the selected launch mode and remains bounded by the local executor
 and capability checks. Keep the loopback Host and same-origin POST checks, the
 fixed EU live context, closed plan schema, single active visitor session, and
 read-back evidence. Do not represent a four-light proxy or mock result as
-sixteen-light live validation.
+eighteen-light live validation.

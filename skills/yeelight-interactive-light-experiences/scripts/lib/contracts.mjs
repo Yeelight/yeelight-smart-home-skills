@@ -7,8 +7,8 @@ const catalogPath = path.join(packageRoot, "assets", "experiences.json");
 export const EXPERIENCE_CATALOG = Object.freeze(JSON.parse(fs.readFileSync(catalogPath, "utf8")));
 export const EXPERIENCE_IDS = new Set(EXPERIENCE_CATALOG.map((item) => item.id));
 export const LOGICAL_SLOTS = Object.freeze([
-  "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8",
-  "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8",
+  "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9",
+  "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9",
 ]);
 export const PLAN_VERSION = 1;
 export const PLAN_SOURCES = new Set(["ai", "fallback", "deterministic"]);
@@ -56,7 +56,7 @@ export function validateExperiencePlan(plan, expectedExperienceId = undefined) {
     seenPhases.add(phase.phaseId);
     if (typeof phase.label !== "string" || !phase.label.trim() || phase.label.length > 64) errors.push("invalid phase label");
     if (!Number.isInteger(phase.durationMs) || phase.durationMs < MIN_PHASE_DURATION_MS || phase.durationMs > MAX_PHASE_DURATION_MS) errors.push("invalid phase duration");
-    if (!Array.isArray(phase.targets) || phase.targets.length !== LOGICAL_SLOTS.length) errors.push("phase must cover all 16 logical slots");
+    if (!Array.isArray(phase.targets) || phase.targets.length !== LOGICAL_SLOTS.length) errors.push("phase must cover all 18 logical slots");
     const seenSlots = new Set();
     for (const target of phase.targets || []) {
       const targetKeys = new Set(["slot", "hue", "saturation", "brightness", "holdMs"]);
@@ -80,7 +80,7 @@ export function publicExperienceCatalog() {
 export function redactedExecution(result) {
   if (!isPlainObject(result)) return { status: "error", userMessage: "No execution result." };
   const statuses = new Set(["success", "acknowledged", "partial", "blocked", "error", "unavailable"]);
-  const modes = new Set(["mock-16", "proxy-4", "live-16", "live-proxy-4", "live-auto", "unknown"]);
+  const modes = new Set(["mock-18", "proxy-4", "live-18", "live-proxy-4", "live-auto", "unknown"]);
   const status = statuses.has(result.status) ? result.status : "error";
   return {
     status,
@@ -88,14 +88,14 @@ export function redactedExecution(result) {
     verification: ["deterministic", "readback_verified", "write_acknowledged"].includes(result.verification) ? result.verification : "unknown",
     evidence: isPlainObject(result.evidence) ? {
       label: cleanText(result.evidence.label, 80, "unverified"),
-      physicalCount: boundedInteger(result.evidence.physicalCount, 0, 16, 0),
-      logicalCount: boundedInteger(result.evidence.logicalCount, 0, 16, 16),
+      physicalCount: boundedInteger(result.evidence.physicalCount, 0, LOGICAL_SLOTS.length, 0),
+      logicalCount: boundedInteger(result.evidence.logicalCount, 0, LOGICAL_SLOTS.length, LOGICAL_SLOTS.length),
       reduced: Boolean(result.evidence.reduced),
-    } : { label: "unverified", physicalCount: 0, logicalCount: 16, reduced: false },
-    physicalResults: Array.isArray(result.physicalResults) ? result.physicalResults.slice(0, 16).filter(isPlainObject).map((item) => ({
+    } : { label: "unverified", physicalCount: 0, logicalCount: LOGICAL_SLOTS.length, reduced: false },
+    physicalResults: Array.isArray(result.physicalResults) ? result.physicalResults.slice(0, LOGICAL_SLOTS.length).filter(isPlainObject).map((item) => ({
       alias: cleanText(item.alias, 24), status: cleanText(item.status, 24, "unknown"), phase: cleanText(item.phase, 24),
     })) : [],
-    logicalStates: Array.isArray(result.logicalStates) ? result.logicalStates.slice(0, 16).filter(isPlainObject).map((item) => ({
+    logicalStates: Array.isArray(result.logicalStates) ? result.logicalStates.slice(0, LOGICAL_SLOTS.length).filter(isPlainObject).map((item) => ({
       slot: cleanText(item.slot, 4), status: cleanText(item.status, 32, "unknown"), source: cleanText(item.source, 32, "unknown"),
     })) : [],
     recovery: isPlainObject(result.recovery) ? {

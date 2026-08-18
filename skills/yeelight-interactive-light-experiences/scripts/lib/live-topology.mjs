@@ -71,7 +71,7 @@ export class LiveTopologyManager {
     const topology = this.#topologies.get(mode);
     if (!topology) return;
     this.#writeValidated = true;
-    topology.evidenceLabel = mode === "live-proxy-4" ? "EU 4-light quadrant-proxy write validated" : "16-light IFA live validation completed";
+    topology.evidenceLabel = mode === "live-proxy-4" ? "EU 4-light quadrant-proxy write validated" : "18-light IFA live validation completed";
   }
 
   status() {
@@ -207,18 +207,18 @@ function buildLiveTopology(record, discovered, writeValidated) {
     logicalCount: LOGICAL_SLOTS.length,
     gateway: discovered.gateway,
     targets,
-    evidenceLabel: writeValidated ? (record.topology === "live-proxy-4" ? "EU 4-light quadrant-proxy write validated" : "16-light IFA live validation completed") : "EU 4-light read-only validated",
+    evidenceLabel: writeValidated ? (record.topology === "live-proxy-4" ? "EU 4-light quadrant-proxy write validated" : "18-light IFA live validation completed") : "EU 4-light read-only validated",
     scenario: "online",
     provenance: "live",
     bindingRevision: bindingRevision(record),
   };
-  if (record.topology === "live-16") topology.evidenceLabel = writeValidated ? "16-light IFA live validation completed" : "16-light IFA live validation pending";
+  if (record.topology === "live-18") topology.evidenceLabel = writeValidated ? "18-light IFA live validation completed" : "18-light IFA live validation pending";
   return topology;
 }
 
 function aliasesFor(topology) {
   if (topology === "live-proxy-4") return QUADRANT_ALIASES;
-  if (topology === "live-16") return LOGICAL_SLOTS;
+  if (topology === "live-18") return LOGICAL_SLOTS;
   throw new Error("live_binding_topology_invalid");
 }
 

@@ -79,7 +79,7 @@ export class ExperienceExecutor {
     };
   }
 
-  async inspectState({ mode = "mock-16", scenario = "online", requestId = "state-inspection", signal } = {}) {
+  async inspectState({ mode = "mock-18", scenario = "online", requestId = "state-inspection", signal } = {}) {
     if (String(mode).startsWith("live")) {
       let topology;
       try { topology = this.topologyFactory(mode, "online"); } catch { return { ok: false, reason: "live_topology_unavailable" }; }
@@ -117,7 +117,7 @@ export class ExperienceExecutor {
     return queued;
   }
 
-  async #execute(plan, { sessionId = "", requestId = "", generation = "", mode = "mock-16", scenario = "online", signal, isCurrent = () => true, expectedPreStateDigest = "", verifyLive = true } = {}) {
+  async #execute(plan, { sessionId = "", requestId = "", generation = "", mode = "mock-18", scenario = "online", signal, isCurrent = () => true, expectedPreStateDigest = "", verifyLive = true } = {}) {
     const current = () => !signal?.aborted && isCurrent();
     const validated = validateExperiencePlan(plan, plan?.experienceId);
     if (!validated.ok) return redactedExecution({ status: "blocked", mode, userMessage: "The light plan was rejected." });
@@ -344,7 +344,7 @@ export class ExperienceExecutor {
     return this.#commandAdapter.invoke(request, { signal });
   }
 
-  async restore(snapshot = null, { mode = "mock-16", scenario = "online", sessionId = "", requestId = "", generation = "", signal, isCurrent = () => true, expectedCurrentDigest = "", recoveryRef = "", restoreAliases = null } = {}) {
+  async restore(snapshot = null, { mode = "mock-18", scenario = "online", sessionId = "", requestId = "", generation = "", signal, isCurrent = () => true, expectedCurrentDigest = "", recoveryRef = "", restoreAliases = null } = {}) {
     const run = async () => {
       const record = snapshot instanceof Map ? { snapshot, owner: null } : (snapshot || this.#currentRecovery());
       const topology = this.topologyFactory(mode, scenario);
@@ -456,7 +456,7 @@ export class ExperienceExecutor {
 
 function observationRepresentatives(topology) {
   if (!topology?.mode?.startsWith("live") || !Array.isArray(topology.targets)) return { ok: false, reason: "live_topology_unavailable" };
-  const aliases = topology.mode === "live-proxy-4" ? ["L-upper", "L-lower"] : topology.mode === "live-16" ? ["L1", "L5"] : [];
+  const aliases = topology.mode === "live-proxy-4" ? ["L-upper", "L-lower"] : topology.mode === "live-18" ? ["L1", "L6"] : [];
   if (!aliases.length) return { ok: false, reason: "observation_topology_unsupported" };
   const targets = aliases.map((alias) => topology.targets.find((target) => target?.alias === alias || target?.slot === alias));
   if (targets.some((target) => !target?.id) || new Set(targets.map((target) => target.id)).size !== aliases.length) return { ok: false, reason: "observation_representatives_unavailable" };

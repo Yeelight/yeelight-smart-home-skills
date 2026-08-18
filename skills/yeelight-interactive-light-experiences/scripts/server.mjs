@@ -7,6 +7,7 @@ import { URL } from "node:url";
 
 import {
   EXPERIENCE_IDS,
+  LOGICAL_SLOTS,
   boundedInteger,
   catalogItem,
   cleanText,
@@ -29,7 +30,7 @@ const webRoot = path.join(packageRoot, "web");
 const MAX_BODY = 32 * 1024;
 const DEFAULT_SESSION_TIMEOUT_MS = 5 * 60 * 1000;
 const LIVE_SESSION_TIMEOUT_MS = 30 * 60 * 1000;
-const MODES = new Set(["mock-16", "proxy-4", "live-16", "live-proxy-4", "live-auto"]);
+const MODES = new Set(["mock-18", "proxy-4", "live-18", "live-proxy-4", "live-auto"]);
 const SCENARIOS = new Set(["online", "offline", "unsupported-capability", "timeout", "partial-write", "readback-mismatch"]);
 const TURN_EXPERIENCES = new Set(["shared-breath", "light-game-arena", "common-ground"]);
 const GARDEN_CATEGORIES = new Set(["welcome", "focus", "ease", "wonder"]);
@@ -60,7 +61,7 @@ const MIME = new Map([
 
 export function createInteractiveServer(options = {}) {
   const port = Number.isInteger(options.port) ? options.port : 8787;
-  const mode = normalizeMode(options.mode || process.env.YEELIGHT_ILE_MODE || "mock-16");
+  const mode = normalizeMode(options.mode || process.env.YEELIGHT_ILE_MODE || "mock-18");
   const scenario = normalizeScenario(options.scenario || process.env.YEELIGHT_ILE_SCENARIO || "online");
   const liveContext = mode.startsWith("live") ? normalizeLiveContext(options) : null;
   if (mode.startsWith("live") && scenario !== "online") throw Object.assign(new Error("live_scenario_must_be_online"), { statusCode: 400 });
@@ -95,7 +96,7 @@ export function createInteractiveServer(options = {}) {
     if (liveTopology) {
       const topology = await liveTopology.load();
       if (mode === "live-auto") {
-        if (!topology?.mode || !["live-16", "live-proxy-4"].includes(topology.mode)) throw new Error("live_topology_unavailable");
+        if (!topology?.mode || !["live-18", "live-proxy-4"].includes(topology.mode)) throw new Error("live_topology_unavailable");
         runtime.mode = topology.mode;
       } else if (topology?.mode && topology.mode !== mode) {
         throw new Error("live_binding_topology_mismatch");
@@ -720,8 +721,8 @@ function projectSampleCoverage(coverage, sampledCount) {
   const sampled = Number.isInteger(coverage?.sampledCount) ? coverage.sampledCount : sampledCount;
   const total = Number.isInteger(coverage?.totalTargets) ? coverage.totalTargets : sampledCount;
   return {
-    sampledCount: Math.max(0, Math.min(16, sampled)),
-    totalTargets: Math.max(0, Math.min(16, total)),
+    sampledCount: Math.max(0, Math.min(LOGICAL_SLOTS.length, sampled)),
+    totalTargets: Math.max(0, Math.min(LOGICAL_SLOTS.length, total)),
     scope: cleanText(coverage?.scope || "state sample", 48),
   };
 }
@@ -780,7 +781,7 @@ function normalizeOwnerToken(value) {
 }
 
 function normalizeMode(value) {
-  const mode = String(value || "mock-16");
+  const mode = String(value || "mock-18");
   if (!MODES.has(mode)) throw Object.assign(new Error("unsupported_mode"), { statusCode: 400 });
   return mode;
 }

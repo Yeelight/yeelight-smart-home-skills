@@ -10,7 +10,7 @@
     "visitorPath": "/",
     "actions": ["start", "status", "stop"],
     "startBehavior": "reuse-healthy-or-start-one",
-    "modeSelection": "protected-binding-or-mock-16",
+    "modeSelection": "protected-binding-or-mock-18",
     "bindingFailure": "fail-closed"
   },
   "hosts": {

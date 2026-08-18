@@ -151,7 +151,7 @@ function servicePaths(options) {
 function resolveConfiguration(options) {
   const bindingPath = path.resolve(options.bindingPath || defaultBindingPath());
   const bindingExists = bindingPresent(bindingPath);
-  const mode = bindingExists ? "live-auto" : "mock-16";
+  const mode = bindingExists ? "live-auto" : "mock-18";
   if (options.mode && options.mode !== mode) throw serviceError("service_mode_fixed", "The service mode is selected from the protected live binding and cannot be supplied by the Host.");
   if (!bindingExists) {
     const port = normalizePort(options.port);
@@ -193,7 +193,7 @@ function readBinding(file) {
     const houseId = String(value.houseId || "");
     const topology = String(value.topology || "");
     const bindings = value.bindings && typeof value.bindings === "object" && !Array.isArray(value.bindings) ? value.bindings : null;
-    if (version !== 1 || !bindings || !["live-proxy-4", "live-16"].includes(topology)) throw new Error("binding_shape_invalid");
+    if (version !== 1 || !bindings || !["live-proxy-4", "live-18"].includes(topology)) throw new Error("binding_shape_invalid");
     return { version, profile, region, houseId, topology, bindings };
   } catch {
     throw serviceError("live_binding_invalid", "The protected IFA binding cannot be read.");
@@ -269,7 +269,7 @@ function readState(file) {
   if (stat.isSymbolicLink() || !stat.isFile()) throw serviceError("service_state_invalid", "The local service state file is invalid.");
   try {
     const state = JSON.parse(fs.readFileSync(file, "utf8"));
-    if (state?.version !== 1 || state.serviceId !== SERVICE_ID || state.protocolVersion !== PROTOCOL_VERSION || !Number.isInteger(state.pid) || state.pid <= 0 || !Number.isInteger(state.port) || state.port < 1 || state.port > 65535 || typeof state.requestedMode !== "string" || !["mock-16", "live-auto"].includes(state.requestedMode) || typeof state.mode !== "string" || (state.mode !== "" && !["mock-16", "live-proxy-4", "live-16"].includes(state.mode)) || !validInstanceId(state.instanceId) || !validOwnerToken(state.ownerToken) || typeof state.configFingerprint !== "string") throw new Error("invalid_state");
+    if (state?.version !== 1 || state.serviceId !== SERVICE_ID || state.protocolVersion !== PROTOCOL_VERSION || !Number.isInteger(state.pid) || state.pid <= 0 || !Number.isInteger(state.port) || state.port < 1 || state.port > 65535 || typeof state.requestedMode !== "string" || !["mock-18", "live-auto"].includes(state.requestedMode) || typeof state.mode !== "string" || (state.mode !== "" && !["mock-18", "live-proxy-4", "live-18"].includes(state.mode)) || !validInstanceId(state.instanceId) || !validOwnerToken(state.ownerToken) || typeof state.configFingerprint !== "string") throw new Error("invalid_state");
     return state;
   } catch {
     throw serviceError("service_state_invalid", "The local service state file is malformed.");

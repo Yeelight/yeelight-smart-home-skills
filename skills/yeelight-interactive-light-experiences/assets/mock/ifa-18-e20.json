@@ -1,0 +1,39 @@
+{
+  "profile": "ifa-18-e20",
+  "region": "mock",
+  "gateway": { "id": "mock-gateway-ifa", "name": "IFA Gateway", "online": true },
+  "slots": [
+    { "slot": "L1", "id": "mock-l1", "name": "L1", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L2", "id": "mock-l2", "name": "L2", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L3", "id": "mock-l3", "name": "L3", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L4", "id": "mock-l4", "name": "L4", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L5", "id": "mock-l5", "name": "L5", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L6", "id": "mock-l6", "name": "L6", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L7", "id": "mock-l7", "name": "L7", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L8", "id": "mock-l8", "name": "L8", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "L9", "id": "mock-l9", "name": "L9", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R1", "id": "mock-r1", "name": "R1", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R2", "id": "mock-r2", "name": "R2", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R3", "id": "mock-r3", "name": "R3", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R4", "id": "mock-r4", "name": "R4", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R5", "id": "mock-r5", "name": "R5", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R6", "id": "mock-r6", "name": "R6", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R7", "id": "mock-r7", "name": "R7", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R8", "id": "mock-r8", "name": "R8", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } },
+    { "slot": "R9", "id": "mock-r9", "name": "R9", "online": true, "capabilities": { "rgb": true, "brightness": true, "flow": true } }
+  ],
+  "quadrants": {
+    "L-upper": { "alias": "L-upper", "coverage": ["L1", "L2", "L3", "L4", "L5"], "physicalSlot": "Q-LU" },
+    "L-lower": { "alias": "L-lower", "coverage": ["L6", "L7", "L8", "L9"], "physicalSlot": "Q-LL" },
+    "R-upper": { "alias": "R-upper", "coverage": ["R1", "R2", "R3", "R4", "R5"], "physicalSlot": "Q-RU" },
+    "R-lower": { "alias": "R-lower", "coverage": ["R6", "R7", "R8", "R9"], "physicalSlot": "Q-RL" }
+  },
+  "scenarios": [
+    "online",
+    "offline",
+    "unsupported-capability",
+    "timeout",
+    "partial-write",
+    "readback-mismatch"
+  ]
+}
