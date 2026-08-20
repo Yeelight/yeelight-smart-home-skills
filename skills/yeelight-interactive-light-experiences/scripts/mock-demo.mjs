@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { createInteractiveServer } from "./server.mjs";
 import { buildDeterministicPlan } from "./lib/plans.mjs";
+import { SMART_HOME_SCENES } from "./lib/smart-home-scenes.mjs";
 
 // The mock contract must stay offline even when the exhibition computer has a
 // persisted provider configuration for the live demo.
@@ -62,6 +63,21 @@ try {
       assert.equal(result.body.execution.evidence.logicalCount, 18);
       runs.push({ mode, id: item.id, status: result.body.execution.status, evidence: result.body.execution.evidence.label });
     }
+    const smartHomeSession = (await json("/api/session", { method: "POST", body: "{}" })).body;
+    for (const scene of SMART_HOME_SCENES) {
+      const result = await json("/api/smart-home/scene", {
+        method: "POST",
+        body: JSON.stringify({ sessionId: smartHomeSession.sessionId, sceneId: scene.id, runId: `${mode}-smart-home-${scene.id}` }),
+      });
+      assert.equal(result.response.status, 200, `${mode}/smart-home/${scene.id}`);
+      assert.equal(result.body.scene.id, scene.id);
+      assert.equal(result.body.plan.source, "preset");
+      assert.equal(result.body.execution.evidence.logicalCount, 18);
+      assert.equal(result.body.execution.evidence.physicalCount, mode === "proxy-4" ? 4 : 18);
+      assert.equal(result.body.execution.evidence.reduced, mode === "proxy-4");
+      runs.push({ mode, id: `smart-home:${scene.id}`, status: result.body.execution.status, evidence: result.body.execution.evidence.label });
+    }
+    await json("/api/session/finish", { method: "POST", body: JSON.stringify({ sessionId: smartHomeSession.sessionId }) });
     await json("/api/session/finish", { method: "POST", body: JSON.stringify({ sessionId: session.sessionId }) });
   }
   for (const scenario of ["offline", "timeout", "partial-write", "readback-mismatch"]) {

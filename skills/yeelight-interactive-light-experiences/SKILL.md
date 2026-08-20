@@ -9,6 +9,21 @@ This Skill runs a loopback-only exhibition collection for two Yeelight light
 banks. It exposes twelve dedicated visitor experiences, beginning with Fortune
 Light, through a local browser application.
 
+The visitor homepage intentionally presents two simple capabilities:
+
+- **Interactive Light Experiences Skills**: Fortune Light, Light Game Arena,
+  and Cinema Director. The remaining experiences stay available through their
+  direct hash routes for staff and demonstrations, but are not part of the
+  high-throughput IFA home screen.
+- **Smart Home Skill**: four one-tap room intents, Relax, Focus, Movie, and
+  Party. Each preset is compiled locally into the same canonical 18-slot plan
+  and uses the existing executor, so the four-light development proxy and the
+  full IFA installation share one control path.
+
+The AI Host starts the service and opens the local page. Visitors do not need
+to start a process or configure a model on the homepage; the Smart Home cards
+are ready as soon as the same-origin preset catalog is healthy.
+
 ## Host Launch Contract
 
 This is an executable Skill experience, not a page that visitors start by hand.

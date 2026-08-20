@@ -2,6 +2,15 @@ import { icon } from './icons.js';
 import { experienceMap, renderExperienceForm, collectInput } from './experience-pages.js';
 
 const api = '/api';
+const FEATURED_EXPERIENCE_IDS = Object.freeze(['fortune-light', 'light-game-arena']);
+const CINEMA_URL = 'http://127.0.0.1:8789/';
+const CINEMA_HEALTH_URL = '/cinema/health';
+const SMART_HOME_FALLBACK = Object.freeze([
+  { id: 'relax', title: 'Relax', summary: 'Slow the room down with a warm, gentle glow.', intent: 'Wind down', accent: 'amber' },
+  { id: 'focus', title: 'Focus', summary: 'Bring clarity to the space when attention matters.', intent: 'Get focused', accent: 'mint' },
+  { id: 'movie', title: 'Movie', summary: 'Shape a low-glare cinematic wash around the screen.', intent: 'Start a screening', accent: 'violet' },
+  { id: 'party', title: 'Party', summary: 'Open the room with a bright, social pulse.', intent: 'Set the mood', accent: 'coral' },
+]);
 const state = {
   session: null,
   catalog: [],
@@ -19,6 +28,15 @@ const state = {
   lastResult: null,
   installationError: '',
   waitTimer: null,
+  smartHomeScenes: SMART_HOME_FALLBACK,
+  smartHomeAvailable: null,
+  smartHomeError: '',
+  smartHomeBusy: false,
+  smartHomeNeedsRestart: false,
+  smartSceneStates: {},
+  smartWaitTimer: null,
+  smartSceneTimers: new Map(),
+  cinema: { status: 'idle', message: '' },
 };
 const main = document.querySelector('main');
 const evidence = document.querySelector('#evidence');
@@ -98,6 +116,11 @@ function home() {
   state.lastInput = null;
   state.retryKind = null;
   state.lastResult = null;
+  state.smartHomeBusy = false;
+  clearSmartWaitTimer();
+  state.smartSceneTimers.forEach(timer => window.clearTimeout(timer));
+  state.smartSceneTimers.clear();
+  state.smartSceneStates = {};
   if (session) fetch(`${api}/session/finish`, {
     method: 'POST',
     keepalive: true,
@@ -120,6 +143,90 @@ function card(item) {
   </a>`;
 }
 
+function featuredCard(item) {
+  const scene = experienceMap[item?.id];
+  if (!scene) return '';
+  const number = String(FEATURED_EXPERIENCE_IDS.indexOf(scene.id) + 1).padStart(2, '0');
+  return `<a class="experience-card featured-card scene-${scene.id}" href="#/experience/${scene.id}">
+    <div class="card-top"><span>${number} / ${escapeHtml(item.aiRole || scene.mode || 'Interactive skill')}</span><span class="card-state">Open experience</span></div>
+    <div class="card-content"><h3>${escapeHtml(item.title || scene.title)}</h3><p>${escapeHtml(item.summary || scene.prompt)}</p></div>
+    <div class="card-bottom"><span>${escapeHtml(item.duration || '02:00')} · no phone required</span><span>${icon('arrowRight')}</span></div>
+  </a>`;
+}
+
+function cinemaCard() {
+  const status = state.cinema.status;
+  const statusLabel = status === 'checking'
+    ? 'Checking local service'
+    : status === 'reachable'
+      ? 'Service detected · open'
+      : status === 'unavailable'
+        ? 'Service unavailable · retry'
+        : 'Separate local experience';
+  const message = status === 'unavailable'
+    ? 'Cinema Director is not ready on this computer. Retry the local health check before opening it.'
+    : 'A film, a soundtrack, and a live light score in its own local space.';
+  return `<a class="experience-card featured-card cinema-card cinema-${escapeHtml(status)}" href="${CINEMA_URL}" data-cinema-link aria-describedby="cinema-card-status">
+    <div class="card-top"><span>03 / Independent local skill</span><span class="card-state" data-cinema-label>${escapeHtml(statusLabel)}</span></div>
+    <div class="card-content"><h3>Cinema Director</h3><p>${escapeHtml(message)}</p></div>
+    <div class="card-bottom"><span id="cinema-card-status" data-cinema-status>${escapeHtml(status === 'unavailable' ? 'Health check did not complete' : 'Open the film light game')}</span><span>${icon(status === 'unavailable' ? 'refresh' : 'arrowRight')}</span></div>
+  </a>`;
+}
+
+function smartSceneStatus(scene) {
+  const current = state.smartSceneStates[scene.id] || { phase: 'idle' };
+  if (state.smartHomeAvailable === null) return { ...current, phase: 'checking', message: 'Checking preset service' };
+  if (state.smartHomeAvailable === false) return { ...current, phase: 'blocked', message: 'Preset service unavailable' };
+  if (current.phase === 'loading') return current;
+  if (current.phase === 'success') return current;
+  if (current.phase === 'applied') return current;
+  if (current.phase === 'recovery') return current;
+  if (current.phase === 'error') return current;
+  return { ...current, phase: 'idle', message: scene.intent || 'Apply this room mood' };
+}
+
+function smartSceneCard(scene) {
+  const status = smartSceneStatus(scene);
+  const loading = status.phase === 'loading';
+  const unavailable = status.phase === 'blocked';
+  const disabled = state.smartHomeBusy || unavailable || state.smartHomeAvailable !== true;
+  const recovery = status.phase === 'recovery';
+  const needsRestart = state.smartHomeNeedsRestart && !recovery;
+  const actionLabel = loading
+    ? status.message || 'Applying the room recipe'
+    : status.phase === 'success'
+      ? status.message || 'Room response received'
+      : status.phase === 'applied'
+        ? status.message || 'Applied to the room'
+        : status.phase === 'error'
+          ? 'Try again'
+          : recovery
+            ? 'Restart and retry'
+          : status.phase === 'checking'
+            ? 'Checking preset service'
+          : unavailable
+            ? 'Preset service unavailable'
+            : scene.intent || 'Apply this scene';
+  const evidence = `<span class="smart-scene-evidence">${escapeHtml(status.evidence || '')}</span>`;
+  return `<button type="button" class="smart-scene-card smart-scene-${escapeHtml(scene.id)} is-${escapeHtml(status.phase)}" data-smart-scene="${escapeHtml(scene.id)}" aria-describedby="smart-scene-status-${escapeHtml(scene.id)}" aria-busy="${loading}"${disabled || needsRestart ? ' disabled' : ''}>
+    <span class="smart-scene-art" aria-hidden="true"></span>
+    <span class="smart-scene-copy"><span class="smart-scene-kicker">${escapeHtml(scene.intent || 'Smart Home scene')}</span><strong>${escapeHtml(scene.title)}</strong><span>${escapeHtml(scene.summary)}</span></span>
+    <span class="smart-scene-footer"><span id="smart-scene-status-${escapeHtml(scene.id)}" class="smart-scene-status" role="status" aria-live="polite">${escapeHtml(actionLabel)}</span>${evidence}<span class="smart-scene-arrow" aria-hidden="true">${icon(status.phase === 'error' || unavailable ? 'refresh' : loading ? 'signal' : status.phase === 'success' || status.phase === 'applied' ? 'check' : 'arrowRight')}</span></span>
+  </button>`;
+}
+
+function smartHomeSection() {
+  const sectionMessage = state.smartHomeAvailable === false
+    ? 'The preset service is unavailable. Retry the local check to continue.'
+    : state.smartHomeAvailable === null
+      ? 'Checking the local preset service before the room controls become active.'
+      : 'Four concise examples of a Smart Home Skill turning intent into an 18-light room response.';
+  return `<section class="smart-home-section" aria-labelledby="smart-home-title">
+    <div class="smart-home-head"><div><div class="eyebrow">Practical application</div><h2 id="smart-home-title">Smart Home Skill</h2><p class="smart-home-tagline">Tell your home what you need.</p></div><div class="smart-home-head-copy"><p data-smart-home-message>${escapeHtml(sectionMessage)}</p><button class="button smart-home-refresh" type="button" data-smart-refresh${state.smartHomeBusy ? ' disabled' : ''}>${icon('refresh')} Check preset service</button></div></div>
+    <div class="smart-scene-grid">${state.smartHomeScenes.map(smartSceneCard).join('')}</div>
+  </section>`;
+}
+
 function renderHome() {
   state.current = null;
   main.dataset.experience = 'home';
@@ -129,9 +236,9 @@ function renderHome() {
     : '';
   main.innerHTML = `<section class="home-hero">
     <div class="hero-copy">
-      <div class="eyebrow">IFA collection · local installation</div>
-      <h1>Light as a <em>shared</em> instrument.</h1>
-      <p>Twelve distinct encounters for two banks of Yeelight light. Choose a scene, make one small decision, and watch an AI-shaped plan become physical light.</p>
+      <div class="eyebrow">IFA collection · Yeelight AI friendly</div>
+      <h1>Tell light what you <em>mean.</em></h1>
+      <p>Explore two ways AI meets the room: playful Interactive Light Experiences and practical Smart Home scenes that turn everyday intent into physical light.</p>
       <div class="hero-actions"><a class="button primary" href="#/experience/fortune-light">Begin with Fortune Light ${icon('arrowRight')}</a><span class="hero-note">No account · one visitor session · live command acknowledgement</span></div>
     </div>
     <div class="hero-visual" aria-hidden="true">
@@ -141,11 +248,239 @@ function renderHome() {
       <div class="hero-orbit-caption"><span>AI plan</span><span>4 quadrants</span></div>
     </div>
   </section>${alert}
-  <div class="signal-rail" aria-hidden="true"><span>visitor signal</span><i></i><i></i><i></i><span>validated light</span></div>
-  <section aria-labelledby="collection-title">
-    <div class="collection-head"><div><div class="eyebrow">The collection</div><h2 id="collection-title">Pick a way in.</h2></div><p>One active visitor session<br>${escapeHtml(modeLabel())}</p></div>
-    <div class="experience-grid">${state.catalog.filter(item => item && experienceMap[item.id]).map(card).join('')}</div>
-  </section>`;
+  <div class="signal-rail" aria-hidden="true"><span>visitor intent</span><i></i><i></i><i></i><span>room response</span></div>
+  <section aria-labelledby="collection-title" class="interactive-section">
+    <div class="collection-head"><div><div class="eyebrow">Interactive Light Experiences Skills</div><h2 id="collection-title">Play with the light.</h2></div><p>Three short ways in<br>${escapeHtml(modeLabel())}</p></div>
+    <div class="experience-grid">${FEATURED_EXPERIENCE_IDS.map(id => state.catalog.find(item => item?.id === id) || { ...experienceMap[id], summary: experienceMap[id]?.prompt }).filter(Boolean).map(featuredCard).join('')}${cinemaCard()}</div>
+  </section>
+  ${smartHomeSection()}`;
+  bindHome();
+  if (state.cinema.status === 'idle') probeCinema();
+  if (state.smartHomeAvailable === null) loadSmartHomeScenes();
+}
+
+function clearSmartWaitTimer() {
+  if (state.smartWaitTimer) window.clearInterval(state.smartWaitTimer);
+  state.smartWaitTimer = null;
+}
+
+function normalizeSmartScene(scene) {
+  if (!scene || typeof scene !== 'object' || typeof scene.id !== 'string') return null;
+  const fallback = SMART_HOME_FALLBACK.find(item => item.id === scene.id);
+  if (!fallback) return null;
+  return {
+    ...fallback,
+    title: typeof scene.title === 'string' && scene.title.trim() ? scene.title : fallback.title,
+    summary: typeof scene.summary === 'string' && scene.summary.trim() ? scene.summary : fallback.summary,
+    intent: typeof scene.intent === 'string' && scene.intent.trim() ? scene.intent : fallback.intent,
+    accent: typeof scene.accent === 'string' && scene.accent.trim() ? scene.accent : fallback.accent,
+  };
+}
+
+function smartErrorMessage(error) {
+  if (error?.status === 409) return 'Another room response is still finishing. Try again in a moment.';
+  if (error?.status === 503) return 'The light installation is not ready yet. Try again when the room is available.';
+  if (error?.status === 404) return 'The Smart Home preset service is not available in this installation.';
+  return error?.message || 'The room could not apply this scene. Try again.';
+}
+
+function smartEvidence(result) {
+  const execution = result?.execution || {};
+  const evidence = execution.evidence || {};
+  const topology = result?.topology || {};
+  const physical = Number(evidence.physicalCount ?? topology.physicalCount);
+  const logical = Number(evidence.logicalCount ?? topology.logicalCount);
+  if (physical === 18) return '18 light positions answered';
+  if (physical === 4) return `${logical || 18} positions · 4-zone preview`;
+  if (physical > 0) return `${physical} physical zones answered`;
+  if (logical > 0) return `${logical} light positions shaped`;
+  return 'Room response acknowledged';
+}
+
+function smartStatusText(scene, status) {
+  if (status.phase === 'loading') return status.message || 'Applying the room recipe';
+  if (status.phase === 'success') return status.message || 'Room response received';
+  if (status.phase === 'applied') return status.message || 'Applied to the room';
+  if (status.phase === 'error') return status.message || 'Try again';
+  if (status.phase === 'blocked') return status.message || 'Preset service unavailable';
+  return status.message || scene.intent || 'Apply this scene';
+}
+
+function updateSmartHomeDom() {
+  const section = document.querySelector('.smart-home-section');
+  if (!section) return;
+  const message = section.querySelector('[data-smart-home-message]');
+  if (message) {
+    message.textContent = state.smartHomeAvailable === false
+      ? (state.smartHomeError || 'The preset service is unavailable. Retry the local check to continue.')
+      : state.smartHomeAvailable === null
+        ? 'Checking the local preset service before the room controls become active.'
+      : state.smartHomeBusy
+        ? 'One room request is in progress. Other scenes stay ready for the next visitor.'
+        : 'Four concise examples of a Smart Home Skill turning intent into an 18-light room response.';
+  }
+  const refresh = section.querySelector('[data-smart-refresh]');
+  if (refresh) refresh.disabled = state.smartHomeBusy;
+  section.querySelectorAll('[data-smart-scene]').forEach(button => {
+    const scene = state.smartHomeScenes.find(item => item.id === button.dataset.smartScene);
+    if (!scene) return;
+    const status = smartSceneStatus(scene);
+    const loading = status.phase === 'loading';
+    const unavailable = status.phase === 'blocked';
+    button.className = `smart-scene-card smart-scene-${scene.id} is-${status.phase}`;
+    button.disabled = state.smartHomeBusy || unavailable || state.smartHomeAvailable !== true || state.smartHomeNeedsRestart && status.phase !== 'recovery';
+    button.setAttribute('aria-busy', String(loading));
+    const statusNode = button.querySelector('.smart-scene-status');
+    if (statusNode) statusNode.textContent = smartStatusText(scene, status);
+    const evidenceNode = button.querySelector('.smart-scene-evidence');
+    if (evidenceNode) evidenceNode.textContent = status.evidence || '';
+    const arrow = button.querySelector('.smart-scene-arrow');
+    if (arrow) arrow.innerHTML = icon(status.phase === 'error' || status.phase === 'recovery' || unavailable ? 'refresh' : loading || status.phase === 'checking' ? 'signal' : status.phase === 'success' || status.phase === 'applied' ? 'check' : 'arrowRight');
+  });
+}
+
+async function loadSmartHomeScenes(force = false) {
+  if (!force && state.smartHomeAvailable !== null) return;
+  state.smartHomeAvailable = null;
+  state.smartHomeError = '';
+  updateSmartHomeDom();
+  try {
+    const body = await endpoint('/smart-home/scenes');
+    const records = Array.isArray(body) ? body : body?.scenes;
+    const scenes = Array.isArray(records) ? records.map(normalizeSmartScene).filter(Boolean) : [];
+    if (scenes.length !== SMART_HOME_FALLBACK.length || new Set(scenes.map(scene => scene.id)).size !== SMART_HOME_FALLBACK.length) throw new Error('The preset catalogue is incomplete.');
+    state.smartHomeScenes = scenes;
+    state.smartHomeAvailable = true;
+  } catch (error) {
+    state.smartHomeScenes = SMART_HOME_FALLBACK;
+    state.smartHomeAvailable = false;
+    state.smartHomeError = 'The Smart Home preset service is unavailable. Retry the local check to continue.';
+  }
+  updateSmartHomeDom();
+}
+
+function startSmartWaitTimer(sceneId) {
+  clearSmartWaitTimer();
+  const phases = ['Translating your request', 'Applying the room recipe', 'Waiting for the room response'];
+  const started = Date.now();
+  const update = () => {
+    const current = state.smartSceneStates[sceneId] || {};
+    const index = Math.floor((Date.now() - started) / 1500) % phases.length;
+    state.smartSceneStates[sceneId] = { ...current, phase: 'loading', message: phases[index], phaseIndex: index };
+    updateSmartHomeDom();
+  };
+  update();
+  state.smartWaitTimer = window.setInterval(update, 1000);
+}
+
+async function runSmartHomeScene(sceneId) {
+  if (state.smartHomeBusy || state.smartHomeAvailable !== true) return;
+  const scene = state.smartHomeScenes.find(item => item.id === sceneId);
+  if (!scene) return;
+  const existing = state.smartSceneStates[sceneId];
+  if (existing?.phase === 'recovery') return restartSmartHomeScene(sceneId);
+  state.smartHomeBusy = true;
+  state.smartSceneStates[sceneId] = { phase: 'loading', message: 'Translating your request' };
+  updateSmartHomeDom();
+  startSmartWaitTimer(sceneId);
+  const runId = newRunId();
+  try {
+    const session = await ensureSession();
+    const result = await endpoint('/smart-home/scene', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: session.sessionId, sceneId: scene.id, runId }),
+    });
+    clearSmartWaitTimer();
+    state.smartHomeBusy = false;
+    const execution = result?.execution || {};
+    const needsRecovery = ['partial', 'error', 'blocked'].includes(execution.status) || execution.recovery?.needed === true;
+    state.smartHomeNeedsRestart = needsRecovery;
+    state.smartSceneStates[sceneId] = needsRecovery
+      ? { phase: 'recovery', message: 'Response needs a fresh visitor session', evidence: smartEvidence(result), result }
+      : { phase: 'success', message: 'Room response received', evidence: smartEvidence(result), result };
+    setEvidence(result.topology);
+    updateSmartHomeDom();
+    if (needsRecovery) return;
+    const timer = window.setTimeout(() => {
+      const current = state.smartSceneStates[sceneId];
+      if (current?.phase !== 'success') return;
+      state.smartSceneStates[sceneId] = { ...current, phase: 'applied', message: 'Applied to the room' };
+      updateSmartHomeDom();
+      state.smartSceneTimers.delete(sceneId);
+    }, 4200);
+    state.smartSceneTimers.set(sceneId, timer);
+  } catch (error) {
+    clearSmartWaitTimer();
+    state.smartHomeBusy = false;
+    state.smartSceneStates[sceneId] = { phase: 'error', message: smartErrorMessage(error) };
+    updateSmartHomeDom();
+  }
+}
+
+async function restartSmartHomeScene(sceneId) {
+  if (state.smartHomeBusy || state.smartHomeAvailable !== true) return;
+  state.smartHomeBusy = true;
+  const previousSession = state.session;
+  state.smartSceneStates[sceneId] = { phase: 'loading', message: 'Resetting the visitor session' };
+  updateSmartHomeDom();
+  try {
+    if (previousSession) await endpoint('/session/finish', { method: 'POST', body: JSON.stringify({ sessionId: previousSession.sessionId }) });
+  } catch (_) {
+    // A new local session is still safe after an expired or already-closed session.
+  }
+  state.session = null;
+  state.smartHomeNeedsRestart = false;
+  state.smartHomeBusy = false;
+  state.smartSceneStates = {};
+  updateSmartHomeDom();
+  return runSmartHomeScene(sceneId);
+}
+
+async function probeCinema(force = false) {
+  if (!force && state.cinema.status !== 'idle') return;
+  state.cinema = { status: 'checking', message: '' };
+  updateCinemaDom();
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 900);
+  try {
+    await endpoint(CINEMA_HEALTH_URL, { method: 'GET', cache: 'no-store', signal: controller.signal });
+    state.cinema = { status: 'reachable', message: '' };
+  } catch (_) {
+    state.cinema = { status: 'unavailable', message: 'Cinema Director is not ready on this computer.' };
+  } finally {
+    window.clearTimeout(timeout);
+    updateCinemaDom();
+  }
+}
+
+function updateCinemaDom() {
+  const card = document.querySelector('[data-cinema-link]');
+  if (!card) return;
+  const label = card.querySelector('[data-cinema-label]');
+  const status = card.querySelector('[data-cinema-status]');
+  const stateName = state.cinema.status;
+  const labelText = stateName === 'checking'
+    ? 'Checking local service'
+    : stateName === 'reachable'
+      ? 'Service detected · open'
+      : stateName === 'unavailable'
+        ? 'Service unavailable · retry'
+        : 'Separate local experience';
+  if (label) label.textContent = labelText;
+  if (status) status.textContent = stateName === 'unavailable' ? 'Health check did not complete' : 'Open the film light game';
+  card.classList.remove('cinema-idle', 'cinema-checking', 'cinema-reachable', 'cinema-unavailable');
+  card.classList.add(`cinema-${stateName}`);
+}
+
+function bindHome() {
+  document.querySelectorAll('[data-smart-scene]').forEach(button => button.addEventListener('click', () => runSmartHomeScene(button.dataset.smartScene)));
+  document.querySelector('[data-smart-refresh]')?.addEventListener('click', () => loadSmartHomeScenes(true));
+  document.querySelector('[data-cinema-link]')?.addEventListener('click', event => {
+    if (state.cinema.status === 'unavailable') {
+      event.preventDefault();
+      probeCinema(true);
+    }
+  });
 }
 
 function sceneArt(id) {

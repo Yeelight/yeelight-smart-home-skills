@@ -32,7 +32,7 @@
               "additionalProperties": false,
               "required": ["slot", "hue", "saturation", "brightness", "holdMs"],
               "properties": {
-                "slot": { "type": "string", "pattern": "^(L[1-8]|R[1-8])$" },
+                "slot": { "type": "string", "pattern": "^(L[1-9]|R[1-9])$" },
                 "hue": { "type": "integer", "minimum": 0, "maximum": 359 },
                 "saturation": { "type": "integer", "minimum": 0, "maximum": 100 },
                 "brightness": { "type": "integer", "minimum": 1, "maximum": 85 },

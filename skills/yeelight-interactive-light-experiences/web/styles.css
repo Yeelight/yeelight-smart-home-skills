@@ -85,7 +85,7 @@ footer {
 .evidence::before { content: ""; width: 7px; height: 7px; border: 1px solid currentColor; border-radius: 50%; box-shadow: 0 0 0 4px rgba(97, 234, 216, .1); }
 .topbar nav { display: flex; gap: 8px; }
 .icon-button, .button {
-  min-height: 42px;
+  min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +98,7 @@ footer {
   text-decoration: none;
   transition: border-color .2s ease, background .2s ease, transform .2s ease, color .2s ease;
 }
-.icon-button { width: 42px; padding: 0; }
+.icon-button { width: 44px; padding: 0; }
 .icon-button:hover, .button:hover { border-color: var(--tone); color: var(--tone); transform: translateY(-1px); }
 .icon-button:focus-visible, .button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; }
 .button.primary { border-color: var(--tone); background: var(--tone); color: #061011; font-weight: 800; }
@@ -664,6 +664,7 @@ input:hover, select:hover, textarea:hover { background: rgba(7, 12, 13, .9); }
 @media (max-width: 700px) {
   .home-hero { min-height: 760px; }
   .hero-copy { padding-bottom: 176px; }
+  .hero-note { display: none; }
   .hero-visual { padding: 12px; }
   .hero-constellation { gap: 5px; }
   .hero-readout { margin-top: 11px; }
@@ -837,4 +838,171 @@ input:hover, select:hover, textarea:hover { background: rgba(7, 12, 13, .9); }
 
 @media (prefers-reduced-motion: reduce) {
   .waiting-orbit, .waiting-orbit i, .signal-field i, .breath-orbit i, .luma-orb::before, .luma-orb i { animation: none; }
+}
+
+/* Visitor homepage: keep the practical Smart Home story visually distinct
+   from the more theatrical game cards without introducing another page. */
+.interactive-section { margin-top: clamp(54px, 8vw, 100px); }
+.interactive-section .collection-head { margin-top: 0; }
+.interactive-section .experience-grid { align-items: stretch; }
+.interactive-section .experience-card { min-height: 398px; }
+.featured-card { min-height: 398px; }
+.featured-card .card-state { color: var(--tone); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.cinema-card { --tone: #f2b36d; }
+.cinema-card.cinema-unavailable { border-color: rgba(255, 154, 145, .5); }
+.cinema-card.cinema-unavailable .card-state, .cinema-card.cinema-unavailable .card-bottom { color: var(--danger); }
+.interactive-section .scene-fortune-light::before {
+  background-position: 63% center;
+}
+.interactive-section .scene-light-game-arena::before {
+  background-position: center 46%;
+}
+.interactive-section .cinema-card::before {
+  background-image: linear-gradient(to top, rgba(7, 11, 12, .98) 0%, rgba(7, 11, 12, .62) 48%, rgba(7, 11, 12, .1) 100%), url("/assets/cinema-director.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+@media (min-width: 901px) {
+  .interactive-section .experience-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .interactive-section .experience-card,
+  .interactive-section .experience-card:nth-child(1) { grid-column: span 1; min-height: 398px; }
+}
+
+@media (min-width: 701px) and (max-width: 900px) {
+  .interactive-section .experience-card,
+  .interactive-section .experience-card:nth-child(1) { min-height: 360px; }
+}
+
+@media (max-width: 700px) {
+  .interactive-section .experience-card,
+  .interactive-section .experience-card:nth-child(1) { min-height: 342px; }
+}
+
+.smart-home-section {
+  position: relative;
+  margin-top: clamp(66px, 10vw, 132px);
+  padding: clamp(28px, 5vw, 56px) 0 clamp(20px, 3vw, 36px);
+  border-top: 1px solid var(--line-strong);
+}
+.smart-home-section::before {
+  content: "01 / REAL-WORLD APPLICATION";
+  position: absolute;
+  top: -8px;
+  right: 0;
+  padding-left: 12px;
+  color: var(--muted);
+  background: var(--ink);
+  font-size: 9px;
+  letter-spacing: .16em;
+}
+.smart-home-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+.smart-home-head h2 { margin: 12px 0 4px; font-size: clamp(30px, 4vw, 52px); line-height: .98; }
+.smart-home-tagline { margin: 0; color: var(--cyan); font-size: clamp(15px, 1.8vw, 20px); letter-spacing: .01em; }
+.smart-home-head-copy { width: min(410px, 100%); }
+.smart-home-head-copy p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.smart-home-refresh { min-height: 44px; padding-inline: 12px; color: var(--muted); font-size: 11px; }
+.smart-home-refresh .icon { width: 14px; height: 14px; }
+.smart-scene-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.smart-scene-card {
+  --scene-accent: var(--cyan);
+  position: relative;
+  min-width: 0;
+  min-height: 306px;
+  display: grid;
+  grid-template-rows: 150px minmax(0, 1fr) auto;
+  gap: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(14, 24, 26, .82);
+  color: var(--silver);
+  text-align: left;
+  isolation: isolate;
+  transition: transform .28s ease, border-color .28s ease, box-shadow .28s ease, background .28s ease;
+}
+.smart-scene-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--scene-accent) 16%, transparent), transparent 48%), rgba(8, 14, 15, .55);
+}
+.smart-scene-card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  z-index: -1;
+  background: var(--scene-accent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--scene-accent) 60%, transparent);
+}
+.smart-scene-card:hover:not(:disabled) { transform: translateY(-5px); border-color: color-mix(in srgb, var(--scene-accent) 70%, var(--line-strong)); box-shadow: 0 18px 44px rgba(0, 0, 0, .3); }
+.smart-scene-card:focus-visible { outline: 2px solid var(--scene-accent); outline-offset: 4px; }
+.smart-scene-card:disabled { cursor: wait; opacity: .82; }
+.smart-scene-card.is-error { border-color: color-mix(in srgb, var(--danger) 62%, var(--line)); }
+.smart-scene-card.is-recovery { border-color: color-mix(in srgb, var(--danger) 72%, var(--line)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--danger) 14%, transparent), 0 16px 44px rgba(0, 0, 0, .25); }
+.smart-scene-card.is-success { border-color: color-mix(in srgb, var(--scene-accent) 76%, var(--line-strong)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--scene-accent) 18%, transparent), 0 16px 44px rgba(0, 0, 0, .25); }
+.smart-scene-card.is-applied { border-color: color-mix(in srgb, var(--scene-accent) 50%, var(--line)); }
+.smart-scene-card.is-loading .smart-scene-art::after, .smart-scene-card.is-checking .smart-scene-art::after { animation: scene-scan 1.4s ease-in-out infinite; }
+.smart-scene-art {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background-color: #101819;
+  background-image: linear-gradient(180deg, rgba(5, 10, 11, .02) 0%, rgba(5, 10, 11, .12) 42%, rgba(5, 10, 11, .82) 100%), var(--scene-image, url("/assets/installation-hero.webp"));
+  background-position: center;
+  background-size: cover;
+  transition: background-size .7s cubic-bezier(.2, .75, .25, 1), filter .3s ease;
+}
+.smart-scene-art::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, color-mix(in srgb, var(--scene-accent) 20%, transparent), transparent 48%, rgba(3, 8, 9, .22)); mix-blend-mode: screen; opacity: .5; }
+.smart-scene-art::after { content: ""; position: absolute; top: -20%; left: 0; width: 2px; height: 140%; background: color-mix(in srgb, var(--scene-accent) 78%, white); box-shadow: 0 0 18px var(--scene-accent); transform: translateX(-24px) rotate(18deg); opacity: 0; }
+.smart-scene-card:hover:not(:disabled) .smart-scene-art { background-size: 106%; }
+.smart-scene-card.is-loading .smart-scene-art, .smart-scene-card.is-checking .smart-scene-art { filter: saturate(1.12) brightness(1.04); }
+.smart-scene-relax .smart-scene-art { --scene-image: url("/assets/smart-home-relax.webp"); }
+.smart-scene-focus .smart-scene-art { --scene-image: url("/assets/smart-home-focus.webp"); }
+.smart-scene-focus .smart-scene-art { background-position: 84% center; background-size: 165% auto; }
+.smart-scene-focus:hover:not(:disabled) .smart-scene-art { background-size: 172% auto; }
+.smart-scene-movie .smart-scene-art { --scene-image: url("/assets/smart-home-movie.webp"); }
+.smart-scene-party .smart-scene-art { --scene-image: url("/assets/smart-home-party.webp"); }
+.smart-scene-copy { min-width: 0; display: flex; flex-direction: column; align-items: start; gap: 8px; padding: 20px 20px 14px; }
+.smart-scene-kicker { color: color-mix(in srgb, var(--scene-accent) 76%, var(--silver)); font-size: 9px; font-weight: 800; letter-spacing: .15em; line-height: 1.25; text-transform: uppercase; }
+.smart-scene-copy strong { font-size: 27px; line-height: 1; }
+.smart-scene-copy > span:last-child { max-width: 27ch; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.smart-scene-footer { min-width: 0; display: flex; align-items: center; gap: 8px; padding: 13px 20px 17px; color: var(--muted); font-size: 10px; line-height: 1.35; }
+.smart-scene-status { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.smart-scene-evidence { color: var(--scene-accent); font-size: 9px; letter-spacing: .05em; white-space: nowrap; }
+.smart-scene-evidence:empty { display: none; }
+.smart-scene-arrow { display: inline-flex; margin-left: auto; color: var(--scene-accent); }
+.smart-scene-arrow .icon { width: 16px; height: 16px; }
+.smart-scene-relax { --scene-accent: #ffc078; }
+.smart-scene-focus { --scene-accent: #65e8df; }
+.smart-scene-movie { --scene-accent: #b7a4ff; }
+.smart-scene-party { --scene-accent: #ff8f78; }
+
+@keyframes scene-scan { 0%, 100% { opacity: .2; transform: translateX(-24px) rotate(18deg); } 50% { opacity: .9; transform: translateX(210px) rotate(18deg); } }
+
+@media (max-width: 1080px) {
+  .smart-scene-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  .smart-home-head { align-items: start; flex-direction: column; gap: 18px; }
+  .smart-home-head-copy { width: 100%; }
+  .smart-scene-grid { grid-template-columns: 1fr; }
+  .smart-scene-card { min-height: 282px; grid-template-rows: 132px minmax(0, 1fr) auto; }
+  .smart-scene-copy { padding: 18px 18px 12px; }
+  .smart-scene-footer { padding-inline: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smart-scene-card, .smart-scene-art, .smart-scene-art::after { animation: none; transition: none; }
 }

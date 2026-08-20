@@ -1,0 +1,54 @@
+[
+  {
+    "id": "relax",
+    "title": "Relax",
+    "summary": "Warm, low-stimulation light for a softer room.",
+    "intent": "Help me slow down and feel at ease.",
+    "effect": "A gentle amber field with a slow left-to-right breathing drift.",
+    "accent": "amber",
+    "temperature": 2900,
+    "brightness": 34,
+    "hue": 30,
+    "saturation": 46,
+    "motion": "slow"
+  },
+  {
+    "id": "focus",
+    "title": "Focus",
+    "summary": "A clear, steady light field for getting things done.",
+    "intent": "Help me concentrate without feeling harsh.",
+    "effect": "A cool cyan-white field with a quiet center and crisp edges.",
+    "accent": "cyan",
+    "temperature": 5000,
+    "brightness": 58,
+    "hue": 190,
+    "saturation": 38,
+    "motion": "steady"
+  },
+  {
+    "id": "movie",
+    "title": "Movie",
+    "summary": "A cinematic frame that keeps the room present but out of the way.",
+    "intent": "Set the room for a film.",
+    "effect": "A deep violet-blue wash with a low, slow horizon pulse.",
+    "accent": "violet",
+    "temperature": 2700,
+    "brightness": 24,
+    "hue": 258,
+    "saturation": 62,
+    "motion": "cinematic"
+  },
+  {
+    "id": "party",
+    "title": "Party",
+    "summary": "A lively, colorful room response for a shared moment.",
+    "intent": "Bring the room to life for everyone.",
+    "effect": "A saturated four-color orbit that moves across both sides of the room.",
+    "accent": "coral",
+    "temperature": 3600,
+    "brightness": 66,
+    "hue": 12,
+    "saturation": 76,
+    "motion": "playful"
+  }
+]

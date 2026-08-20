@@ -24,6 +24,7 @@ import { ExperienceExecutor } from "./lib/executor.mjs";
 import { YeelightHomeCommandAdapter } from "./lib/command-adapter.mjs";
 import { LiveTopologyManager, defaultBindingPath } from "./lib/live-topology.mjs";
 import { PROTOCOL_VERSION, SERVICE_ID, serviceOwnerProof, validInstanceId, validOwnerToken } from "./lib/service-contract.mjs";
+import { buildSmartHomeScenePlan, getSmartHomeScene, publicSmartHomeScenes, scenePlanId } from "./lib/smart-home-scenes.mjs";
 
 const packageRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const webRoot = path.join(packageRoot, "web");
@@ -133,7 +134,9 @@ async function handleApi({ request, response, parsed, sessions, provider, execut
     if (challenge) health.ownerProof = serviceOwnerProof(runtime.ownerToken, challenge, runtime.instanceId, runtime.protocolVersion);
     return sendJson(response, 200, health);
   }
+  if (request.method === "GET" && pathname === "/api/cinema/health") return await proxyCinemaHealth(response);
   if (request.method === "GET" && pathname === "/api/catalog") return sendJson(response, 200, { experiences: publicExperienceCatalog() });
+  if (request.method === "GET" && pathname === "/api/smart-home/scenes") return sendJson(response, 200, { scenes: publicSmartHomeScenes() });
   if (request.method === "GET" && pathname === "/api/provider/status") return sendJson(response, 200, { provider: publicProviderStatus(provider) });
   if (request.method === "GET" && pathname === "/api/topology") {
     const mode = normalizeMode(searchParams.get("mode") || runtime.mode);
@@ -182,6 +185,10 @@ async function handleApi({ request, response, parsed, sessions, provider, execut
     if (experienceMatch && !body.experienceId) body.experienceId = experienceMatch[1];
     return await runExperience({ response, body, sessions, provider, executor, runtime, liveTopology, activeRuns, completedRuns, uncertainRuns, gardenRuns, garden });
   }
+  if (request.method === "POST" && pathname === "/api/smart-home/scene") {
+    const body = await readJson(request);
+    return await runSmartHomeScene({ response, body, sessions, provider, executor, runtime, liveTopology, activeRuns, completedRuns, uncertainRuns });
+  }
   const restoreMatch = pathname.match(/^\/api\/experience\/([a-z0-9-]+)\/restore$/);
   if (request.method === "POST" && restoreMatch) {
     const body = await readJson(request);
@@ -217,6 +224,26 @@ async function handleApi({ request, response, parsed, sessions, provider, execut
     return sendJson(response, 200, { garden: garden.public() });
   }
   return sendJson(response, 404, { error: "not_found" });
+}
+
+async function proxyCinemaHealth(response) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 900);
+  try {
+    const upstream = await fetch("http://127.0.0.1:8789/api/health", {
+      headers: { accept: "application/json" },
+      signal: controller.signal,
+    });
+    const payload = await upstream.json().catch(() => null);
+    if (!upstream.ok || payload?.ok !== true || payload?.serviceId !== "yeelight-cinema-director") {
+      return sendJson(response, 503, { available: false, error: "cinema_unavailable", message: "Cinema Director is not ready on this computer." });
+    }
+    return sendJson(response, 200, { available: true, serviceId: payload.serviceId, protocolVersion: payload.protocolVersion ?? null });
+  } catch (_) {
+    return sendJson(response, 503, { available: false, error: "cinema_unavailable", message: "Cinema Director is not ready on this computer." });
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function restoreExperience({ response, body, sessions, provider, executor, runtime, liveTopology, uncertainRuns }) {
@@ -262,6 +289,110 @@ async function restoreExperience({ response, body, sessions, provider, executor,
   } catch (error) {
     completeRequest(sessions, operation, "error");
     throw error;
+  }
+}
+
+async function runSmartHomeScene({ response, body, sessions, provider, executor, runtime, liveTopology, activeRuns, completedRuns, uncertainRuns }) {
+  const timing = createRunTiming();
+  const timedSend = (status, value) => sendJson(response, status, value, timingHeaders(timing));
+  if (!isPlainObject(body)) return timedSend(400, { error: "invalid_json" });
+  const allowedFields = new Set(["sessionId", "sceneId", "runId"]);
+  if (Object.keys(body).some((key) => !allowedFields.has(key))) return timedSend(400, { error: "smart_home_payload_not_allowed", message: "Only sessionId, sceneId, and runId are accepted." });
+
+  const sceneId = cleanText(body.sceneId, 40);
+  const scene = getSmartHomeScene(sceneId);
+  if (!scene) return timedSend(404, { error: "unknown_smart_home_scene", message: "That Smart Home scene is not available." });
+  const sessionId = cleanText(body.sessionId, 80);
+  if (!getSession(sessions, sessionId)) return timedSend(409, { error: "session_expired" });
+  const runId = body.runId === undefined ? crypto.randomUUID() : cleanText(body.runId, 96);
+  if (!runId) return timedSend(400, { error: "smart_home_run_id_required", message: "A non-empty runId is required." });
+
+  const mode = runtime.mode;
+  const scenario = runtime.scenario;
+  const experienceId = scenePlanId(sceneId);
+  const runKey = `smart-home:${sessionId}:${sceneId}:${runId}`;
+  purgeActiveRuns(activeRuns, completedRuns, sessions, null, executor);
+  purgeUncertainRuns(uncertainRuns, sessions);
+
+  const completed = completedRuns.get(runKey);
+  if (completed?.sessionId === sessionId && completed.experienceId === experienceId) return timedSend(Number.isInteger(completed.status) ? completed.status : 200, cloneValue(completed.body));
+  const uncertain = uncertainRuns.get(sessionId);
+  if (uncertain) {
+    if (uncertain.runKey === runKey) return timedSend(uncertain.status, cloneValue(uncertain.body));
+    return timedSend(409, { error: "recovery_required", message: "Restart or restore the previous light interaction before starting another one.", retryDisposition: "restart" });
+  }
+  const active = activeRuns.get(runKey);
+  if (active) return timedSend(409, { error: "request_in_progress", message: "This Smart Home scene is already running." });
+  const activeForRunId = [...activeRuns.values()].find((item) => item.sessionId === sessionId && item.runId === runId);
+  if (activeForRunId) return timedSend(409, { error: "request_id_conflict", message: "This run id is already bound to another Smart Home scene." });
+  const activeForSession = [...activeRuns.values()].find((item) => item.sessionId === sessionId);
+  if (activeForSession) return timedSend(409, { error: "request_in_progress", message: "Finish the current visitor action before starting another." });
+
+  const revision = providerRevision(provider);
+  const requestRecord = beginRequest(sessions, sessionId, revision);
+  if (!requestRecord) return timedSend(409, { error: "session_expired" });
+  activeRuns.set(runKey, { runId, sessionId, experienceId, request: requestRecord });
+  let executionStarted = false;
+  const finishError = (status, error, message, retryDisposition = executionStarted ? "restart" : "new_run") => {
+    const result = { error, message, status, retryDisposition };
+    if (executionStarted) rememberUncertainRun(uncertainRuns, { sessionId, experienceId, runId, runKey, requestId: requestRecord.requestId, status, body: result });
+    if (isCurrent(sessions, requestRecord)) {
+      completeRequest(sessions, requestRecord, "error");
+      rememberCompletedRun(completedRuns, runKey, { sessionId, experienceId, status, body: result });
+    }
+    return timedSend(status, result);
+  };
+
+  try {
+    const plan = buildSmartHomeScenePlan(sceneId);
+    const checkedPlan = validateExperiencePlan(plan, experienceId);
+    if (!checkedPlan.ok) return finishError(422, "plan_rejected", "The Smart Home preset did not pass validation.");
+    executionStarted = true;
+    const execution = await measureRunStage(timing, "execute", () => executor.execute(plan, {
+      sessionId,
+      requestId: requestRecord.requestId,
+      generation: requestRecord.sessionGeneration,
+      mode,
+      scenario,
+      signal: requestRecord.signal,
+      verifyLive: mode.startsWith("live") ? false : true,
+      isCurrent: () => isCurrent(sessions, requestRecord) && providerRevision(provider) === requestRecord.configRevision,
+    }));
+    if (!isCurrent(sessions, requestRecord)) {
+      const result = { error: "request_discarded", message: "This Smart Home action was discarded after execution began.", status: 409, retryDisposition: "restart" };
+      rememberUncertainRun(uncertainRuns, { sessionId, experienceId, runId, runKey, requestId: requestRecord.requestId, status: 409, body: result });
+      return timedSend(409, result);
+    }
+    if (execution.status === "success" && mode.startsWith("live")) {
+      liveTopology?.markWriteValidated(mode);
+      const verifiedTopology = resolveTopology(mode, scenario, liveTopology);
+      if (execution.evidence) execution.evidence.label = verifiedTopology.evidenceLabel;
+    } else if (execution.status === "acknowledged" && mode.startsWith("live") && execution.evidence) {
+      execution.evidence.label = mode === "live-proxy-4" ? "EU 4-light quadrant-proxy command acknowledged" : "Live light command acknowledged; physical state not verified";
+    }
+    completeRequest(sessions, requestRecord, "completed");
+    const result = {
+      requestId: requestRecord.requestId,
+      runId,
+      scene: publicSmartHomeScene(scene),
+      plan: publicSmartHomePlan(plan, scene),
+      execution: smartHomeExecution(execution, executor),
+      topology: publicSmartHomeTopology(resolveTopology(mode, scenario, liveTopology)),
+    };
+    if (executionNeedsRecoveryLock(execution, mode)) rememberUncertainRun(uncertainRuns, { sessionId, experienceId, runId, runKey, requestId: requestRecord.requestId, status: 200, body: result });
+    rememberCompletedRun(completedRuns, runKey, { sessionId, experienceId, body: result });
+    return timedSend(200, result);
+  } catch (error) {
+    const projected = publicError(error, { executionStarted });
+    if (executionStarted) rememberUncertainRun(uncertainRuns, { sessionId, experienceId, runId, runKey, requestId: requestRecord.requestId, status: projected.status, body: projected });
+    if (isCurrent(sessions, requestRecord)) {
+      completeRequest(sessions, requestRecord, "error");
+      rememberCompletedRun(completedRuns, runKey, { sessionId, experienceId, status: projected.status, body: projected });
+    }
+    return timedSend(projected.status, projected);
+  } finally {
+    const currentRun = activeRuns.get(runKey);
+    if (currentRun?.request?.requestId === requestRecord.requestId && currentRun.request.sessionGeneration === requestRecord.sessionGeneration) activeRuns.delete(runKey);
   }
 }
 
@@ -678,6 +809,44 @@ function publicPlan(plan, experienceId) {
   };
 }
 
+function publicSmartHomeScene(scene) {
+  return {
+    id: scene.id,
+    title: cleanText(scene.title, 48),
+    summary: cleanText(scene.summary, 180),
+    intent: cleanText(scene.intent, 180),
+    effect: cleanText(scene.effect, 220),
+    accent: cleanText(scene.accent, 24),
+  };
+}
+
+function publicSmartHomePlan(plan, scene) {
+  return {
+    source: "preset",
+    summary: cleanText(scene.summary, 180),
+    explanation: cleanText(plan.explanation, 360),
+  };
+}
+
+function smartHomeExecution(execution, executor) {
+  const safe = visitorExecution(execution, executor);
+  // Scene controls are intentionally outcome-only. The public endpoint does
+  // not need per-slot aliases or state rows to explain a preset response.
+  const { physicalResults: _physicalResults, logicalStates: _logicalStates, ...publicResult } = safe;
+  return publicResult;
+}
+
+function publicSmartHomeTopology(topology) {
+  return {
+    mode: cleanText(topology?.mode, 24, "unknown"),
+    reduced: Boolean(topology?.reduced),
+    physicalCount: boundedInteger(topology?.physicalCount, 0, LOGICAL_SLOTS.length, 0),
+    logicalCount: boundedInteger(topology?.logicalCount, 0, LOGICAL_SLOTS.length, LOGICAL_SLOTS.length),
+    evidenceLabel: cleanText(topology?.evidenceLabel, 100, "unverified"),
+    scenario: cleanText(topology?.scenario, 32, "unknown"),
+  };
+}
+
 function visitorExecution(execution, executor) {
   const safe = redactedExecution(execution);
   if (safe.recovery.restoreAvailable && typeof executor.recoverySummary === "function") {
@@ -921,7 +1090,7 @@ function serveStatic(response, pathname) {
     return sendJson(response, 404, { error: "not_found" });
   }
   if (!realFile.startsWith(`${realRoot}${path.sep}`) || !fs.statSync(realFile).isFile()) return sendJson(response, 404, { error: "not_found" });
-  response.writeHead(200, { "content-type": MIME.get(path.extname(realFile)) || "application/octet-stream", "cache-control": "no-store", "x-content-type-options": "nosniff", "content-security-policy": "default-src 'self'; frame-ancestors 'none'" });
+  response.writeHead(200, { "content-type": MIME.get(path.extname(realFile)) || "application/octet-stream", "cache-control": "no-store", "x-content-type-options": "nosniff", "content-security-policy": "default-src 'self'; connect-src 'self' http://127.0.0.1:8789; frame-ancestors 'none'" });
   fs.createReadStream(realFile).pipe(response);
 }
 
@@ -939,6 +1108,8 @@ function publicError(error, { executionStarted = false } = {}) {
     ["turn_unavailable", [409, "turn_unavailable", "That private turn is no longer available."]],
     ["turn_expired", [409, "turn_expired", "That private turn has expired."]],
     ["turn_replayed", [409, "turn_replayed", "That private turn has already been used."]],
+    ["unknown_smart_home_scene", [404, "unknown_smart_home_scene", "That Smart Home scene is not available."]],
+    ["smart_home_run_id_required", [400, "smart_home_run_id_required", "A non-empty runId is required."]],
     ["recovery_required", [409, "recovery_required", "Restart or restore the previous light interaction before starting another one."]],
     ["request_in_progress", [409, "request_in_progress", "This visitor action is already in progress."]],
     ["request_id_conflict", [409, "request_id_conflict", "This run id is already bound to another experience."]],
@@ -949,7 +1120,7 @@ function publicError(error, { executionStarted = false } = {}) {
     ["live_context_fixed_to_ifa_eu", [400, "live_context_fixed_to_ifa_eu", "Live mode is reserved for the approved ifa-eu EU profile."]],
   ]);
   const [status, code, message] = known.get(error?.message) || [500, "experience_failed", "The experience could not complete."];
-  const restartOnly = new Set(["valid_input", "light_dna_incomplete", "turn_not_supported", "turn_unavailable", "turn_expired", "turn_replayed", "recovery_required", "request_in_progress", "request_id_conflict", "garden_session_already_seeded", "state_inspection_required", "visitor_runtime_field_not_allowed", "live_context_fixed_to_ifa_eu", "session_expired", "request_discarded"]);
+  const restartOnly = new Set(["valid_input", "light_dna_incomplete", "turn_not_supported", "turn_unavailable", "turn_expired", "turn_replayed", "unknown_smart_home_scene", "smart_home_run_id_required", "recovery_required", "request_in_progress", "request_id_conflict", "garden_session_already_seeded", "state_inspection_required", "visitor_runtime_field_not_allowed", "live_context_fixed_to_ifa_eu", "session_expired", "request_discarded"]);
   const retryDisposition = executionStarted || restartOnly.has(code) ? "restart" : "new_run";
   return { error: code, message, status, retryDisposition };
 }

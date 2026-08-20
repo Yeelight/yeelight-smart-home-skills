@@ -10,6 +10,15 @@ export const LOGICAL_SLOTS = Object.freeze([
   "L1", "L2", "L3", "L4", "L5", "L6", "L7", "L8", "L9",
   "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9",
 ]);
+// Smart Home presets are executable plans but are intentionally kept outside
+// the interactive catalog. The server is the only caller that can construct
+// these IDs from the bundled scene allowlist.
+export const SMART_HOME_PLAN_IDS = new Set([
+  "smart-home-relax",
+  "smart-home-focus",
+  "smart-home-movie",
+  "smart-home-party",
+]);
 export const PLAN_VERSION = 1;
 export const PLAN_SOURCES = new Set(["ai", "fallback", "deterministic"]);
 export const MIN_PHASE_DURATION_MS = 700;
@@ -40,7 +49,7 @@ export function validateExperiencePlan(plan, expectedExperienceId = undefined) {
   const allowed = new Set(["version", "experienceId", "aiRole", "source", "summary", "phases", "explanation"]);
   for (const key of Object.keys(plan)) if (!allowed.has(key)) errors.push(`unknown field: ${key}`);
   if (plan.version !== PLAN_VERSION) errors.push("unsupported plan version");
-  if (!EXPERIENCE_IDS.has(plan.experienceId)) errors.push("unknown experience");
+  if (!EXPERIENCE_IDS.has(plan.experienceId) && !SMART_HOME_PLAN_IDS.has(plan.experienceId)) errors.push("unknown experience");
   if (expectedExperienceId && plan.experienceId !== expectedExperienceId) errors.push("experience mismatch");
   if (typeof plan.aiRole !== "string" || plan.aiRole.length < 2 || plan.aiRole.length > 48) errors.push("invalid aiRole");
   if (!PLAN_SOURCES.has(plan.source)) errors.push("invalid source");
