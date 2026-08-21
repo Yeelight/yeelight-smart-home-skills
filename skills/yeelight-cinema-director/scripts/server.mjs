@@ -5,7 +5,7 @@ import { assertRequest, CinemaError, FADE_DURATION_MS, LIVE_MAX_BRIGHTNESS, MAX_
 import { chunkPlan, createLightingPlan, mergeReceipts, MAX_WAVE_SIZE, selectLightingWindow } from "./lib/lighting.mjs";
 import { CinemaSessionStore } from "./lib/session.mjs";
 import { MockRuntimeAdapter } from "./lib/mock.mjs";
-import { classifyDesignReceipt, normalizeRuntimeContext, YeelightHomeRuntimeAdapter } from "./lib/runtime-adapter.mjs";
+import { classifyDesignBatchReceipt, classifyDesignReceipt, normalizeRuntimeContext, YeelightHomeRuntimeAdapter } from "./lib/runtime-adapter.mjs";
 import { expireActiveSession, invalidateSession, renewProof, requireLiveSession, scheduleSessionExpiry, validProof } from "./lib/lifecycle.mjs";
 import { allowedHost, readJson, sameOrigin, sameOriginGet, securityHeaders, sendJson, serveArtwork, serveStatic } from "./lib/http.mjs";
 import { applyOne, hasPendingRecovery, loadValidationRecovery, pruneRecoveryRecords, refreshLiveTargets } from "./lib/validation.mjs";
@@ -16,11 +16,14 @@ import { createStopExecutor, stateMatchesPreState } from "./lib/screening-stop.m
 import { createSnapshotFinalizer } from "./lib/screening-finalize.mjs";
 import { prepareValidationRequest, recoverValidationRequest, runValidationRequest } from "./lib/validation-routes.mjs";
 import { createTickRunner } from "./lib/tick-execution.mjs";
+import { executeBatchWindow } from "./lib/tick-batch.mjs";
 
 // Every live frame covers the frozen selected target set. Runtime calls remain
 // bounded so a 160-light screening cannot create an unbounded process burst.
 const LIVE_TICK_WINDOW_SIZE = MAX_TARGETS;
-const LIVE_TICK_CONCURRENCY = 8;
+// EU Runtime latency is dominated by per-target network round trips. Keep the
+// pool bounded, but allow one additional wave of the normal 18-light home.
+export const LIVE_TICK_CONCURRENCY = 12;
 // Keep explicitly retryable outages alive long enough for a transient
 // home/network issue to recover. A persistent all-failed outage still stops
 // after a bounded grace period so an unattended session cannot run forever.
@@ -38,7 +41,7 @@ export function createCinemaServer(options = {}) {
   const targetBook = new Map();
   const instanceId = options.instanceId || process.env.YEELIGHT_CINEMA_INSTANCE || randomOpaque("i");
   const app = { mode, runtime, sessions, catalog, artwork, targetBook, context, startupSignal: options.startupSignal, hostToken: typeof options.hostToken === "string" ? options.hostToken : "", recoveryPath: mode === "live" ? options.recoveryPath || DEFAULT_RECOVERY_PATH : null, screeningRecoveryPath: mode === "live" ? options.screeningRecoveryPath || DEFAULT_SCREENING_RECOVERY_PATH : null, recoveryRecords: new Map(), screeningRecoveryRecords: new Map(), screeningWriteEvidence: new Map(), validationGrants: new Map(), validationScope: new Map(), validationActive: false, liveValidationPassed: mode !== "live", pageProof, pageProofIssuedAt: clock(), clock, instanceId, port: options.port || 8789, fadeMs: Number.isInteger(options.fadeMs) ? options.fadeMs : FADE_DURATION_MS, activeWorker: null, transition: Promise.resolve(), expiryTimers: new Map(), shuttingDown: false, shutdownPromise: null };
-  app.stopExecutor = createStopExecutor({ executeTarget, queryState: async (owner, target, signal) => owner.runtime.queryState([target], signal), queryStateBatch: typeof runtime.queryStateBatch === "function" ? async (owner, targets, signal) => owner.runtime.queryStateBatch(targets, signal) : null, maxWaveSize: MAX_WAVE_SIZE, concurrency: STOP_PHASE_CONCURRENCY, timeoutMs: STOP_PHASE_TIMEOUT_MS });
+  app.stopExecutor = createStopExecutor({ executeTarget, executeBatch: executeBatchRows, queryState: async (owner, target, signal) => owner.runtime.queryState([target], signal), queryStateBatch: typeof runtime.queryStateBatch === "function" ? async (owner, targets, signal, options) => owner.runtime.queryStateBatch(targets, signal, options) : null, maxWaveSize: MAX_WAVE_SIZE, concurrency: STOP_PHASE_CONCURRENCY, timeoutMs: STOP_PHASE_TIMEOUT_MS });
   app.finalizeSnapshot = createSnapshotFinalizer({ cancelActiveWorker });
   const ready = loadTargets(app);
   const server = http.createServer((request, response) => handleRequest(app, request, response));
@@ -282,7 +285,7 @@ async function executeTarget(app, target, row, signal, forceDesign = false, opti
   // EU live playback uses the verified single-property Runtime intents. Keep
   // design writes for mock playback and the power-inclusive stop/recovery path.
   if (app.mode === "live" && !forceDesign && typeof app.runtime.applyProperties === "function") {
-    const result = await applyOne(app, target, request.set, signal, options);
+    const result = await applyOne(app, target, request.set, signal, { ...options, parallelProperties: true });
     return result?.status === "acknowledged"
       ? { handle: row.handle, status: "acknowledged" }
       : { handle: row.handle, status: "failed" };
@@ -306,9 +309,11 @@ const runTick = createTickRunner({
   liveConcurrency: LIVE_TICK_CONCURRENCY,
   liveMaxBrightness: LIVE_MAX_BRIGHTNESS,
   executeTarget,
+  executeBatch: executeBatchWindow,
   recordScreeningStates,
   CinemaError,
 });
+
 function enqueueTransition(app, operation) {
   const task = app.transition.then(operation, operation);
   app.transition = task.catch(() => {});
@@ -324,8 +329,25 @@ async function cancelActiveWorker(app, sessionId) {
 }
 const executeRows = (app, targets, rows, signal) => app.stopExecutor.executeRows(app, targets, rows, signal);
 const runStopPhase = (app, targets, rows) => app.stopExecutor.runStopPhase(app, targets, rows);
+async function executeBatchRows(app, targets, rows, signal) {
+  if (app.mode !== "live" || app.runtime?.supportsBatchFrames !== true || typeof app.runtime.applyDesign !== "function") return null;
+  const byHandle = new Map(targets.map((target) => [target.handle, target]));
+  const batchRows = rows.map((row) => ({ ...row, runtimeId: byHandle.get(row.handle)?.runtimeId })).filter((row) => row.runtimeId);
+  if (batchRows.length !== rows.length || batchRows.length < 2) return null;
+  try {
+    const result = await app.runtime.applyDesign(batchRows, signal, { retrySafeError: false });
+    const expected = new Map(batchRows.map((row) => [String(row.runtimeId), row.set || {}]));
+    const classification = classifyDesignBatchReceipt(result, expected);
+    if (classification === "verified") return rows.map((row) => ({ handle: row.handle, status: "acknowledged" }));
+    const reason = classification === "bound_verification_mismatch" ? "runtime_write_verification_mismatch" : "runtime_batch_receipt_invalid";
+    return rows.map((row) => ({ handle: row.handle, status: "failed", reason, failureClass: "verification", retryable: true }));
+  } catch (error) {
+    const reason = signal?.aborted ? "runtime_cancelled" : error?.code || "runtime_batch_uncertain";
+    return rows.map((row) => ({ handle: row.handle, status: signal?.aborted ? "timeout" : "failed", reason, failureClass: "transport", retryable: true }));
+  }
+}
 function recoverScreeningRequest(app, body) {
-  return recoverScreeningRequestWithDeps(app, body, { enqueueTransition, assertWritable, CinemaError, sendJsonResult, queryStopState: (owner, targets, signal) => owner.stopExecutor.queryStopState(owner, targets, signal), stateMatchesPreState, executeTarget, persistScreeningRecovery });
+  return recoverScreeningRequestWithDeps(app, body, { enqueueTransition, assertWritable, CinemaError, sendJsonResult, queryStopState: (owner, targets, signal) => owner.stopExecutor.queryStopState(owner, targets, signal), queryStopStateBatch: (owner, targets, signal, options) => owner.runtime.queryStateBatch(targets, signal, options), stateMatchesPreState, executeTarget, executeBatch: executeBatchRows, persistScreeningRecovery });
 }
 function assertLiveValidationScope(app, targets) {
   if (!app.liveValidationPassed || !(app.validationScope instanceof Map) || app.validationScope.size < 1) {
@@ -367,15 +389,11 @@ export async function shutdownCinemaServer(app) {
       app.screeningWriteEvidence.clear();
       for (const timer of app.expiryTimers.values()) clearTimeout(timer);
       app.expiryTimers.clear();
+      app.runtime?.close?.();
     }
   });
   return app.shutdownPromise;
 }
-function publicMovie(app, movie) {
-  const result = { id: movie.id, title: movie.title, year: movie.year || null };
-  if (movie.artworkUrl) result.artworkHandle = app.artwork.sign(movie.artworkUrl, app.pageProof);
-  return result;
-}
-
+function publicMovie(app, movie) { const result = { id: movie.id, title: movie.title, year: movie.year || null }; if (movie.artworkUrl) result.artworkHandle = app.artwork.sign(movie.artworkUrl, app.pageProof); return result; }
 function sendJsonResult(status, value) { return { __result: true, status, value }; }
 export const __testing = { allowedHost, sameOrigin, sameOriginGet, validProof, securityHeaders };

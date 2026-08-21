@@ -2,7 +2,9 @@ import { CinemaError, randomOpaque } from "./contracts.mjs";
 import { DEFAULT_SCREENING_RECOVERY_PATH, SCREENING_RECOVERY_CONFIRMATION, SCREENING_RECOVERY_TIMEOUT_MS, SCREENING_RECOVERY_TTL_MS, loadScreeningRecoveryRecords, saveScreeningRecoveryRecords } from "./screening-recovery-store.mjs";
 import { isValidTargetState } from "./validation-store.mjs";
 
-export const STOP_PHASE_CONCURRENCY = 4;
+// Stop/recovery writes remain bounded while reducing the number of cloud
+// waves for the normal 18-light household.
+export const STOP_PHASE_CONCURRENCY = 8;
 export const STOP_PHASE_TIMEOUT_MS = 120 * 1000;
 
 export function hasAnyPendingRecovery(app, hasValidationPending, exceptSessionId = "") {
@@ -116,25 +118,42 @@ export async function recoverScreeningRecord(app, record, deps) {
   const operation = createDeadline(app.clock, deps.recoveryTimeoutMs || SCREENING_RECOVERY_TIMEOUT_MS);
   const rows = [];
   const targets = pendingHandles.map((handle) => targetByHandle.get(handle));
-  try {
-    for (let index = 0; index < targets.length; index += STOP_PHASE_CONCURRENCY) {
-      if (operation.signal.aborted) {
-        rows.push(...targets.slice(index).map((target) => ({ handle: target.handle, status: "timeout" })));
-        break;
+  // An expired journal may outlive a successful physical restore. Reconcile
+  // that orphaned state once before issuing another irreversible write burst.
+  // Normal Stop/Restore stays write-first; this guard only applies when no
+  // active screening can still own the recovery record.
+  if (record.phase === "manual_recovery_required" && typeof deps.queryStopStateBatch === "function" && typeof deps.stateMatchesPreState === "function") {
+    try {
+      const currentRows = await deps.queryStopStateBatch(app, targets, operation.signal, { skipOnlineFallback: true });
+      const currentByHandle = mapRowsByHandle(currentRows, targets);
+      const restored = targets.every((target) => {
+        const row = currentByHandle.get(target.handle);
+        // The EU batch properties endpoint omits `online` but only returns a
+        // row after reading the device. Treat that omission as online evidence
+        // for this reconciliation-only path; explicit false remains failure.
+        const reconciled = withKnownOnline(row, target);
+        return deps.stateMatchesPreState(reconciled, target);
+      });
+      if (restored) {
+        await removeScreeningRecovery(app, record.id);
+        operation.cancel();
+        return {
+          status: "complete",
+          complete: true,
+          recoveryId: null,
+          rows: targets.map((target) => ({ handle: target.handle, status: "verified", reason: "already_restored" })),
+        };
       }
-      const chunk = targets.slice(index, index + STOP_PHASE_CONCURRENCY);
-      const results = await Promise.all(chunk.map(async (target) => {
-        if (operation.signal.aborted) return { handle: target.handle, status: "timeout" };
-        const current = (await deps.queryStopState(app, [target], operation.signal))[0];
-        if (deps.stateMatchesPreState(current, target)) return { handle: target.handle, status: "verified" };
-        if (!current || current.runtimeId !== target.runtimeId || current.verified !== true || current.online !== true || current.simulated === true || !knownScreeningState(current, target)) return { handle: target.handle, status: operation.signal.aborted ? "timeout" : "conflict" };
-        try {
-          const receipt = await deps.executeTarget(app, target, { handle: target.handle, set: target.preState }, operation.signal, true, { retrySafeError: false });
-          const final = (await deps.queryStopState(app, [target], operation.signal))[0];
-          return { handle: target.handle, status: receipt.status === "acknowledged" && deps.stateMatchesPreState(final, target) ? "verified" : "uncertain" };
-        } catch { return { handle: target.handle, status: operation.signal.aborted ? "timeout" : "failed" }; }
-      }));
-      rows.push(...results);
+    } catch {
+      // A failed reconciliation read must not claim physical recovery; fall
+      // through to the existing bounded restore path.
+    }
+  }
+  try {
+    if (typeof deps.queryStopStateBatch === "function") {
+      rows.push(...await recoverScreeningRecordBatch(app, targets, deps, operation.signal));
+    } else {
+      rows.push(...await recoverScreeningRecordSerial(app, targets, deps, operation.signal));
     }
   } finally {
     operation.cancel();
@@ -150,6 +169,93 @@ export async function recoverScreeningRecord(app, record, deps) {
   return { status: pending.length ? "uncertain" : "complete", complete: pending.length === 0, recoveryId: pending.length ? record.id : null, rows };
 }
 
+async function recoverScreeningRecordBatch(app, targets, deps, signal) {
+  const statuses = new Map();
+  const writable = [];
+  for (const target of targets) {
+    if (signal.aborted) {
+      statuses.set(target.handle, "timeout");
+    } else {
+      writable.push(target);
+    }
+  }
+
+  for (let index = 0; index < writable.length; index += STOP_PHASE_CONCURRENCY) {
+    if (signal.aborted) {
+      for (const target of writable.slice(index)) statuses.set(target.handle, "timeout");
+      break;
+    }
+    const chunk = writable.slice(index, index + STOP_PHASE_CONCURRENCY);
+    if (typeof deps.executeBatch === "function" && chunk.length > 1) {
+      const batchRows = chunk.map((target) => ({ handle: target.handle, set: target.preState }));
+      const batchResult = await deps.executeBatch(app, targets, batchRows, signal);
+      if (Array.isArray(batchResult)) {
+        for (const row of batchResult) statuses.set(row.handle, row.status);
+        continue;
+      }
+    }
+    const results = await Promise.all(chunk.map(async (target) => {
+      try {
+        const receipt = await deps.executeTarget(app, target, { handle: target.handle, set: target.preState }, signal, true, { retrySafeError: false });
+        return { handle: target.handle, status: receipt.status === "acknowledged" ? "acknowledged" : "failed" };
+      } catch {
+        return { handle: target.handle, status: signal.aborted ? "timeout" : "failed" };
+      }
+    }));
+    for (const row of results) statuses.set(row.handle, row.status);
+  }
+
+  const finalRows = writable.length && !signal.aborted
+    ? await deps.queryStopStateBatch(app, targets, signal, { skipOnlineFallback: true })
+    : [];
+  const finalByHandle = mapRowsByHandle(finalRows, targets);
+  return targets.map((target) => {
+    const status = statuses.get(target.handle);
+    const final = withKnownOnline(finalByHandle.get(target.handle), target);
+    // The final physical readback is authoritative. A gateway can return an
+    // incomplete or failed batch receipt after the device has already applied
+    // the restore, so never issue another write when the pre-state matches.
+    if (deps.stateMatchesPreState(final, target)) return { handle: target.handle, status: "verified" };
+    if (status === "failed" || status === "timeout") return { handle: target.handle, status };
+    return { handle: target.handle, status: signal.aborted ? "timeout" : "uncertain" };
+  });
+}
+
+async function recoverScreeningRecordSerial(app, targets, deps, signal) {
+  const rows = [];
+  for (let index = 0; index < targets.length; index += STOP_PHASE_CONCURRENCY) {
+    if (signal.aborted) {
+      rows.push(...targets.slice(index).map((target) => ({ handle: target.handle, status: "timeout" })));
+      break;
+    }
+    const chunk = targets.slice(index, index + STOP_PHASE_CONCURRENCY);
+    const results = await Promise.all(chunk.map(async (target) => {
+      if (signal.aborted) return { handle: target.handle, status: "timeout" };
+      try {
+        const receipt = await deps.executeTarget(app, target, { handle: target.handle, set: target.preState }, signal, true, { retrySafeError: false });
+        const final = signal.aborted ? null : withKnownOnline((await deps.queryStopState(app, [target], signal))[0], target);
+        return { handle: target.handle, status: receipt.status === "acknowledged" && deps.stateMatchesPreState(final, target) ? "verified" : "uncertain" };
+      } catch { return { handle: target.handle, status: signal.aborted ? "timeout" : "failed" }; }
+    }));
+    rows.push(...results);
+  }
+  return rows;
+}
+
+function withKnownOnline(row, target) {
+  return row && row.online === undefined && target.online === true ? { ...row, online: true } : row;
+}
+
+function mapRowsByHandle(rows, targets) {
+  const targetByRuntimeId = new Map(targets.map((target) => [String(target.runtimeId), target.handle]));
+  const byHandle = new Map();
+  for (const row of Array.isArray(rows) ? rows : []) {
+    const handle = row?.handle || targetByRuntimeId.get(String(row?.runtimeId || ""));
+    if (handle) byHandle.set(handle, row);
+  }
+  return byHandle;
+}
+
 export function recoverScreeningRequest(app, body, deps) {
   return deps.enqueueTransition(app, async () => {
     deps.assertWritable(app);
@@ -161,19 +267,6 @@ export function recoverScreeningRequest(app, body, deps) {
     const result = await recoverScreeningRecord(app, record, deps);
     return deps.sendJsonResult(result.complete ? 200 : 207, { status: result.status, recovery: result });
   });
-}
-
-function knownScreeningState(state, target) {
-  if (!state || state.verified !== true || state.online !== true || state.simulated === true) return false;
-  const observed = {
-    power: state.power,
-    brightness: state.brightness,
-    ...(target.capabilities?.color ? { color: state.color } : {}),
-    ...(target.capabilities?.temperature ? { colorTemperature: state.colorTemperature } : {}),
-  };
-  if (!isValidTargetState(observed, target)) return false;
-  const knownStates = Array.isArray(target.knownStates) ? target.knownStates : [];
-  return knownStates.some((known) => stateKey(known) === stateKey(observed));
 }
 
 function stateKey(state) {
@@ -210,4 +303,4 @@ function createDeadline(clock, timeoutMs) {
   return { signal: controller.signal, cancel: () => clearTimeout(timer), expiresAt: clock() + timeoutMs };
 }
 
-export const __testing = { STOP_PHASE_CONCURRENCY, STOP_PHASE_TIMEOUT_MS, SCREENING_RECOVERY_TIMEOUT_MS, knownScreeningState };
+export const __testing = { STOP_PHASE_CONCURRENCY, STOP_PHASE_TIMEOUT_MS, SCREENING_RECOVERY_TIMEOUT_MS };

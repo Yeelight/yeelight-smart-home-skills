@@ -38,10 +38,25 @@
         <div id="song-results" class="result-list" aria-live="polite"></div>
         <div id="song-selection" class="selection-card" aria-live="polite" hidden></div>
         <div id="optional-audio" class="optional-audio" hidden>
-          <div class="optional-heading"><span>Optional audio source</span><span>Not required</span></div>
-          <p id="youtube-note" class="panel-note optional-source"></p>
-          <div id="youtube-results" class="result-list" aria-live="polite"></div>
-          <div id="youtube-selection" class="selection-card" aria-live="polite" hidden></div>
+          <div class="optional-heading"><span>Apple Music playback</span><span>Optional</span></div>
+          <div id="apple-music-launcher" class="provider-launcher" hidden>
+            <div class="provider-launcher-heading"><span class="provider-brand"><span class="companion-bars provider-signal" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>Apple Music</span></span><span id="apple-music-window-state">Separate window</span></div>
+            <div class="provider-launcher-row">
+              <p id="apple-music-note" class="panel-note">Open the selected soundtrack in a separate resizable window.</p>
+              <button id="open-apple-music" type="button">Open Apple Music window</button>
+            </div>
+          </div>
+          <details id="youtube-fallback" class="source-fallback" hidden>
+            <summary>Use another source</summary>
+            <p id="youtube-note" class="panel-note optional-source"></p>
+            <div id="youtube-results" class="result-list" aria-live="polite"></div>
+            <div id="youtube-selection" class="selection-card" aria-live="polite" hidden></div>
+            <div id="embedded-player" class="embedded-player" hidden>
+              <div class="embedded-player-heading"><span>In-page player</span><span id="embedded-player-status">Ready</span></div>
+              <div id="youtube-player" class="embedded-player-frame"></div>
+              <p id="embedded-player-note" class="panel-note embedded-player-note">Play the selected source here. To let the lights follow it, share the tab or window playing it below.</p>
+            </div>
+          </details>
         </div>
         <label for="local-audio">Local audio</label>
         <input id="local-audio" type="file" accept="audio/*">
@@ -66,12 +81,19 @@
           <div class="spectrum" id="spectrum" aria-label="Live audio spectrum"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
           <div class="console-readout"><div><span>ENERGY</span><strong id="energy">--</strong></div><div><span>LYRIC CUE</span><strong id="lyric-cue">NONE</strong></div><div><span>LAST RECEIPT</span><strong id="last-receipt">--</strong></div></div>
         </div>
-        <div class="console-actions"><button id="share-audio" type="button">Share tab audio</button><button id="start-show" class="primary" type="button" disabled>Start</button><button id="pause-show" type="button" disabled>Pause</button><button id="stop-show" class="danger" type="button" disabled>Stop</button></div>
+        <div class="console-actions"><button id="share-audio" type="button">Share page audio</button><button id="start-show" class="primary" type="button" disabled>Start</button><button id="pause-show" type="button" disabled>Pause</button><button id="stop-show" class="danger" type="button" disabled>Stop</button></div>
         <p id="console-message" class="console-message" role="status">Select a film, soundtrack, and at least one light.</p>
         <div id="target-receipts" class="target-receipts" aria-live="polite"></div>
       </div>
     </section>
   </main>
+  <div id="apple-music-companion" class="apple-music-companion" hidden>
+    <button id="apple-music-companion-button" class="apple-music-companion-button" type="button">
+      <span class="companion-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+      <span class="companion-copy"><span id="apple-music-companion-action">Open player</span><strong id="apple-music-companion-track">Apple Music</strong></span>
+      <span class="companion-arrow" aria-hidden="true"></span>
+    </button>
+  </div>
   <footer><span>Loopback only</span><span id="hardware-boundary">Mock preview never touches hardware</span><span id="mode-label">Mode: --</span></footer>
   <script type="module" src="/scripts/app.js"></script>
 </body>

@@ -13,7 +13,7 @@ audience member. Silence freezes the last frame; it does not turn lights on.
 For multiple lights, each role receives a deterministic phase offset and every
 selected target receives one row in every frame. The phase/wave value changes
 the look between frames; it is not a device rotation window. The compatibility
-path executes the complete frame through at most eight concurrent Runtime
+path executes the complete frame through at most twelve concurrent Runtime
 workers. A Flow receipt is only `acknowledged`; physical verification requires
 a separate Runtime state query. Single-light screenings use the full composite
 signal rather than an empty second role.

@@ -43,23 +43,20 @@ export function createSnapshotFinalizer({ cancelActiveWorker }) {
       const initialEligibility = selectWritableTargets(app, targets, initialRows, journalByHandle(app, snapshot.id, screeningRecord), evidence);
       screeningRecord = await noteBlockedTargets(app, screeningRecord, initialEligibility.blockedTargets);
       if (app.fadeMs > 0) await new Promise((resolve) => setTimeout(resolve, Math.min(app.fadeMs, FADE_DURATION_MS)));
-      const fadeStateRows = app.mode === "live" ? await app.stopExecutor.queryStopState(app, targets) : [];
-      const fadeEligibility = selectWritableTargets(app, targets, fadeStateRows, journalByHandle(app, snapshot.id, screeningRecord), evidence);
-      screeningRecord = await noteBlockedTargets(app, screeningRecord, fadeEligibility.blockedTargets);
+      // The entry snapshot is the only pre-stop selection fence. Reuse it for
+      // fade/off/restore and keep one final read as the authoritative result.
+      const fadeEligibility = initialEligibility;
       const fadeRows = stopPlan(fadeEligibility.writableTargets, 1);
       if (screeningRecord) await recordScreeningStates(app, snapshot.id, fadeRows);
       screeningRecord = currentScreeningRecord(app, snapshot.id, screeningRecord);
       const fadeResult = await app.stopExecutor.runStopPhase(app, fadeEligibility.writableTargets, fadeRows);
-      const offStateRows = app.mode === "live" ? await app.stopExecutor.queryStopState(app, targets) : [];
-      const offEligibility = selectWritableTargets(app, targets, offStateRows, journalByHandle(app, snapshot.id, screeningRecord), evidence);
-      screeningRecord = await noteBlockedTargets(app, screeningRecord, offEligibility.blockedTargets);
+      const offEligibility = initialEligibility;
       const offRows = offEligibility.writableTargets.map((target) => ({ handle: target.handle, set: { power: false } }));
       if (screeningRecord) await recordScreeningStates(app, snapshot.id, offRows);
       screeningRecord = currentScreeningRecord(app, snapshot.id, screeningRecord);
       const offResult = await app.stopExecutor.runStopPhase(app, offEligibility.writableTargets, offRows);
-      const beforeRestoreRows = app.mode === "live" ? await app.stopExecutor.queryStopState(app, targets) : [];
-      const restoreEligibility = selectWritableTargets(app, targets, beforeRestoreRows, journalByHandle(app, snapshot.id, screeningRecord), evidence);
-      screeningRecord = await noteBlockedTargets(app, screeningRecord, restoreEligibility.blockedTargets);
+      const beforeRestoreRows = initialRows;
+      const restoreEligibility = initialEligibility;
       const restoreJournalRows = app.mode === "live" ? restorePlan(restoreEligibility.writableTargets) : [];
       if (screeningRecord) await recordScreeningStates(app, snapshot.id, restoreJournalRows);
       const restoreResult = await app.stopExecutor.runStopPhase(app, restoreEligibility.writableTargets, restoreJournalRows);

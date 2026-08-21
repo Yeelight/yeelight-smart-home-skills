@@ -1,11 +1,12 @@
-import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { CinemaError, isPlainObject } from "./contracts.mjs";
-import { classifyDesignReceipt, classifyPropertyReceipt, isVerifiedDesignPowerWrite, isVerifiedPowerWrite } from "./runtime-receipts.mjs";
+import { classifyDesignBatchReceipt, classifyDesignReceipt, classifyPropertyReceipt, isVerifiedDesignPowerWrite, isVerifiedPowerWrite } from "./runtime-receipts.mjs";
 import { normalizeCapabilities, normalizeDetail, normalizeDiscovery, normalizeLiveDevice, normalizePreState, normalizeState, isQualifiedLiveDevice } from "./runtime-normalizers.mjs";
 import { CONTEXT_VALUE, CONTROL_MODES, VALID_REGIONS, endpointHost, normalizeGatewayIp, normalizeLanEndpoint } from "./runtime-context.mjs";
+import { discardStderr, invokeWithRetry, MAX_RUNTIME_OUTPUT_BYTES, PersistentRuntimeChannel as RuntimeChannel, runInvoke, runtimeEnvironment } from "./runtime-process.mjs";
 
-export { classifyDesignReceipt, classifyPropertyReceipt, isVerifiedDesignPowerWrite, isVerifiedPowerWrite } from "./runtime-receipts.mjs";
+export { classifyDesignBatchReceipt, classifyDesignReceipt, classifyPropertyReceipt, isVerifiedDesignPowerWrite, isVerifiedPowerWrite } from "./runtime-receipts.mjs";
+export { discardStderr, invokeWithRetry, runInvoke, runtimeEnvironment } from "./runtime-process.mjs";
 
 const SAFE_INTENTS = new Set(["entity.list", "entity.capabilities", "device.detail.get", "state.query", "state.batch.query", "lighting.design.apply", "lighting.flow.execute", "light.power.set", "light.brightness.set", "light.color.set", "light.color_temperature.set"]);
 const PROPERTY_INTENTS = new Map([
@@ -13,11 +14,16 @@ const PROPERTY_INTENTS = new Map([
   ["color", "light.color.set"],
   ["colorTemperature", "light.color_temperature.set"],
 ]);
-const MAX_RUNTIME_OUTPUT_BYTES = 2 * 1024 * 1024;
 const BATCH_ONLINE_FALLBACK_CONCURRENCY = 16;
+// Discovery is a bounded read-only burst. Keep high-frequency writes and
+// batch state reads on the persistent channel, while avoiding serial startup
+// latency when a household has many lights.
+const DISCOVERY_CONCURRENCY = 4;
 const STATE_BATCH_QUERY_TIMEOUT_MS = 120 * 1000;
+// A multi-target design is one Runtime request, but its verified device-level
+// fan-out can take longer than the normal single-target 20 second budget.
+const BATCH_DESIGN_APPLY_TIMEOUT_MS = 120 * 1000;
 const ONLINE_UNREADABLE = "online:unreadable";
-const RUNTIME_ENV_KEYS = new Set(["PATH", "HOME", "USER", "TMPDIR", "TMP", "TEMP", "APPDATA", "LOCALAPPDATA", "USERPROFILE", "SYSTEMROOT", "YEELIGHT_HOME_PROFILE", "YEELIGHT_HOME_CONFIG_DIR", "YEELIGHT_HOME_DATA_DIR", "YEELIGHT_HOME_HOUSE_ID", "YEELIGHT_CLOUD_REGION", "YEELIGHT_HOME_CONTROL_MODE", "YEELIGHT_HOME_GATEWAY_IP", "YEELIGHT_HOME_LAN_ENDPOINT"]);
 const BATCH_PROPERTY_SPECS = Object.freeze([
   Object.freeze({ property: "online", wire: "online" }),
   Object.freeze({ property: "power", wire: "p" }),
@@ -25,6 +31,7 @@ const BATCH_PROPERTY_SPECS = Object.freeze([
   Object.freeze({ property: "colorTemperature", wire: "ct", capability: "temperature" }),
   Object.freeze({ property: "color", wire: "c", capability: "color" }),
 ]);
+const PersistentRuntimeChannel = RuntimeChannel;
 
 export class YeelightHomeRuntimeAdapter {
   constructor(options = {}) {
@@ -33,8 +40,11 @@ export class YeelightHomeRuntimeAdapter {
     this.invocations = [];
     this.live = options.live === true;
     this.context = normalizeRuntimeContext(options.context, { required: this.live });
+    this.persistent = this.live && options.persistent !== false;
+    this.channel = options.runtimeChannel || null;
+    this.ephemeralRunner = options.ephemeralRunner || runInvoke;
+    this.supportsBatchFrames = true;
   }
-
   async invoke(intent, request = {}, options = {}) {
     if (!this.live) throw new CinemaError("runtime_disabled", "Live Runtime mode is disabled.", 503);
     if (!SAFE_INTENTS.has(intent)) throw new CinemaError("runtime_intent_blocked", "That Runtime capability is not enabled.", 400);
@@ -50,55 +60,85 @@ export class YeelightHomeRuntimeAdapter {
     });
     this.invocations.push({ requestId, intent });
     const timeoutMs = Number.isInteger(options.timeoutMs) ? options.timeoutMs : this.timeoutMs;
-    return invokeWithRetry(this.binary, payload, timeoutMs, options.signal, this.context, options.retrySafeError);
+    const runEphemeral = (_binary, requestPayload, requestTimeoutMs, signal, requestContext) => this.ephemeralRunner(_binary, requestPayload, requestTimeoutMs, signal, contextToEnvironment(requestContext));
+    const runner = options.ephemeral === true
+      ? runEphemeral
+      : this.persistent
+      ? async (_binary, requestPayload, requestTimeoutMs, signal, requestContext) => {
+        try {
+          return await this.persistentChannel().request(requestPayload, requestTimeoutMs, signal);
+        } catch (error) {
+          if (error?.code !== "runtime_keep_alive_unsupported") throw error;
+          this.persistent = false;
+          this.channel?.close();
+          this.channel = null;
+          return runEphemeral(_binary, requestPayload, requestTimeoutMs, signal, requestContext);
+        }
+      }
+      : runEphemeral;
+    return invokeWithRetry(this.binary, payload, timeoutMs, options.signal, this.context, options.retrySafeError, runner);
   }
 
+  persistentChannel() {
+    if (!this.channel) this.channel = new PersistentRuntimeChannel(this.binary, this.context, undefined, runtimeEnvironment(process.env, contextToEnvironment(this.context)));
+    return this.channel;
+  }
+
+  close() {
+    this.channel?.close();
+  }
   async discover(signal) {
     const result = await this.invoke("entity.list", { parameters: { entityTypes: ["device"], include: ["room", "capabilities"] } }, { signal });
     const devices = normalizeDiscovery(result);
     if (!this.live) return devices;
-    const settled = await Promise.allSettled(devices.map(async (device) => {
-      const [detail, capabilities, states] = await Promise.all([
-        this.detail(device.runtimeId, signal),
-        this.capabilities(device.runtimeId, signal),
-        this.queryState([device], signal),
-      ]);
-      const state = states.find((row) => row.runtimeId === device.runtimeId);
-      return normalizeLiveDevice(device, detail, capabilities, state);
-    }));
-    if (settled.some((entry) => entry.status === "rejected")) {
+    const detailSettled = await mapWithConcurrency(devices, DISCOVERY_CONCURRENCY, async (device) => {
+      try {
+        const detail = await this.detail(device.runtimeId, signal, { ephemeral: true });
+        return { status: "fulfilled", value: { device, detail } };
+      } catch (reason) {
+        return { status: "rejected", reason };
+      }
+    });
+    if (detailSettled.some((entry) => entry.status === "rejected")) {
       throw new CinemaError("runtime_discovery_incomplete", "The live Runtime could not verify every discovered device.", 503);
     }
-    return settled
-      .filter((entry) => entry.status === "fulfilled")
-      .map((entry) => entry.value)
+    const detailed = detailSettled.map((entry) => entry.value);
+    const stateTargets = detailed.map(({ device, detail }) => ({ ...device, capabilities: detail.capabilities }));
+    const states = await this.queryStateBatch(stateTargets, signal, { ephemeral: true, skipOnlineFallback: true });
+    const stateByRuntimeId = new Map(states.map((state) => [state.runtimeId, state]));
+    return detailed
+      .map(({ device, detail }) => {
+        const state = stateByRuntimeId.get(device.runtimeId);
+        return normalizeLiveDevice(device, detail, undefined, state ? { ...state, online: detail.online } : undefined);
+      })
       .filter(isQualifiedLiveDevice);
   }
-
-  async detail(runtimeId, signal) {
+  async detail(runtimeId, signal, options = {}) {
     const result = await this.invoke("device.detail.get", {
       targets: [{ entityType: "device", id: runtimeId }],
       parameters: {}
-    }, { signal });
+    }, { signal, ...options });
     return normalizeDetail(result);
   }
-
-  async capabilities(runtimeId, signal) {
+  async capabilities(runtimeId, signal, options = {}) {
     const result = await this.invoke("entity.capabilities", {
       targets: [{ entityType: "device", id: runtimeId }],
       parameters: {}
-    }, { signal });
+    }, { signal, ...options });
     return normalizeCapabilities(result);
   }
 
   async applyDesign(rows, signal, options = {}) {
     const actions = rows.map((row) => ({ targetType: "device", targetId: row.runtimeId, set: row.set }));
-    return this.invoke("lighting.design.apply", { targets: rows.map((row) => ({ entityType: "device", id: row.runtimeId })), parameters: { actions } }, { signal, retrySafeError: options.retrySafeError });
+    return this.invoke("lighting.design.apply", { targets: rows.map((row) => ({ entityType: "device", id: row.runtimeId })), parameters: { actions } }, {
+      signal,
+      retrySafeError: options.retrySafeError,
+      timeoutMs: rows.length > 1 ? BATCH_DESIGN_APPLY_TIMEOUT_MS : undefined,
+    });
   }
-
   async applyProperties(target, set, signal, options = {}) {
-    const rows = [];
-    for (const [property, value] of Object.entries(set || {})) {
+    const entries = Object.entries(set || {});
+    const applyProperty = async ([property, value]) => {
       const intent = PROPERTY_INTENTS.get(property);
       if (!intent) throw new CinemaError("runtime_property_blocked", "The Runtime property is not enabled for validation.", 400);
       let result;
@@ -129,11 +169,16 @@ export class YeelightHomeRuntimeAdapter {
           classification,
         });
       }
-      rows.push({ handle: target.handle, status: "acknowledged", property });
+      return { handle: target.handle, status: "acknowledged", property };
+    };
+    const rows = options.parallelProperties === true
+      ? await Promise.all(entries.map(applyProperty))
+      : [];
+    if (options.parallelProperties !== true) {
+      for (const entry of entries) rows.push(await applyProperty(entry));
     }
     return { status: "acknowledged", rows };
   }
-
   async applyPower(target, power, signal, options = {}) {
     // EU Runtime exposes a stable R1 power endpoint; keep validation power
     // writes on that exact single-property contract instead of design apply.
@@ -157,11 +202,21 @@ export class YeelightHomeRuntimeAdapter {
     }, { signal, retrySafeError: options.retrySafeError });
   }
 
+  async executeFlows(rows, signal, options = {}) {
+    if (!Array.isArray(rows) || rows.length === 0) throw new CinemaError("runtime_flow_protocol", "The Runtime flow batch is empty.", 502);
+    return this.invoke("lighting.flow.execute", {
+      targets: rows.map((row) => ({ entityType: "device", id: row.runtimeId })),
+      parameters: {
+        actions: rows.map((row) => ({ targetType: "device", targetId: row.runtimeId, flow: { mode: "cinema", set: row.set } })),
+      },
+    }, { signal, retrySafeError: options.retrySafeError });
+  }
+
   async queryState(targets, signal, options = {}) {
     const result = await this.invoke("state.query", {
       targets: targets.map((target) => ({ entityType: "device", id: target.runtimeId })),
       parameters: options.property ? { property: options.property } : {}
-    }, { signal, retrySafeError: options.retrySafeError });
+    }, { signal, retrySafeError: options.retrySafeError, ephemeral: options.ephemeral });
     return normalizeState(result);
   }
 
@@ -176,9 +231,9 @@ export class YeelightHomeRuntimeAdapter {
           properties: requestedBatchProperties(target),
         })),
       },
-    }, { signal, retrySafeError: options.retrySafeError, timeoutMs: Math.max(this.timeoutMs, STATE_BATCH_QUERY_TIMEOUT_MS) });
+    }, { signal, retrySafeError: options.retrySafeError, ephemeral: options.ephemeral, timeoutMs: Math.max(this.timeoutMs, STATE_BATCH_QUERY_TIMEOUT_MS) });
     const normalized = normalizeBatchStateResponse(result, normalizedTargets, { allowOnlineUnreadable: true, includeFallbackMetadata: true });
-    if (normalized.unreadableRuntimeIds.size === 0) return normalized.states;
+    if (normalized.unreadableRuntimeIds.size === 0 || options.skipOnlineFallback === true) return normalized.states;
     const fallbackTargets = normalizedTargets.filter((target) => normalized.unreadableRuntimeIds.has(target.runtimeId));
     const fallbackStates = await mapWithConcurrency(fallbackTargets, BATCH_ONLINE_FALLBACK_CONCURRENCY, async (target) => {
       const rows = await this.queryState([target], signal, { retrySafeError: options.retrySafeError });
@@ -289,72 +344,6 @@ function isBoundRuntimeWriteRejection(error) {
     && error.details.runtimeError.code === "write_verification_mismatch";
 }
 
-async function invokeWithRetry(binary, payload, timeoutMs, signal, context, retrySafeError, runner = runInvoke) {
-  try {
-    return await runner(binary, payload, timeoutMs, signal, context);
-  } catch (error) {
-    if (error?.details?.safeToRetry === true && retrySafeError !== false) {
-      return runner(binary, payload, timeoutMs, signal, context);
-    }
-    throw error;
-  }
-}
-
-function runInvoke(binary, payload, timeoutMs, signal, context = {}, spawnProcess = spawn) {
-  return new Promise((resolve, reject) => {
-    if (signal?.aborted) {
-      reject(new CinemaError("runtime_cancelled", "The Runtime request was cancelled.", 504));
-      return;
-    }
-    const child = spawnProcess(binary, ["invoke", "--stdin"], { shell: false, stdio: ["pipe", "pipe", "pipe"], env: runtimeEnvironment(process.env, contextToEnvironment(context)) });
-    let output = "";
-    let settled = false;
-    const finish = (error, value) => {
-      if (settled) return;
-      settled = true;
-      clearTimeout(timer);
-      signal?.removeEventListener("abort", abort);
-      if (error) reject(error); else resolve(value);
-    };
-    const abort = () => { child.kill(); finish(new CinemaError("runtime_cancelled", "The Runtime request was cancelled.", 504)); };
-    const timer = setTimeout(() => { child.kill(); finish(new CinemaError("runtime_timeout", "The Runtime request timed out.", 504)); }, timeoutMs);
-    signal?.addEventListener("abort", abort, { once: true });
-    child.stdout.setEncoding("utf8");
-    discardStderr(child.stderr);
-    child.stdout.on("data", (chunk) => {
-      output += chunk;
-      if (output.length > MAX_RUNTIME_OUTPUT_BYTES) {
-        child.kill();
-        finish(new CinemaError("runtime_protocol", "The local Runtime response was too large.", 502));
-      }
-    });
-    child.on("error", () => finish(new CinemaError("runtime_unavailable", "The local Yeelight Runtime is unavailable.", 503)));
-    child.on("close", (code) => {
-      if (code !== 0) return finish(new CinemaError("runtime_failed", "The local Yeelight Runtime rejected the request.", 502));
-      try {
-        const parsed = JSON.parse(output.trim().split(/\r?\n/).filter(Boolean).pop() || "{}");
-        if (parsed && parsed.error) return finish(new CinemaError("runtime_rejected", "The Runtime could not complete that semantic request.", 502, {
-          runtimeError: parsed.error,
-          safeToRetry: parsed.result?.safeToRetry === true,
-          traceId: parsed.traceId,
-        }));
-        finish(null, parsed);
-      } catch {
-        finish(new CinemaError("runtime_protocol", "The local Runtime returned an invalid response.", 502));
-      }
-    });
-    if (signal?.aborted) return abort();
-    child.stdin.end(payload);
-  });
-}
-
-export function runtimeEnvironment(source = process.env, overrides = {}) {
-  const merged = { ...source, ...overrides };
-  return Object.fromEntries([...RUNTIME_ENV_KEYS]
-    .filter((key) => typeof merged[key] === "string" && merged[key] !== "")
-    .map((key) => [key, merged[key]]));
-}
-
 export function normalizeRuntimeContext(context = {}, options = {}) {
   const source = context || {};
   const profile = String(source.profile || "").trim();
@@ -390,9 +379,4 @@ function contextToEnvironment(context) {
   };
 }
 
-export function discardStderr(stream) {
-  stream?.on("data", () => {});
-  stream?.resume();
-}
-
-export const __testing = { runInvoke, invokeWithRetry, runtimeEnvironment, discardStderr, normalizeRuntimeContext, contextToEnvironment, normalizeGatewayIp, normalizeLanEndpoint, normalizeDiscovery, normalizeDetail, normalizeCapabilities, normalizeLiveDevice, normalizePreState, isQualifiedLiveDevice, normalizeState, normalizeBatchTargets, normalizeBatchPropertyResponse, normalizeOnlineFallback, isVerifiedPowerWrite, isVerifiedDesignPowerWrite, classifyDesignReceipt, classifyPropertyReceipt, MAX_RUNTIME_OUTPUT_BYTES, BATCH_ONLINE_FALLBACK_CONCURRENCY, STATE_BATCH_QUERY_TIMEOUT_MS };
+export const __testing = { runInvoke, invokeWithRetry, runtimeEnvironment, discardStderr, normalizeRuntimeContext, contextToEnvironment, normalizeGatewayIp, normalizeLanEndpoint, normalizeDiscovery, normalizeDetail, normalizeCapabilities, normalizeLiveDevice, normalizePreState, isQualifiedLiveDevice, normalizeState, normalizeBatchTargets, normalizeBatchPropertyResponse, normalizeOnlineFallback, isVerifiedPowerWrite, isVerifiedDesignPowerWrite, classifyDesignBatchReceipt, classifyDesignReceipt, classifyPropertyReceipt, PersistentRuntimeChannel, MAX_RUNTIME_OUTPUT_BYTES, BATCH_ONLINE_FALLBACK_CONCURRENCY, DISCOVERY_CONCURRENCY, STATE_BATCH_QUERY_TIMEOUT_MS, BATCH_DESIGN_APPLY_TIMEOUT_MS };

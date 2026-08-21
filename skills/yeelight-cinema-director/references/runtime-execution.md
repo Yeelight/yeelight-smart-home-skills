@@ -15,15 +15,17 @@ Read-only discovery uses `entity.list`; Prepare and Live Stop prefer one formal
 `state.batch.query` request containing one exact `items[]` entry per target and
 the capability-scoped property list, with strict exact-set validation. This
 avoids one Runtime process per property without weakening the write fence.
-Stop still refreshes that batch immediately before each fade/off/restore phase
-and once for final readback, so an external state change is never overwritten.
-Explicit recovery still processes one target at a time through the same strict
-state-read adapter for conservative per-light retries. Low-frequency setup and
-termination can use `lighting.design.apply`.
+Batch-capable Stop reuses that entry snapshot for fade/off/restore and performs
+one final batch read. It does not spend another state query immediately before
+restore; the final batch read is the authoritative physical result. The same
+entry snapshot is reused for adapters without batch support, so compatibility
+fallbacks do not add phase queries. Explicit recovery writes each journaled
+pre-state directly and reads it back only after the restore write. Low-frequency
+setup and termination can use `lighting.design.apply`.
 High-frequency work first checks whether
 `lighting.flow.execute` is available. Because the Runtime resolves one target
 per Flow request, the adapter sends one request per target through a bounded
-eight-worker pool and aggregates every receipt. Each live frame includes the
+twelve-worker pool and aggregates every receipt. Each live frame includes the
 complete frozen selected set; it is not a four-target rotation. It never labels
 an aggregate as physical verification.
 
@@ -31,10 +33,9 @@ Before the pool starts, the service persists one durable screening-journal
 record containing every frame target and its next known state. Fatal errors and
 cancellation stop new workers and wait for already-started workers to settle
 before finalization, Stop, or restore can run. The journal scope is
-conservative, but live finalization queries the complete frozen target set
-first: only a target with in-session write evidence and a known session state
-that differs from its pre-state enters fade/off/restore. Unchanged targets are
-verified without a write; unknown or conflicting states remain pending for
+conservative, but live finalization uses the entry snapshot and in-session
+write evidence to choose its writable set. The complete frozen target set is
+queried once after restore; unknown or mismatched rows remain pending for
 explicit recovery.
 
 Live mode is opt-in and fail-closed. Missing capability, unknown handle, stale

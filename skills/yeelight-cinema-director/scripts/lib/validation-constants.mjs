@@ -13,6 +13,6 @@ export const RECOVERY_TTL_MS = 10 * 60 * 1000;
 // normal 18-light household to one full wave plus a small tail without turning
 // Prepare into an unbounded Runtime burst.
 export const PREFLIGHT_CONCURRENCY = 16;
-// EU Runtime intermittently rejects overlapping cleanup writes; serialize
-// validation fade-off and restore while keeping preflight concurrency intact.
-export const CLEANUP_CONCURRENCY = 1;
+// Cleanup writes are still bounded and journaled, but four workers avoid
+// making the physical gate wait for every light in strict series.
+export const CLEANUP_CONCURRENCY = 4;

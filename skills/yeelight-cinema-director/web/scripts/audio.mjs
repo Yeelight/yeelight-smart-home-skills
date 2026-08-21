@@ -1,34 +1,73 @@
 export class AudioEngine {
-  constructor() { this.context = null; this.analyser = null; this.source = null; this.data = null; }
+  constructor() { this.context = null; this.analyser = null; this.source = null; this.data = null; this.stream = null; this.element = null; this.objectUrl = null; }
 
   connectStream(stream) {
-    this.stop();
+    const audioTracks = typeof stream?.getAudioTracks === "function" ? stream.getAudioTracks().filter((track) => track?.readyState !== "ended") : [];
+    if (!audioTracks.length) {
+      stopTracks(stream);
+      throw new Error("audio_track_unavailable");
+    }
     const Context = window.AudioContext || window.webkitAudioContext;
-    if (!Context) throw new Error("audio_context_unavailable");
-    this.context = new Context();
-    this.analyser = this.context.createAnalyser();
-    this.analyser.fftSize = 256;
-    this.data = new Uint8Array(this.analyser.frequencyBinCount);
-    this.source = this.context.createMediaStreamSource(stream);
-    this.source.connect(this.analyser);
+    if (!Context) {
+      stopTracks(stream);
+      throw new Error("audio_context_unavailable");
+    }
+    let context;
+    try {
+      context = new Context();
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 256;
+      const source = context.createMediaStreamSource(stream);
+      source.connect(analyser);
+      this.stop();
+      this.context = context;
+      this.analyser = analyser;
+      this.data = new Uint8Array(analyser.frequencyBinCount);
+      this.source = source;
+    } catch (error) {
+      try { context?.close(); } catch {}
+      stopTracks(stream);
+      throw error;
+    }
+    this.stream = stream;
     return this;
   }
 
   connectFile(file) {
-    this.stop();
     const Context = window.AudioContext || window.webkitAudioContext;
-    if (!Context) throw new Error("audio_context_unavailable");
-    this.context = new Context();
-    this.analyser = this.context.createAnalyser();
-    this.analyser.fftSize = 256;
-    this.data = new Uint8Array(this.analyser.frequencyBinCount);
-    const element = new Audio();
-    element.src = URL.createObjectURL(file);
-    element.loop = true;
+    if (!Context) {
+      this.stop();
+      throw new Error("audio_context_unavailable");
+    }
+    let context;
+    let element;
+    let objectUrl;
+    try {
+      context = new Context();
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 256;
+      element = new Audio();
+      objectUrl = URL.createObjectURL(file);
+      element.src = objectUrl;
+      element.loop = true;
+      const source = context.createMediaElementSource(element);
+      source.connect(analyser);
+      analyser.connect(context.destination);
+      this.stop();
+      this.context = context;
+      this.analyser = analyser;
+      this.data = new Uint8Array(analyser.frequencyBinCount);
+      this.source = source;
+      this.element = element;
+      this.objectUrl = objectUrl;
+    } catch (error) {
+      try { element?.pause(); } catch {}
+      try { if (element) element.removeAttribute("src"); } catch {}
+      try { if (objectUrl) URL.revokeObjectURL(objectUrl); } catch {}
+      try { context?.close(); } catch {}
+      throw error;
+    }
     element.play().catch(() => undefined);
-    this.source = this.context.createMediaElementSource(element);
-    this.source.connect(this.analyser);
-    this.analyser.connect(this.context.destination);
     return this;
   }
 
@@ -41,7 +80,15 @@ export class AudioEngine {
 
   stop() {
     try { this.source?.disconnect(); } catch {}
+    try { this.element?.pause(); } catch {}
+    try { if (this.element) this.element.removeAttribute("src"); } catch {}
+    try { if (this.objectUrl) URL.revokeObjectURL(this.objectUrl); } catch {}
+    try { this.stream?.getTracks?.().forEach((track) => track.stop()); } catch {}
     try { this.context?.close(); } catch {}
-    this.source = null; this.analyser = null; this.context = null; this.data = null;
+    this.source = null; this.analyser = null; this.context = null; this.data = null; this.stream = null; this.element = null; this.objectUrl = null;
   }
+}
+
+function stopTracks(stream) {
+  try { stream?.getTracks?.().forEach((track) => track.stop()); } catch {}
 }

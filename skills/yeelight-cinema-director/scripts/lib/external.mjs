@@ -2,6 +2,7 @@ import dns from "node:dns/promises";
 import https from "node:https";
 import net from "node:net";
 import { CinemaError, randomOpaque } from "./contracts.mjs";
+import { validateAppleMusicUrl } from "./apple-music.mjs";
 import { createYouTubeCatalog, MAX_YOUTUBE_WEB_BODY_BYTES } from "./youtube.mjs";
 
 const ARTWORK_HOSTS = new Set(["image.tmdb.org", "m.media-amazon.com", "is1-ssl.mzstatic.com"]);
@@ -167,6 +168,8 @@ export function validateYouTubeUrl(raw) {
   return /^[A-Za-z0-9_-]{11}$/.test(id) ? { id, url: `https://www.youtube.com/watch?v=${id}` } : null;
 }
 
+export { validateAppleMusicUrl } from "./apple-music.mjs";
+
 async function defaultTransport(kind, input) {
   if (kind === "movies") return searchMovieCatalog(input.query);
   if (kind === "songs") return searchSongCatalog(input.title);
@@ -204,6 +207,7 @@ async function searchSongCatalog(title, fetchImpl = fetch) {
       title: String(item.trackName).slice(0, 160),
       artist: String(item.artistName || "").slice(0, 120),
       durationMs: Number(item.trackTimeMillis) || 0,
+      appleMusicUrl: validateAppleMusicUrl(item.trackViewUrl)?.toString() || "",
       album: String(item.collectionName || "").slice(0, 160),
     }))
     .filter((item) => normalizeSearchText(item.album).includes(normalizedTitle) && /(soundtrack|motion picture|original score|film score)/i.test(item.album))
@@ -343,7 +347,19 @@ function requestArtwork(parsed, address) {
 
 function cleanQuery(value) { return typeof value === "string" ? value.trim().slice(0, 160) : ""; }
 function projectMovies(value) { return (value?.items || []).filter((item) => item?.id && item?.title).slice(0, 12).map((item) => ({ id: boundedString(item.id, 80), title: boundedString(item.title, 160), year: Number(item.year) || null, artworkUrl: item.artwork ? validateArtworkUrl(item.artwork).toString() : "" })); }
-function projectSongs(value) { return (value?.items || []).filter((item) => item?.id && item?.title).slice(0, 20).map((item) => ({ id: boundedString(item.id, 80), movieTitle: boundedString(item.movieTitle, 160), title: boundedString(item.title, 160), artist: boundedString(item.artist, 120), durationMs: Number(item.durationMs) || 0 })); }
+function projectSongs(value) {
+  return (value?.items || []).filter((item) => item?.id && item?.title).slice(0, 20).map((item) => {
+    const appleMusicUrl = validateAppleMusicUrl(item.appleMusicUrl || item.trackViewUrl);
+    return {
+      id: boundedString(item.id, 80),
+      movieTitle: boundedString(item.movieTitle, 160),
+      title: boundedString(item.title, 160),
+      artist: boundedString(item.artist, 120),
+      durationMs: Number(item.durationMs) || 0,
+      ...(appleMusicUrl ? { appleMusicUrl: appleMusicUrl.toString() } : {}),
+    };
+  });
+}
 function projectYouTube(value) { return (value?.items || []).map((item) => ({ item, video: validateYouTubeUrl(item.url || `https://www.youtube.com/watch?v=${item.id}`) })).filter(({ video }) => video).slice(0, 8).map(({ item, video }) => ({ id: video.id, url: video.url, title: boundedString(item.title || item.name || video.id, 160) })); }
 function projectLyrics(value) { return { synced: Array.isArray(value?.synced) ? value.synced.filter((row) => row && Number.isFinite(row.timeMs)).slice(0, 4000).map((row) => ({ timeMs: Math.max(0, Math.min(86_400_000, Number(row.timeMs))), text: boundedString(row.text, 240) })) : [], plain: boundedString(value?.plain, 40_000) }; }
 function boundedString(value, max) { return typeof value === "string" ? value.slice(0, max) : ""; }

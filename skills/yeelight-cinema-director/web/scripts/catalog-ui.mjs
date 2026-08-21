@@ -1,5 +1,35 @@
-export function setupCatalog({ state, $, api, setMessage, updateSelection, clearPreparedSession }) {
+import { clearYouTubeEmbed, mountYouTubeEmbed } from "./embed-player.mjs";
+import { hasAppleMusicLink, setupAppleMusicController } from "./apple-music-controller.mjs";
+
+export { hasAppleMusicLink };
+
+export function createSearchButtonOwner() {
+  const owners = new WeakMap();
+  return {
+    claim(button) {
+      const token = {};
+      owners.set(button, token);
+      return token;
+    },
+    owns(button, token) {
+      return owners.get(button) === token;
+    },
+  };
+}
+
+export function restoreSearchButton(button, owner, token, originalLabel) {
+  if (!owner.owns(button, token)) return false;
+  button.disabled = false;
+  button.removeAttribute("aria-busy");
+  button.textContent = originalLabel;
+  return true;
+}
+
+export function setupCatalog({ state, $, api, setMessage, updateSelection, clearPreparedSession, clearSharedAudio }) {
   const searchVersions = new Map();
+  const buttonOwner = createSearchButtonOwner();
+  let selectionEpoch = 0;
+  const appleMusic = setupAppleMusicController({ $, state, setMessage });
 
   function invalidateSearch(resultId) {
     searchVersions.set(resultId, (searchVersions.get(resultId) || 0) + 1);
@@ -35,6 +65,59 @@ export function setupCatalog({ state, $, api, setMessage, updateSelection, clear
     summary.hidden = false;
   }
 
+  function clearEmbeddedPlayer() {
+    clearYouTubeEmbed($("youtube-player"));
+    $("embedded-player").hidden = true;
+    $("embedded-player-status").textContent = "Ready";
+    $("embedded-player-note").textContent = "Play the selected source here. To let the lights follow it, share the tab or window playing the source below.";
+    clearSharedAudio?.();
+  }
+
+  function setEmbeddedPlaybackState(status) {
+    if (status === "checking") {
+      $("embedded-player-status").textContent = "Checking playback";
+      $("embedded-player-note").textContent = "Checking whether this source can play in the embedded player...";
+    } else if (status === "ready") {
+      $("embedded-player-status").textContent = "Ready to play";
+      $("embedded-player-note").textContent = "Play this source here. To analyze it, share the tab or window playing the source below.";
+    }
+  }
+
+  function markEmbeddedUnavailable(video, song, selectedEpoch, event) {
+    if (selectionEpoch !== selectedEpoch || state.song !== song || state.youtubeCandidate !== video) return;
+    state.youtubeCandidate = null;
+    resetResultSelection("youtube-results", "youtube-selection");
+    clearYouTubeEmbed($("youtube-player"));
+    $("embedded-player").hidden = false;
+    $("embedded-player-status").textContent = "Unavailable";
+    $("embedded-player-note").textContent = "This source cannot play in the embedded player. Choose another result or use local audio.";
+    $("youtube-note").textContent = "The selected source is unavailable here. Choose another result or use local audio; the soundtrack remains selected.";
+    clearSharedAudio?.();
+    setMessage(event.reason === "playback_check_timeout" ? "The embedded source could not be verified. Choose another result or use local audio." : "This embedded source is unavailable. Choose another result or use local audio.");
+  }
+
+  function mountEmbeddedPlayer(video, song, selectedEpoch) {
+    state.youtubeCandidate = video;
+    $("embedded-player").hidden = false;
+    setEmbeddedPlaybackState("checking");
+    const mounted = mountYouTubeEmbed($("youtube-player"), video, document, {
+      onState: (event) => {
+        if (selectionEpoch !== selectedEpoch || state.song !== song || state.youtubeCandidate !== video) return;
+        if (event.status === "checking" || event.status === "ready") setEmbeddedPlaybackState(event.status);
+        else if (event.status === "unavailable") markEmbeddedUnavailable(video, song, selectedEpoch, event);
+      },
+    });
+    if (!mounted) {
+      state.youtubeCandidate = null;
+      clearYouTubeEmbed($("youtube-player"));
+      $("embedded-player").hidden = false;
+      $("embedded-player-status").textContent = "Unavailable";
+      $("embedded-player-note").textContent = "This source cannot be embedded safely. Use local audio or choose another result.";
+      return false;
+    }
+    return true;
+  }
+
   function showResults(id, items, label, select) {
     const host = $(id);
     host.replaceChildren();
@@ -65,6 +148,7 @@ export function setupCatalog({ state, $, api, setMessage, updateSelection, clear
 
   async function runCatalogSearch(button, message, path, resultId, label, select, summaryId) {
     const originalLabel = button.textContent;
+    const requestToken = buttonOwner.claim(button);
     const version = (searchVersions.get(resultId) || 0) + 1;
     searchVersions.set(resultId, version);
     const current = () => searchVersions.get(resultId) === version;
@@ -86,15 +170,12 @@ export function setupCatalog({ state, $, api, setMessage, updateSelection, clear
       }
       return [];
     } finally {
-      if (current()) {
-        button.disabled = false;
-        button.removeAttribute("aria-busy");
-        button.textContent = originalLabel;
-      }
+      restoreSearchButton(button, buttonOwner, requestToken, originalLabel);
     }
   }
 
   function clearSongSelection() {
+    selectionEpoch += 1;
     state.song = null;
     state.youtubeCandidate = null;
     invalidateSearch("song-results");
@@ -102,6 +183,8 @@ export function setupCatalog({ state, $, api, setMessage, updateSelection, clear
     resetResultSelection("song-results", "song-selection");
     resetResultSelection("youtube-results", "youtube-selection");
     $("youtube-results").replaceChildren();
+    appleMusic.clear();
+    clearEmbeddedPlayer();
     $("optional-audio").hidden = true;
     $("youtube-note").textContent = "";
   }
@@ -131,12 +214,16 @@ export function setupCatalog({ state, $, api, setMessage, updateSelection, clear
     clearSongSelection();
     $("song-query").value = "";
     updateSelection();
+    const searchEpoch = selectionEpoch;
     await runCatalogSearch($("movie-search"), "Searching films...", `/api/catalog/movies?q=${encodeURIComponent(query)}`, "movie-results", "films", async (movie) => {
+      if (selectionEpoch !== searchEpoch) return;
       if (!await prepareForContentChange()) return;
       state.movie = movie;
       clearSongSelection();
       $("song-query").value = movie.title;
+      const selectedEpoch = selectionEpoch;
       showResultSelection("movie-results", "movie-selection", movie, movie.year || "Film result", async () => {
+        if (selectionEpoch !== selectedEpoch || state.movie !== movie) return;
         if (!await prepareForContentChange()) return;
         state.movie = null;
         clearSongSelection();
@@ -160,37 +247,49 @@ export function setupCatalog({ state, $, api, setMessage, updateSelection, clear
     }
     clearSongSelection();
     updateSelection();
+    const searchEpoch = selectionEpoch;
     await runCatalogSearch($("song-search"), "Searching soundtracks...", `/api/catalog/songs?movie=${encodeURIComponent(title)}`, "song-results", "soundtracks", async (song) => {
+      if (selectionEpoch !== searchEpoch) return;
       if (!await prepareForContentChange()) return;
       state.song = song;
       state.youtubeCandidate = null;
       $("optional-audio").hidden = false;
-      $("youtube-note").textContent = "Optional YouTube source. Choose at most one to open; this soundtrack alone is enough to prepare.";
+      const appleMusicAvailable = appleMusic.show(song);
+      const selectedEpoch = selectionEpoch;
       showResultSelection("song-results", "song-selection", song, song.artist || "Soundtrack result", async () => {
+        if (selectionEpoch !== selectedEpoch || state.song !== song) return;
         if (!await prepareForContentChange()) return;
         clearSongSelection();
         updateSelection();
+        $("song-search").click();
       });
       setMessage(`Soundtrack selected: ${song.title}`);
       updateSelection();
+      if (appleMusicAvailable) {
+        setMessage(`Soundtrack selected: ${song.title}. Open Apple Music in the separate window when ready.`);
+        return;
+      }
+      $("youtube-fallback").hidden = false;
+      $("youtube-note").textContent = "Apple Music is unavailable for this track. Use this optional in-page source or local audio.";
       const videos = await runCatalogSearch($("song-search"), "Searching optional audio sources...", `/api/catalog/youtube?song=${encodeURIComponent(song.title)}`, "youtube-results", "optional audio sources", (video) => {
-        if (state.song !== song) return;
-        state.youtubeCandidate = video;
+        if (selectionEpoch !== selectedEpoch || state.song !== song) return;
+        if (!mountEmbeddedPlayer(video, song, selectedEpoch)) return;
         showResultSelection("youtube-results", "youtube-selection", video, "Optional external source", () => {
-          if (state.song !== song) return;
+          if (selectionEpoch !== selectedEpoch || state.song !== song) return;
           state.youtubeCandidate = null;
           resetResultSelection("youtube-results", "youtube-selection");
-          setMessage(`Soundtrack remains selected: ${song.title}. YouTube is optional.`);
+          clearEmbeddedPlayer();
+          setMessage(`Soundtrack remains selected: ${song.title}. The embedded source is optional.`);
         });
-        const opened = window.open(video.url, "_blank", "noopener,noreferrer");
-        setMessage(opened ? `Optional YouTube source opened: ${video.title}` : "The optional YouTube source was blocked. Use the browser address bar or local audio.");
+        setMessage(`Embedded audio source ready: ${video.title}. Play it here or use local audio.`);
       }, "youtube-selection");
-      if (state.song !== song) return;
-      $("youtube-note").textContent = videos.length ? "Optional YouTube source. Choose at most one to open; this soundtrack alone is enough to prepare." : "No optional YouTube source is available. The selected soundtrack is still enough to prepare.";
-      if (videos.length) setMessage(`Soundtrack selected: ${song.title}. YouTube suggestions are optional.`);
+      if (selectionEpoch !== selectedEpoch || state.song !== song) return;
+      $("youtube-note").textContent = videos.length ? "Optional in-page player. Play a result here, then share the tab or window playing it if the lights should follow it." : "No optional in-page source is available. The selected soundtrack is still enough to prepare.";
+      if (videos.length) setMessage(`Soundtrack selected: ${song.title}. An optional player is ready below.`);
     }, "song-selection");
   });
 
   $("movie-query").addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); $("movie-search").click(); } });
   $("song-query").addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); $("song-search").click(); } });
+
 }

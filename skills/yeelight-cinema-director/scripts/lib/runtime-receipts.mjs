@@ -41,6 +41,34 @@ export function classifyDesignReceipt(value, runtimeId, expectedSet = {}) {
   return "invalid";
 }
 
+export function classifyDesignBatchReceipt(value, expectedByRuntimeId = new Map()) {
+  const result = value?.result;
+  const rows = Array.isArray(result?.results) ? result.results : [];
+  const expected = expectedByRuntimeId instanceof Map ? expectedByRuntimeId : new Map(Object.entries(expectedByRuntimeId || {}));
+  const expectedCount = [...expected.values()].reduce((count, set) => count + Object.keys(set || {}).length, 0);
+  if (!expectedCount || result?.capability !== "lighting.design.apply" || result?.persistentWrites !== true || !Array.isArray(result?.createdArtifacts) || result.createdArtifacts.length !== 0 || result?.actionCount !== expectedCount || rows.length !== expectedCount) return "invalid";
+  const seen = new Set();
+  for (const row of rows) {
+    const entity = row?.entity || {};
+    const runtimeId = String(entity.id ?? entity.entityId ?? "");
+    const properties = expected.get(runtimeId);
+    if ((entity.entityType !== undefined && entity.entityType !== "device") || !properties || !Object.hasOwn(properties, row?.property) || seen.has(`${runtimeId}\0${row.property}`) || row?.expectedValue !== properties[row.property] || !validBatchValue(row?.property, row?.verifiedValue)) return "invalid";
+    seen.add(`${runtimeId}\0${row.property}`);
+  }
+  if (seen.size !== expectedCount) return "invalid";
+  if (value?.status === "success" && result.verified === true && rows.every((row) => row.verified === true && row.verifiedValue === expected.get(String(row.entity?.id ?? row.entity?.entityId))[row.property])) return "verified";
+  if (value?.status === "partial" && result.verified === false) return "bound_verification_mismatch";
+  return "invalid";
+}
+
+function validBatchValue(property, value) {
+  if (property === "power") return typeof value === "boolean";
+  if (property === "brightness") return Number.isInteger(value) && value >= 1 && value <= 100;
+  if (property === "color") return Number.isInteger(value) && value >= 0 && value <= 0xFFFFFF;
+  if (property === "colorTemperature") return Number.isInteger(value) && value >= 1700 && value <= 6500;
+  return false;
+}
+
 export function classifyPropertyReceipt(value, runtimeId, property, expected) {
   const result = value?.result;
   const entity = result?.entity || {};
@@ -54,4 +82,4 @@ export function classifyPropertyReceipt(value, runtimeId, property, expected) {
   return "invalid";
 }
 
-export const __testing = { isVerifiedPowerWrite, isVerifiedDesignPowerWrite, classifyDesignReceipt, classifyPropertyReceipt };
+export const __testing = { isVerifiedPowerWrite, isVerifiedDesignPowerWrite, classifyDesignReceipt, classifyDesignBatchReceipt, classifyPropertyReceipt };

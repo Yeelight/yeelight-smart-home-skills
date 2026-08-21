@@ -57,7 +57,7 @@ function recoverValidationRequest(app, body, deps) {
     if (record.expired === true && body.confirmation !== RECOVERY_CONFIRMATION) throw new CinemaError("manual_recovery_confirmation_required", "An expired recovery record requires explicit host confirmation before retrying.", 428);
     app.validationActive = true;
     try {
-      const result = await recoverValidation(app, record, { allowPowerOnAtFadeOff: body.confirmation === RECOVERY_CONFIRMATION });
+      const result = await recoverValidation(app, record);
       return sendJsonResult(result.complete ? 200 : 207, { status: result.status, recovery: result });
     } finally { app.validationActive = false; }
   });

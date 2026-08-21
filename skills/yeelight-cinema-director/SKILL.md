@@ -78,14 +78,30 @@ replacement, timeout, or service restart.
 ## Directing a screening
 
 1. Search for a film and choose an official poster and exactly one soundtrack.
-   YouTube results are optional audio sources, not a second soundtrack; the
-   selected catalog track is enough to prepare.
+   Apple Music is the primary playback entry when the catalog returns an
+   official track link; the selected catalog track is enough to prepare.
 2. Select one or more discovered lights. Every selected light is assigned once
    to `Accent` or `Ambient`; those names describe musical roles, not bulb
    counts. A single light still receives the complete composite track.
-3. Open at most one permitted YouTube candidate in a separate tab, or choose local audio.
-   When sharing a tab, use the browser's native audio-share picker; the page
-   cannot choose a tab on the user's behalf.
+3. Use `Open Apple Music window` to open the selected track in one small,
+   resizable top-level player; after selecting a different soundtrack, clicking
+   the button reuses that window and navigates it to the new track instead of
+   opening another window.
+   The page also exposes a matching draggable Apple Music companion in the
+   lower-right corner. It stays available while the Cinema Director page is
+   used, and its `Open player`, `Load selected track`, and `Bring player
+   forward` actions reuse the same top-level window as the panel button.
+   This avoids third-party iframe preview limits. The initial open uses the
+   companion's current position as a best-effort anchor. After the window has
+   loaded, the companion remains an independent, non-disruptive control surface:
+   browsers block web pages from moving an already-loaded cross-origin player,
+   and the page never closes or restarts playback just to follow a drag. The
+   page cannot force the player to remain always-on-top above Cinema Director.
+   YouTube appears only as a secondary fallback when the selected track has no
+   official Apple Music link. If a browser player should drive the lights, use
+   the native audio-share picker to share the tab or window playing the
+   soundtrack and enable its audio; the page cannot choose a source on the
+   user's behalf. Local audio remains the fallback.
 4. Prepare the console to capture a read-only target snapshot, then start it. In
    live mode, Prepare remains read-only before host validation; Start stays blocked
    until the bounded physical validation succeeds. The console shows live spectrum, conservative lyric cues, target
@@ -99,14 +115,14 @@ The browser sends only one live frame request at a time. A `busy` or cadence
 skip means no new physical write was accepted and does not create a recovery
 queue. Every live frame covers the complete frozen selected set, regardless of
 whether the user selected one, four, eighteen, or another supported number of
-lights. Runtime writes use a bounded pool of eight workers, so a large home is
+lights. Runtime writes use a bounded pool of twelve workers, so a large home is
 parallel without creating an unbounded process burst. The recovery journal is
 persisted once for the complete frame before any worker writes; a fatal error or
 cancellation stops new work and drains already-started workers before Stop or
-restore begins. Live Stop queries the frozen target set before writing: only
-targets with in-session write evidence and a known non-pre-state are
-faded/off/restored, while unchanged or conflicting targets remain untouched
-and recoverable.
+restore begins. Live Stop queries the frozen target set once before writing to
+select targets with in-session write evidence, then reuses that selection for
+fade/off/restore. It does not query again before restore; one final readback is
+the physical result, and mismatches remain recoverable.
 
 A live `partial` or `uncertain` result is recorded and the next frame continues
 when every failed row is retryable: either an exact target-bound verification
@@ -131,7 +147,7 @@ Flow receipts mean that a semantic request was acknowledged. They do not claim
 that a physical light has changed. `lighting.design.apply` is reserved for
 low-frequency initialisation and termination because Runtime applies and reads
 back its attributes serially. High-frequency frames use a capability-gated
-single-target Flow call or a bounded eight-worker compatibility pool over the
+single-target Flow call or a bounded twelve-worker compatibility pool over the
 complete selected set.
 
 When protected Runtime metadata includes a household gateway, pass
@@ -149,7 +165,13 @@ never selects or receives this endpoint.
   cross-site POSTs, uses a short-lived page proof, and returns no CORS grant.
 - Requests are JSON with bounded size and closed fields/enums. User text is
   rendered as text, not executable markup. The parent page has a fixed local
-  script policy; YouTube is limited to a validated iframe or external tab.
+  script policy; YouTube is limited to a validated in-page iframe and explicit
+  browser audio capture. Apple Music opens only from a server-projected,
+  validated `music.apple.com` link in a user-triggered top-level window. The
+  page requests an initial companion-anchored position, while the browser
+  controls any later native window movement, popup sizing, and audio-sharing
+  permission; the Skill never closes a playing cross-origin window to fake
+  repositioning.
 - Artwork is fetched only from the server's signed opaque handle and exact
   HTTPS host allowlist. Redirects, private DNS, oversized responses, and raw
   upstream errors are rejected.
@@ -184,9 +206,8 @@ ordinary high-frequency screening. The host must:
 
 1. Run read-only `auth status`, `home list`, `entity.list`, and the dedicated
    exact-target `state.batch.query` preflight through the protected Runtime
-   context. Use a single-target state read only for later readback/recovery;
-   the protected adapter may use the exact-target batch wrapper for that one
-   target, but it keeps the same conservative query/write/query ordering.
+   context. Use single-target reads only for failed/uncertain write readback or
+   explicit recovery; the final validation restore uses one batch read.
    Do not change the active profile or write credentials.
 2. Bind the exact upcoming screening scope by display name/room and Runtime
    evidence (18 lights here, or any other explicitly selected N). Choose four
@@ -204,10 +225,11 @@ ordinary high-frequency screening. The host must:
    bounded validation sequence per target in series. A sequence may use
    separate semantic brightness and power writes; it never replays the design
    step, and a power-only fallback is limited to one additional direct power
-   call after trusted readback. The server reads each target back immediately,
-   stops on the first
-   failure/conflict, fades/off briefly, and restores the recorded state. The
-   The host wrapper receives both the four sample handles and the full
+   call after trusted readback. Successful receipts skip an immediate readback;
+   failed or uncertain writes still pay for a single-target readback. After a
+   verified fade/off receipt, restore writes the recorded state directly without
+   a pre-restore state query, then one final batch read confirms the result. The
+   host wrapper receives both the four sample handles and the full
    `scopeHandles` set; success authorizes only that exact set. The
    conversational Chinese phrase is checked by the host wrapper and is never
    copied into a request header. Do not use the ordinary high-frequency page Start

@@ -1,4 +1,4 @@
-export function createStopExecutor({ executeTarget, queryState, queryStateBatch, maxWaveSize, concurrency, timeoutMs }) {
+export function createStopExecutor({ executeTarget, executeBatch, queryState, queryStateBatch, maxWaveSize, concurrency, timeoutMs }) {
   async function executeRows(app, targets, rows, signal) {
     const byHandle = new Map(targets.map((target) => [target.handle, target]));
     const receipts = [];
@@ -9,6 +9,13 @@ export function createStopExecutor({ executeTarget, queryState, queryStateBatch,
         break;
       }
       const chunk = rows.slice(index, index + limit);
+      if (typeof executeBatch === "function" && chunk.length > 1) {
+        const batchReceipts = await executeBatch(app, targets, chunk, signal);
+        if (Array.isArray(batchReceipts)) {
+          receipts.push(...batchReceipts);
+          continue;
+        }
+      }
       const chunkReceipts = await Promise.all(chunk.map(async (row) => {
         if (signal?.aborted) return { handle: row.handle, status: "timeout" };
         const target = byHandle.get(row.handle);
@@ -53,7 +60,7 @@ export function createStopExecutor({ executeTarget, queryState, queryStateBatch,
     finally { clearTimeout(timer); }
   }
 
-  return { executeRows, queryStopState, runStopPhase };
+  return { executeRows, queryStopState, runStopPhase, batchSnapshot: typeof queryStateBatch === "function" };
 }
 
 function normalizeQueryRows(targets, result) {

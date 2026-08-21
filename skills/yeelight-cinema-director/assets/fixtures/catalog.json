@@ -4,7 +4,7 @@
     { "id": "fixture-moonlight", "title": "Moonlight", "year": 2016, "artwork": "https://image.tmdb.org/t/p/w500/fixture-moonlight.jpg" }
   ],
   "songs": [
-    { "id": "fixture-arrival-theme", "movieTitle": "Arrival", "title": "First Contact", "artist": "Cinema Orchestra", "durationMs": 180000 },
-    { "id": "fixture-moonlight-theme", "movieTitle": "Moonlight", "title": "Blue Hour", "artist": "Cinema Orchestra", "durationMs": 180000 }
+    { "id": "fixture-arrival-theme", "movieTitle": "Arrival", "title": "First Contact", "artist": "Cinema Orchestra", "durationMs": 180000, "appleMusicUrl": "https://music.apple.com/us/album/arrival/1440758063?i=1440758324&uo=4" },
+    { "id": "fixture-moonlight-theme", "movieTitle": "Moonlight", "title": "Blue Hour", "artist": "Cinema Orchestra", "durationMs": 180000, "appleMusicUrl": "https://music.apple.com/us/album/moonlight/1856306045?i=1856306147&uo=4" }
   ]
 }

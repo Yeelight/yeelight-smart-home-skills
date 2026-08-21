@@ -20,8 +20,8 @@ results in the host context:
 2. `home list --json`
 3. `entity.list` for the selected house
 4. `state.batch.query` with one exact `items[]` entry per proposed target;
-   later readback/recovery remains single-target and conservative, even when
-   the protected adapter uses its exact-target batch wrapper for that one target
+   later failed-write readback may remain single-target, while restore recovery
+   writes directly from the durable journal and reads back only afterward
 
 The preflight must prove one house, one region, a non-empty online target set,
 and enough capability evidence for brightness/color or temperature writes. A
@@ -51,20 +51,26 @@ into an HTTP header. The server fixes the brightness ceiling at 10% and runs
 one bounded validation sequence per target in series. A sequence may use
 separate semantic brightness and power writes; it never replays the design
 step, and a power-only fallback is limited to one additional direct power call
-after trusted readback. The server reads each target back immediately,
-and stops on the first failure or concurrent-state conflict. It then fades/off
-briefly and restores only targets that were touched. A physical verification is
-incomplete until every touched target is read back and its recorded state is
-restored. A formally bound `partial` Runtime receipt may be accepted only after
-a verified, online, non-simulated readback proves the exact requested design
-properties; for a power-only mismatch, the host may make at most one
-`light.power.set` fallback after the same readback proves the phase brightness
-is already applied. Unknown, malformed, timed-out, or conflicting receipts
-stop the remaining test and are reported as `partial` or `uncertain`; a
-recovery reference remains available for a failed restore. Pending recovery
-blocks new live sessions until the recorded state is verified. An expired
-record is retained as `manual_recovery_required`; retrying it needs fresh state
-evidence and the explicit host confirmation `确认恢复上述物理验证`.
+after trusted readback. Successful Runtime receipts are phase acknowledgements,
+so successful writes do not pay for an immediate per-target query. Failed or
+uncertain writes still perform a single-target readback and stop the remaining
+test. Fade/off uses the same rule: successful receipts proceed without another
+query. A target with a verified fade/off receipt is restored directly from the
+recorded pre-state, without a pre-restore state query; one final batch read
+confirms every touched target. This deliberately trades detection of a state
+change between fade/off and restore for lower latency. A formally bound
+`partial` Runtime receipt may be accepted only after a verified, online,
+non-simulated readback proves the exact requested design properties; for a
+power-only mismatch, the host may make at most one `light.power.set` fallback
+after the same readback proves the phase brightness is already applied.
+Unknown, malformed, timed-out, or conflicting receipts stop the remaining test
+and are reported as `partial` or `uncertain`; a recovery reference remains
+available for a failed restore. Pending recovery blocks new live sessions until
+the recorded state is verified. An explicit recovery retry writes the
+journaled pre-state directly and verifies it only after the restore; it does not
+spend a state query before restore. An expired record is retained as
+`manual_recovery_required` and additionally requires the explicit host
+confirmation `确认恢复上述物理验证`.
 
 This four-light procedure is a physical sample gate only. A successful grant
 authorizes only the explicitly bound screening scope; a discovered light

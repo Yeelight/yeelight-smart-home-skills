@@ -7,6 +7,7 @@ import net from "node:net";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { normalizeRuntimeContext, runtimeEnvironment } from "./lib/runtime-adapter.mjs";
+import { readRuntimeConfig, resolveLiveContext } from "./lib/service-context.mjs";
 import { randomOpaque } from "./lib/contracts.mjs";
 
 const packageRoot = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
@@ -33,7 +34,7 @@ export async function serviceCommand(action, options = {}) {
 async function start(existing, options, storagePath) {
   const port = Number(options.port || process.env.YEELIGHT_CINEMA_PORT || DEFAULT_PORT);
   const mode = options.mode === "live" ? "live" : "mock";
-  const context = mode === "live" ? normalizeRuntimeContext(options.context, { required: true }) : {};
+  const context = mode === "live" ? await resolveLiveContext(options) : {};
   const startupTimeoutMs = parseStartupTimeout(options.startupTimeoutMs, mode);
   if (existing?.instanceId) {
     const existingOpen = await portIsOpen(existing.port);
@@ -340,4 +341,4 @@ function value(name) {
   return process.argv[indexes[0] + 1] ?? "";
 }
 
-export const __testing = { statePath, health, healthDetails, waitForHealth, waitForDown, validPid, parseStopTimeout, parseStartupTimeout, readState, privateDirectoryExists, privateFileExists, assertPrivateFile };
+export const __testing = { statePath, health, healthDetails, waitForHealth, waitForDown, validPid, parseStopTimeout, parseStartupTimeout, readState, privateDirectoryExists, privateFileExists, assertPrivateFile, resolveLiveContext, readRuntimeConfig };

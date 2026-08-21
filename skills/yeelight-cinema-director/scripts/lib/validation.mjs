@@ -1,8 +1,10 @@
 import { CinemaError, MAX_TARGETS, randomOpaque } from "./contracts.mjs";
 import { DEFAULT_RECOVERY_PATH, loadRecoveryRecords, saveRecoveryRecords } from "./validation-store.mjs";
-import { classifyDesignReceipt } from "./runtime-adapter.mjs";
 import { CLEANUP_CONCURRENCY, PREFLIGHT_CONCURRENCY, RECOVERY_CONFIRMATION, RECOVERY_TIMEOUT_MS, RECOVERY_TTL_MS, VALIDATION_CONFIRMATION, VALIDATION_GRANT_TTL_MS, VALIDATION_MAX_BRIGHTNESS, VALIDATION_READBACK_DELAYS_MS, VALIDATION_TARGET_COUNT, VALIDATION_TIMEOUT_MS } from "./validation-constants.mjs";
-import { __testing as validationHelpers, bounded, deadline, expectedState, isKnownValidationState, mapWithConcurrency, preflightError, propertiesMatch, publicState, queryOne, queryUntilPropertiesMatch, sameState, snapshotTarget, trustedState, validateTargets } from "./validation-helpers.mjs";
+import { __testing as validationHelpers, bounded, deadline, expectedState, mapWithConcurrency, preflightError, publicState, queryOne, sameState, snapshotTarget, validateTargets } from "./validation-helpers.mjs";
+import { applyDesignStep, applyOne } from "./validation-operations.mjs";
+
+export { applyOne };
 
 export { CLEANUP_CONCURRENCY, PREFLIGHT_CONCURRENCY, RECOVERY_CONFIRMATION, RECOVERY_TIMEOUT_MS, RECOVERY_TTL_MS, VALIDATION_CONFIRMATION, VALIDATION_GRANT_TTL_MS, VALIDATION_MAX_BRIGHTNESS, VALIDATION_READBACK_DELAYS_MS, VALIDATION_TARGET_COUNT, VALIDATION_TIMEOUT_MS } from "./validation-constants.mjs";
 
@@ -48,7 +50,11 @@ function validateScopeTargets(targets) {
 export async function refreshLiveTargets(runtime, targets, signal) {
   if (typeof runtime.queryStateBatch === "function") {
     let states;
-    try { states = await runtime.queryStateBatch(targets, signal); } catch { throw preflightError(); }
+    // The startup detail read already established an explicit online fact for
+    // every target. Batch state endpoints may omit online for an otherwise
+    // complete row, so avoid reopening a slow single-target fallback storm;
+    // writable properties still need a fresh exact batch snapshot below.
+    try { states = await runtime.queryStateBatch(targets, signal, { skipOnlineFallback: true }); } catch { throw preflightError(); }
     if (!Array.isArray(states) || states.length !== targets.length) throw preflightError();
     const byRuntimeId = new Map();
     for (const state of states) {
@@ -69,8 +75,25 @@ export async function refreshLiveTargets(runtime, targets, signal) {
   return refreshed;
 }
 
+async function queryValidationStates(app, targets, signal) {
+  if (!targets.length) return [];
+  if (typeof app.runtime.queryStateBatch === "function") {
+    try {
+      const states = await app.runtime.queryStateBatch(targets, signal);
+      if (!Array.isArray(states) || states.length !== targets.length) return null;
+      const byRuntimeId = new Map(states.map((state) => [String(state?.runtimeId || ""), state]));
+      if (byRuntimeId.size !== targets.length || targets.some((target) => !byRuntimeId.has(String(target.runtimeId)))) return null;
+      return targets.map((target) => byRuntimeId.get(String(target.runtimeId)));
+    } catch {
+      return null;
+    }
+  }
+  return Promise.all(targets.map((target) => queryOne(app, target, signal)));
+}
+
 function refreshTargetState(target, state) {
-  if (!state || state.runtimeId !== target.runtimeId || state.verified !== true || state.online !== true || state.simulated === true || typeof state.power !== "boolean" || !bounded(state.brightness, 1, 100)) throw preflightError();
+  const online = state?.online === undefined ? target.online === true : state.online === true;
+  if (!state || state.runtimeId !== target.runtimeId || state.verified !== true || !online || state.simulated === true || typeof state.power !== "boolean" || !bounded(state.brightness, 1, 100)) throw preflightError();
   const preState = {
     power: state.power,
     brightness: state.brightness,
@@ -114,25 +137,31 @@ export async function runPhysicalValidation(app, targets) {
   const touched = [];
   let operationError = null;
   try {
+    // The exact pre-state batch above is the write fence for this bounded
+    // validation. Successful Runtime receipts already bind each property;
+    // only failed/uncertain writes pay for a single-target补查.
     for (let index = 0; index < refreshedTargets.length; index += 1) {
       const target = refreshedTargets[index];
       const row = rows[index];
-      const before = await queryOne(app, target, operation.signal);
-      if (!before || !sameState(before, target.preState)) { row.write = { status: operation.signal.aborted ? "timeout" : "conflict" }; break; }
       record.touchedHandles.push(target.handle);
       await persistRequired(app);
       touched.push(target);
       try {
         const receipt = await applyOne(app, target, { power: true, brightness: VALIDATION_MAX_BRIGHTNESS }, operation.signal, { retrySafeError: false });
-        row.write = { status: receipt.status };
-      } catch { row.write = { status: operation.signal.aborted ? "timeout" : "failed" }; break; }
-      const after = await queryOne(app, target, operation.signal);
-      row.write.readback = publicState(after);
-      if (!after || !sameState(after, expectedState(target, { power: true, brightness: VALIDATION_MAX_BRIGHTNESS }))) {
-        row.write.status = operation.signal.aborted ? "timeout" : after ? "uncertain" : "failed";
+        row.write = {
+          status: receipt.status === "acknowledged" ? "verified" : "failed",
+          verification: "runtime_receipt",
+        };
+      } catch (error) {
+        const after = operation.signal.aborted ? null : await queryOne(app, target, operation.signal, { retrySafeError: false });
+        row.write = {
+          status: after && sameState(after, expectedState(target, { power: true, brightness: VALIDATION_MAX_BRIGHTNESS }))
+            ? "verified"
+            : operation.signal.aborted ? "timeout" : error?.code === "validation_write_failed" ? "failed" : after ? "uncertain" : "failed",
+          ...(after ? { readback: publicState(after), verification: "failure_readback" } : {}),
+        };
         break;
       }
-      row.write.status = "verified";
     }
   } catch (error) {
     operationError = error;
@@ -151,10 +180,10 @@ export async function runPhysicalValidation(app, targets) {
       const row = rows.find((item) => item.handle === target.handle);
       try {
         const receipt = await applyOne(app, target, { power: false, brightness: 1 }, cleanup.signal, { retrySafeError: false });
-        row.fadeOff = { status: receipt.status };
-        const state = await queryOne(app, target, cleanup.signal);
-        row.fadeOff.readback = publicState(state);
-        row.fadeOff.status = state && sameState(state, expectedState(target, { power: false, brightness: 1 })) ? "verified" : cleanup.signal.aborted ? "timeout" : "uncertain";
+        row.fadeOff = {
+          status: receipt.status === "acknowledged" ? "verified" : "failed",
+          verification: "runtime_receipt",
+        };
       } catch {
         const state = cleanup.signal.aborted ? null : await queryOne(app, target, cleanup.signal, { retrySafeError: false });
         row.fadeOff = {
@@ -168,29 +197,38 @@ export async function runPhysicalValidation(app, targets) {
 
     await mapWithConcurrency(touched, CLEANUP_CONCURRENCY, async (target) => {
       const row = rows.find((item) => item.handle === target.handle);
-      const current = await queryOne(app, target, cleanup.signal);
-      if (!current || !isKnownValidationState(current, target)) {
+      // A successful fade/off receipt and the durable journal are the bounded
+      // restore fence. Unknown phase failures stay out of this direct write.
+      if (row.fadeOff.status !== "verified") {
         row.restore = { status: cleanup.signal.aborted ? "timeout" : "conflict" };
-        pendingRecovery.add(target);
         return;
       }
       try {
         const receipt = await applyOne(app, target, target.preState, cleanup.signal, { retrySafeError: false });
-        row.restore = { status: receipt.status };
-        const state = await queryOne(app, target, cleanup.signal);
-        row.restore.readback = publicState(state);
-        if (!state || !sameState(state, target.preState)) {
-          row.restore.status = cleanup.signal.aborted ? "timeout" : state ? "uncertain" : "failed";
-          pendingRecovery.add(target);
-        } else {
-          row.restore.status = "verified";
-          restoredHandles.add(target.handle);
-        }
+        row.restore = {
+          status: receipt.status === "acknowledged" ? "verified" : "failed",
+          verification: "runtime_receipt",
+        };
       } catch {
         row.restore = { status: cleanup.signal.aborted ? "timeout" : "failed" };
-        pendingRecovery.add(target);
       }
     });
+
+    // Final batch read is the authoritative physical evidence for recovery.
+    const finalStates = await queryValidationStates(app, touched, cleanup.signal);
+    const finalByRuntimeId = new Map((finalStates || []).filter((state) => state && typeof state.runtimeId === "string").map((state) => [state.runtimeId, state]));
+    for (const target of touched) {
+      const row = rows.find((item) => item.handle === target.handle);
+      const state = finalByRuntimeId.get(target.runtimeId);
+      if (state) row.restore.readback = publicState(state);
+      if (state && sameState(state, target.preState)) {
+        row.restore.status = "verified";
+        restoredHandles.add(target.handle);
+      } else {
+        if (row.restore.status === "verified") row.restore.status = cleanup.signal.aborted ? "timeout" : state ? "uncertain" : "failed";
+        pendingRecovery.add(target);
+      }
+    }
     record.pendingHandles = record.pendingHandles.filter((handle) => !restoredHandles.has(handle));
     await persistRecoveryRecords(app);
   } finally {
@@ -228,7 +266,7 @@ export async function runPhysicalValidation(app, targets) {
   };
 }
 
-export async function recoverValidation(app, record, options = {}) {
+export async function recoverValidation(app, record) {
   if (!record) throw new CinemaError("recovery_not_found", "The physical validation recovery record is unavailable.", 404);
   if (record.expiresAt <= app.clock()) record.expired = true;
   const cleanup = deadline(app.clock, RECOVERY_TIMEOUT_MS);
@@ -243,22 +281,13 @@ export async function recoverValidation(app, record, options = {}) {
         rows.push(row);
         continue;
       }
-      const current = await queryOne(app, target, cleanup.signal);
-      if (current && sameState(current, target.preState)) {
-        row.restore.status = "verified";
-        rows.push(row);
-        continue;
-      }
-      if (!current || !isKnownValidationState(current, target, options)) {
-        row.restore.status = cleanup.signal.aborted ? "timeout" : "conflict";
-        pending.push(target);
-        rows.push(row);
-        continue;
-      }
       try {
         const receipt = await applyOne(app, target, target.preState, cleanup.signal, { retrySafeError: false });
-        row.restore.status = receipt.status;
-        const state = await queryOne(app, target, cleanup.signal);
+        row.restore = {
+          status: receipt.status === "acknowledged" ? "acknowledged" : "failed",
+          verification: "runtime_receipt",
+        };
+        const state = cleanup.signal.aborted ? null : await queryOne(app, target, cleanup.signal);
         row.restore.readback = publicState(state);
         if (!state || !sameState(state, target.preState)) { row.restore.status = cleanup.signal.aborted ? "timeout" : state ? "uncertain" : "failed"; pending.push(target); }
         else row.restore.status = "verified";
@@ -311,88 +340,5 @@ async function persistRecoveryRecords(app) {
 }
 
 async function persistRequired(app) { if (!await persistRecoveryRecords(app)) throw new CinemaError("recovery_persistence_failed", "The physical validation recovery journal could not be persisted; no further light writes are allowed.", 503); }
-
-export async function applyOne(app, target, set, signal, options = {}) {
-  const entries = Object.entries(set || {});
-  const power = entries.find(([property]) => property === "power")?.[1];
-  const designSet = Object.fromEntries(entries.filter(([property]) => property !== "power"));
-  if (Object.keys(designSet).length > 0) await applyDesignStep(app, target, designSet, signal, options);
-  // Design writes can wake a light; always fix the requested power state last.
-  if (typeof power === "boolean") await applyPower(app, target, power, signal, designSet, options);
-  return { status: "acknowledged" };
-}
-
-async function applyDesignStep(app, target, set, signal, options = {}) {
-  let result;
-  const usesPropertyRuntime = typeof app.runtime.applyProperties === "function";
-  try {
-    result = usesPropertyRuntime
-      ? await app.runtime.applyProperties(target, set, signal, options)
-      : await app.runtime.applyDesign([{ handle: target.handle, runtimeId: target.runtimeId, set }], signal, options);
-  } catch (error) {
-    if (isBoundPropertyMismatch(error, target, set)) {
-      const observed = await queryUntilPropertiesMatch(app, target, set, signal, VALIDATION_READBACK_DELAYS_MS);
-      if (observed) return { status: "acknowledged", verification: "readback" };
-    }
-    throw error;
-  }
-  // The property adapter verifies each fixed `light.*` write before returning
-  // this compact acknowledgement. Design receipts use the stricter formal
-  // `lighting.design.apply` envelope below and must remain separate.
-  if (usesPropertyRuntime && result?.status === "acknowledged") return { status: "acknowledged" };
-  const formalStatus = classifyDesignReceipt(result, target.runtimeId, set);
-  if (formalStatus === "verified") return { status: "acknowledged" };
-  if (formalStatus === "bound_verification_mismatch") {
-    const observed = await queryUntilPropertiesMatch(app, target, set, signal, VALIDATION_READBACK_DELAYS_MS);
-    if (observed) return { status: "acknowledged", verification: "readback" };
-  } else {
-    const row = result?.rows?.find((item) => item.handle === target.handle);
-    const status = String(row?.status || "").toLowerCase();
-    if (["acknowledged", "success", "applied", "verified", "ok"].includes(status)) return { status: "acknowledged" };
-  }
-  throw new CinemaError("validation_write_failed", "A validation write was not acknowledged or verified.", 502, { classification: formalStatus });
-}
-
-async function applyPower(app, target, power, signal, designSet = {}, options = {}) {
-  if (typeof app.runtime.applyPower === "function") {
-    try {
-      const receipt = await app.runtime.applyPower(target, power, signal, options);
-      if (receipt?.status !== "acknowledged") throw new CinemaError("validation_write_failed", "A power design write was not acknowledged.", 502);
-      return receipt;
-    } catch (error) {
-      if (!isBoundPowerMismatch(error)) throw error;
-      if (!Number.isInteger(designSet.brightness) || designSet.brightness < 1 || designSet.brightness > 100) throw error;
-      const observed = await queryOne(app, target, signal);
-      if (!trustedState(observed) || !propertiesMatch(observed, designSet)) throw error;
-      if (observed.power === power) return { status: "acknowledged", verification: "readback" };
-      if (typeof app.runtime.setPower !== "function") throw error;
-      const fallback = await app.runtime.setPower(target, power, signal, options);
-      if (fallback?.status !== "acknowledged") throw new CinemaError("validation_write_failed", "A fallback power write was not acknowledged.", 502);
-      return { ...fallback, verification: "direct_power_fallback" };
-    }
-  }
-  if (typeof app.runtime.setPower === "function") {
-    const receipt = await app.runtime.setPower(target, power, signal, options);
-    if (receipt?.status !== "acknowledged") throw new CinemaError("validation_write_failed", "A power write was not acknowledged.", 502);
-    return receipt;
-  }
-  return applyDesignStep(app, target, { power }, signal, options);
-}
-
-function isBoundPowerMismatch(error) {
-  return error?.code === "runtime_write_verification_mismatch"
-    && error?.details?.intent === "lighting.design.apply"
-    && error?.details?.property === "power"
-    && error?.details?.classification === "bound_verification_mismatch";
-}
-
-function isBoundPropertyMismatch(error, target, set) {
-  const details = error?.details || {};
-  return error?.code === "runtime_write_verification_mismatch"
-    && details.classification === "bound_verification_mismatch"
-    && String(details.runtimeId) === String(target.runtimeId)
-    && Object.hasOwn(set, details.property)
-    && details.expectedValue === set[details.property];
-}
 
 export const __testing = { ...validationHelpers, DEFAULT_RECOVERY_PATH, applyDesignStep };

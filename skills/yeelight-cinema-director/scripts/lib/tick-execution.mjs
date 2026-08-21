@@ -1,4 +1,4 @@
-export function createTickRunner({ chunkPlan, selectLightingWindow, maxWaveSize, liveWindowSize, liveConcurrency = 8, liveMaxBrightness, executeTarget, recordScreeningStates, CinemaError }) {
+export function createTickRunner({ chunkPlan, selectLightingWindow, maxWaveSize, liveWindowSize, liveConcurrency = 8, liveMaxBrightness, executeTarget, executeBatch, recordScreeningStates, CinemaError }) {
   async function runTick(app, session, generation, plan, signal) {
     if (app.mode === "live") {
       const window = selectLightingWindow(plan, session.cursor, liveWindowSize);
@@ -12,8 +12,16 @@ export function createTickRunner({ chunkPlan, selectLightingWindow, maxWaveSize,
         // record keeps the whole selected set recoverable without serializing
         // an fsync in front of every target worker.
         if (!await journal.record(window)) return plan.rows.map((row) => ({ handle: row.handle, status: "stale" }));
-        const execute = createTickExecutor(app, session, generation, signal);
-        const selectedReceipts = await executeParallelChunk(window, execute, liveConcurrency, signal, journal.close);
+        let selectedReceipts = null;
+        if (typeof executeBatch === "function") selectedReceipts = await executeBatch(app, session, generation, window, signal);
+        // `null` is the explicit no-dispatch sentinel. A batch adapter must
+        // never return a falsy/partial value after sending the request: doing
+        // so would replay the same physical frame through the per-target path.
+        if (selectedReceipts === null) {
+          selectedReceipts = await executeParallelChunk(window, createTickExecutor(app, session, generation, signal), liveConcurrency, signal, journal.close);
+        } else {
+          selectedReceipts = normalizeBatchReceipts(window, selectedReceipts);
+        }
         const byHandle = new Map(selectedReceipts.map((receipt) => [receipt.handle, receipt]));
         return plan.rows.map((row) => byHandle.get(row.handle) || { handle: row.handle, status: "not_started", reason: "worker_not_started" });
       } finally {
@@ -112,6 +120,34 @@ export function createTickRunner({ chunkPlan, selectLightingWindow, maxWaveSize,
   }
 
   return runTick;
+}
+
+function normalizeBatchReceipts(rows, value) {
+  const receipts = Array.isArray(value)
+    ? value
+    : Array.isArray(value?.receipts)
+      ? value.receipts
+      : null;
+  if (!receipts) return rows.map((row) => batchReceiptFailure(row, "runtime_batch_receipt_invalid"));
+  const expectedHandles = new Set(rows.map((row) => row.handle));
+  const byHandle = new Map();
+  for (const receipt of receipts) {
+    if (!receipt || typeof receipt !== "object" || !expectedHandles.has(receipt.handle) || byHandle.has(receipt.handle) || !["acknowledged", "verified", "failed", "stale", "skipped"].includes(receipt.status)) {
+      return rows.map((row) => batchReceiptFailure(row, "runtime_batch_receipt_invalid"));
+    }
+    byHandle.set(receipt.handle, receipt);
+  }
+  return rows.map((row) => byHandle.get(row.handle) || batchReceiptFailure(row, "runtime_batch_receipt_incomplete"));
+}
+
+function batchReceiptFailure(row, reason) {
+  return {
+    handle: row.handle,
+    status: "failed",
+    reason,
+    failureClass: "verification",
+    retryable: true,
+  };
 }
 
 function markScreeningWriteAttempt(app, sessionId, handle) {

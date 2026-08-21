@@ -1,4 +1,5 @@
 import { AudioEngine } from "./audio.mjs";
+import { setupAudioControls } from "./audio-controls.mjs";
 import { setupCatalog } from "./catalog-ui.mjs";
 import { createTickLoop } from "./tick-loop.mjs";
 import { createCinemaUi } from "./ui.mjs";
@@ -20,6 +21,7 @@ const state = {
   tickTimer: 0,
   tickInFlight: false,
   frame: 0,
+  audioSource: "none",
   live: false,
   controlMode: "mock",
   validationReady: true,
@@ -357,32 +359,7 @@ $("stop-show").addEventListener("click", async () => {
   }
 });
 
-$("share-audio").addEventListener("click", async () => {
-  try {
-    if (!navigator.mediaDevices?.getDisplayMedia) throw new Error("This browser does not expose tab audio sharing.");
-    const capture = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-    audio.connectStream(capture);
-    state.audioReady = true;
-    updateSelection();
-    setMessage("Audio source connected. The browser controls which tab is shared.");
-  } catch {
-    setMessage("Choose a YouTube tab and enable audio in the browser dialog, or use local audio.");
-  }
-});
-
-$("local-audio").addEventListener("change", () => {
-  const file = $("local-audio").files?.[0];
-  if (!file) return;
-  try {
-    audio.connectFile(file);
-    state.audioReady = true;
-    updateSelection();
-    setMessage(`Local audio ready: ${file.name}`);
-  } catch (error) {
-    setMessage(error.message);
-  }
-});
-
-setupCatalog({ state, $, api, setMessage, updateSelection, clearPreparedSession });
+const { clearSharedAudio } = setupAudioControls({ $, audio, state, updateSelection, setMessage });
+setupCatalog({ state, $, api, setMessage, updateSelection, clearPreparedSession, clearSharedAudio });
 updateControls();
 boot();
