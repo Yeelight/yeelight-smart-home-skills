@@ -97,17 +97,19 @@ The supported sequence is `browser -> loopback server -> validated plan -> local
 executor -> yeelight-home invoke --stdin`. In live visitor mode, the server
 selects a fixed command-acknowledged fast path: a successful control skips the
 extra executor pre-state and final-state reads and is labelled as acknowledged,
-not physically read-back verified. The live command adapter expands each
-validated physical action into direct light-property requests (`light.power.set`,
-`light.brightness.set`, `light.color.set`, or the bounded color-temperature
-variant) and runs them through the existing bounded worker pool. Each cloud
-receipt is bound to its generated request, target, property, expected value,
-source, and intent-specific trace; the generic `node.properties.set`
-acknowledgement is deliberately not used because it can be accepted without
-changing a light. A write failure, timeout, or cancellation
-after dispatch still triggers one independent reconciliation read; no restore is
-offered because the fast path has no trusted pre-state snapshot. The browser,
-Provider, and model cannot select this policy. The `No Shared Prompt` server-side
+not physically read-back verified. With a Runtime that supports the native
+action batch, the adapter submits the complete `lighting.design.apply` action
+list with an internal acknowledged verification mode, so the Runtime performs
+all writes without a per-property readback. Older one-shot Runtime versions use
+the bounded direct-property fallback (`light.power.set`, `light.brightness.set`,
+`light.color.set`, or the bounded color-temperature variant). Each write receipt
+remains bound to its generated request, target, property, expected value, source,
+and intent-specific trace; the generic `node.properties.set` acknowledgement is
+deliberately not used because it can be accepted without changing a light. A
+write failure, timeout, or cancellation after dispatch still triggers one
+independent reconciliation read; no restore is offered because the fast path has
+no trusted pre-state snapshot. The browser, Provider, and model cannot select
+this policy. The `No Shared Prompt` server-side
 state inspection remains a separate MCP input step. In live mode it uses only the
 server-selected left-bank representatives (`L-upper`/`L-lower` for the quadrant
 proxy, `L1`/`L6` for eighteen lights) and fixed Runtime `brightness` and `color`
@@ -121,10 +123,11 @@ installation validation. The adapter may also treat a Runtime
 response is a complete `write_verification_mismatch` receipt: every expanded
 action has a matching target/property/expected value row, `persistentWrites` is
 true, and the Runtime has returned its post-write query rows. The verified/
-compatibility adapter path uses this shortcut; the visitor fast path does not
-use that generic design receipt and instead uses the direct light-property
-receipt contract above. Generic or mixed partials, timeouts, cancellations, and
-Flow failures remain on the normal reconciliation path.
+compatibility adapter path uses this shortcut; the visitor fast path uses the
+explicit native acknowledged contract when available and the direct
+light-property receipt contract on the compatibility fallback. Generic or mixed
+partials, timeouts, cancellations, and Flow failures remain on the normal
+reconciliation path.
 
 Before topology aggregation, the local canonical-plan policy raises every
 visitor brightness below the fixed exhibition floor (36) to 36 while preserving

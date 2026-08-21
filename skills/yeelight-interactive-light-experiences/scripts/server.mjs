@@ -121,6 +121,7 @@ export function createInteractiveServer(options = {}) {
       return sendJson(response, projected.status, projected);
     }
   });
+  server.on("close", () => commandAdapter?.close?.());
   return { server, sessions, provider, executor, commandAdapter, liveTopology, runtime, garden, port, ready };
 }
 

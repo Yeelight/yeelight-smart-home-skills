@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { LOGICAL_SLOTS, MAX_PHASE_DURATION_MS, MIN_PHASE_DURATION_MS } from "./contracts.mjs";
+import { PersistentRuntimeChannel } from "./persistent-runtime.mjs";
 
 const ALLOWED_INTENTS = new Set(["lighting.design.apply", "lighting.flow.execute", "state.query"]);
 const READ_INTENTS = new Set(["entity.list", "entity.capabilities", "gateway.list", "state.query"]);
@@ -25,7 +27,7 @@ export { DEFAULT_MAX_PARALLEL_TARGETS, MAX_TARGETS, FLOW_SETTLE_BUFFER_MS, norma
 export class YeelightHomeCommandAdapter {
   #runtimeGate;
 
-  constructor({ runtimeBin = process.env.YEELIGHT_HOME_BIN || "yeelight-home", run = runCommand, sleep = delay, profile = "", region = "", houseId = "", strictRuntime = false, homeDir = "", timeoutMs = 30000, maxParallelTargets = process.env.YEELIGHT_INTERACTIVE_MAX_PARALLEL_TARGETS } = {}) {
+  constructor({ runtimeBin = process.env.YEELIGHT_HOME_BIN || "yeelight-home", run = runCommand, sleep = delay, profile = "", region = "", houseId = "", strictRuntime = false, homeDir = "", timeoutMs = 30000, maxParallelTargets = process.env.YEELIGHT_INTERACTIVE_MAX_PARALLEL_TARGETS, persistent = run === runCommand, runtimeChannel = null } = {}) {
     this.runtimeBin = strictRuntime ? assertTrustedRuntimeBinary(runtimeBin) : runtimeBin;
     this.run = run;
     this.sleep = sleep;
@@ -35,6 +37,9 @@ export class YeelightHomeCommandAdapter {
     this.timeoutMs = Number.isFinite(Number(timeoutMs)) ? Math.max(1000, Math.min(30000, Math.round(Number(timeoutMs)))) : 30000;
     this.maxParallelTargets = normalizeParallelTargets(maxParallelTargets, DEFAULT_MAX_PARALLEL_TARGETS);
     this.#runtimeGate = new RuntimeConcurrencyGate(this.maxParallelTargets);
+    this.persistent = Boolean(persistent);
+    this.nativeBatch = Boolean(persistent);
+    this.runtimeChannel = runtimeChannel;
   }
 
   async invoke(request, { signal, confirmEventual = true } = {}) {
@@ -55,6 +60,20 @@ export class YeelightHomeCommandAdapter {
     if (!safe.ok) return { ok: false, reason: safe.reason };
     if (safe.request.intent !== "lighting.design.apply" || !Array.isArray(safe.request.parameters.actions)) return { ok: false, reason: "batch_not_supported" };
     if (signal?.aborted) return { ok: false, reason: "runtime_cancelled" };
+
+    // New Runtime versions accept the complete action list in one request.
+    // Keep the older bounded target fallback for one-shot/legacy binaries.
+    if (this.nativeBatch) {
+      const dispatched = await this.invoke(safe.request, { signal, confirmEventual: false });
+      if (!dispatched.ok) return dispatched;
+      if (dispatched.status === "dispatched_unverified" && confirmEventual === true) {
+        const confirmed = await this.#confirmBatchWrite(safe.request, signal);
+        return confirmed
+          ? { ok: true, status: "success", verification: "batched_delayed_readback", targetCount: safe.request.targets.length }
+          : { ok: false, reason: "runtime_partial" };
+      }
+      return { ...dispatched, targetCount: safe.request.targets.length, verification: dispatched.verification || "runtime_batch_receipt" };
+    }
 
     // The current Runtime accepts actions[] but fans them out sequentially.
     // Keep the single validated phase as the source of truth, then run one
@@ -92,10 +111,19 @@ export class YeelightHomeCommandAdapter {
   // Each direct Runtime intent verifies one property, so its closed receipt is
   // sufficient to distinguish an acknowledged eventual write from a hard error.
   async invokeVisitorBatch(request, { signal } = {}) {
-    const safe = validateRequest(request);
+    const visitorRequest = {
+      ...request,
+      parameters: { ...(request?.parameters || {}), verification: "acknowledged" },
+    };
+    const safe = validateRequest(visitorRequest);
     if (!safe.ok) return { ok: false, reason: safe.reason };
     if (safe.request.intent !== "lighting.design.apply" || !Array.isArray(safe.request.parameters.actions)) return { ok: false, reason: "batch_not_supported" };
     if (signal?.aborted) return { ok: false, reason: "runtime_cancelled" };
+    if (this.nativeBatch) {
+      const dispatched = await this.invoke(safe.request, { signal, confirmEventual: false });
+      if (dispatched.ok) return { ...dispatched, status: "dispatched_unverified", verification: dispatched.verification || "runtime_batch_receipt", targetCount: safe.request.targets.length };
+      return dispatched;
+    }
     return this.#invokeVisitorPropertiesBatch(safe.request, signal);
   }
 
@@ -148,6 +176,20 @@ export class YeelightHomeCommandAdapter {
     const safe = validateReadRequest(request);
     if (!safe.ok) return { ok: false, reason: safe.reason };
     if (safe.request.intent === "state.query" && request?.parameters?.allProperties === true && safe.request.targets.length > 1) {
+      if (this.nativeBatch) {
+        const batchRequest = {
+          ...safe.request,
+          intent: "state.batch.query",
+          parameters: {
+            items: safe.request.targets.map((target) => ({ nodeType: "device", nodeId: target.id, properties: ["online", "p", "l", "ct", "c"] })),
+          },
+        };
+        const batched = await this.#run(batchRequest, signal);
+        if (batched.ok) {
+          const projected = projectBatchReadResponse(batched.value, safe.request.targets);
+          if (projected.ok) return projected;
+        }
+      }
       const requests = safe.request.targets.map((target, index) => ({
         ...safe.request,
         requestId: `${safe.request.requestId}-target-${index + 1}`,
@@ -210,12 +252,36 @@ export class YeelightHomeCommandAdapter {
       return { ok: false, reason: "runtime_cancelled" };
     }
     try {
+      if (this.persistent) {
+        try {
+          const value = await this.#persistentChannel().request(JSON.stringify(request), this.timeoutMs, signal);
+          return { ok: true, value };
+        } catch (error) {
+          if (error?.message === "runtime_keep_alive_unsupported" || error?.code === "runtime_keep_alive_unsupported") {
+            this.persistent = false;
+            this.nativeBatch = false;
+            this.runtimeChannel?.close?.();
+            this.runtimeChannel = null;
+          } else {
+            return { ok: false, reason: safeRuntimeFailure(error?.message) };
+          }
+        }
+      }
       return await this.run(this.runtimeBin, this.#args(), JSON.stringify(request), { signal, env: this.#env(), timeoutMs: this.timeoutMs });
     } catch {
       return { ok: false, reason: "runtime_error" };
     } finally {
       release();
     }
+  }
+
+  #persistentChannel() {
+    if (!this.runtimeChannel) this.runtimeChannel = new PersistentRuntimeChannel(this.runtimeBin, this.#args(), this.#env());
+    return this.runtimeChannel;
+  }
+
+  close() {
+    this.runtimeChannel?.close?.();
   }
 
   async #confirmEventualWrite(request, failure, signal) {
@@ -301,7 +367,7 @@ export function validateRequest(request) {
       ? normalizeFlowParameters(request.parameters, request.targets, new Set(targetIds))
       : normalizeStateParameters(request.parameters);
   if (!parameters) return { ok: false, reason: "parameters_not_allowed" };
-  return { ok: true, request: { contractVersion: "1.0", requestId: String(request.requestId || "interactive-light").slice(0, 80), locale: "en-US", utterance: "interactive-light-experiences", intent: request.intent, targets: request.targets.map(({ id }) => ({ entityType: "device", id })), parameters } };
+  return { ok: true, request: { contractVersion: "1.0", requestId: String(request.requestId || `interactive-light-${randomUUID()}`).slice(0, 80), locale: "en-US", utterance: "interactive-light-experiences", intent: request.intent, targets: request.targets.map(({ id }) => ({ entityType: "device", id })), parameters } };
 }
 
 export function validateReadRequest(request) {
@@ -315,17 +381,19 @@ export function validateReadRequest(request) {
   if (targets.length && new Set(targets.map(({ id }) => id)).size !== targets.length) return { ok: false, reason: "targets_not_allowed" };
   const parameters = request.intent === "state.query" ? normalizeStateParameters(request.parameters || {}) : {};
   if (!parameters) return { ok: false, reason: "parameters_not_allowed" };
-  return { ok: true, request: { contractVersion: "1.0", requestId: String(request.requestId || "interactive-light-read").slice(0, 80), locale: "en-US", utterance: "interactive-light-experiences-read", intent: request.intent, targets: targets.map(({ id }) => ({ entityType: "device", id })), parameters } };
+  return { ok: true, request: { contractVersion: "1.0", requestId: String(request.requestId || `interactive-light-read-${randomUUID()}`).slice(0, 80), locale: "en-US", utterance: "interactive-light-experiences-read", intent: request.intent, targets: targets.map(({ id }) => ({ entityType: "device", id })), parameters } };
 }
 
 function normalizeLightingParameters(parameters, targets, targetIds) {
-  const allowed = new Set(["hue", "saturation", "brightness", "holdMs", "power", "actions"]);
+  const allowed = new Set(["hue", "saturation", "brightness", "holdMs", "power", "actions", "verification"]);
   if (Object.keys(parameters).some((key) => !allowed.has(key))) return null;
   if (Array.isArray(parameters.actions)) {
     const actions = parameters.actions.map((action) => normalizeAction(action, targetIds));
     if (actions.length !== targets.length || actions.some((action) => !action)) return null;
     const actionIds = actions.map((action) => action.targetId);
-    return new Set(actionIds).size === actionIds.length && actionIds.every((id) => targetIds.has(id)) ? { actions } : null;
+    if (new Set(actionIds).size !== actionIds.length || !actionIds.every((id) => targetIds.has(id))) return null;
+    const verification = parameters.verification === "acknowledged" || parameters.verification === "batch" ? parameters.verification : undefined;
+    return verification ? { actions, verification } : { actions };
   }
   const hue = Number(parameters.hue);
   const saturation = Number(parameters.saturation);
@@ -686,6 +754,14 @@ function projectReadResponse(value, request) {
   return projectRuntimeResponse(value, request);
 }
 
+function projectBatchReadResponse(value, targets) {
+  const status = String(value?.status || "").toLowerCase();
+  if (!["success", "applied", "verified", "ok"].includes(status)) return { ok: false, reason: runtimeReason(status) };
+  const states = extractStateSnapshots(value, targets, { requireExplicitTargetId: true });
+  const valid = validateTargetReads(states, targets);
+  return valid.ok ? { ok: true, status, states } : valid;
+}
+
 function projectEntity(entity) {
   if (!entity || typeof entity !== "object") return null;
   const id = safeId(entity.id || entity.entityId);
@@ -792,6 +868,8 @@ const RUNTIME_FAILURE_REASONS = new Set([
   "runtime_timeout",
   "runtime_output_too_large",
   "runtime_invalid_json",
+  "runtime_protocol",
+  "runtime_unavailable",
   "runtime_error",
 ]);
 

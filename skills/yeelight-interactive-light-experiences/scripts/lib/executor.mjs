@@ -157,13 +157,11 @@ export class ExperienceExecutor {
     // exists even when the plan is too long for Runtime's six-tuple limit.
     const commonFlowCapabilityName = isLive ? commonFlowName(topology) : "";
     const flowName = isLive && compiled.phases.length <= 6 ? commonFlowCapabilityName : "";
-    // Static phases have no local hold between writes, so an unsupported Flow
-    // installation would immediately overwrite every intermediate phase. For
-    // the unverified visitor path, dispatch only the effective final phase.
-    // Verified, mock, proxy, and Flow-capable paths retain canonical ordering.
-    const executionPhases = isLive && !liveVerification && !commonFlowCapabilityName && compiled.phases.length > 1
-      ? [compiled.phases.at(-1)]
-      : compiled.phases;
+    // A device without Flow support still needs to see the complete plan. The
+    // local executor owns the phase clock in this case, so intermediate phases
+    // are written in order and held for their declared duration instead of
+    // being silently collapsed to the final frame.
+    const executionPhases = compiled.phases;
     if (flowName && typeof this.#commandAdapter?.invokeFlowBatch === "function") {
       const entries = topology.targets.map((target) => {
         affected.add(target.alias);
@@ -207,6 +205,13 @@ export class ExperienceExecutor {
           for (const { target, entry } of entries) {
             entry.status = dispatchedUnverified ? "dispatched_unverified" : "written";
             if (!dispatchedUnverified) this.#states.set(target.alias, { hue: target.hue, saturation: target.saturation, brightness: target.brightness });
+          }
+          if (isLive && !flowName && phaseIndex < executionPhases.length - 1) {
+            try {
+              await this.#sleep(phase.durationMs, signal);
+            } catch {
+              return this.#recover(mode, topology, compiled, affected, preState, "cancelled", recoveryOwner());
+            }
           }
           continue;
         }
@@ -334,6 +339,43 @@ export class ExperienceExecutor {
     return failed || results.some((result) => !result) ? { ok: false, reason: failed?.reason || (signal?.aborted ? "runtime_cancelled" : "runtime_error") } : { ok: true, status: "success" };
   }
 
+  async #writeSnapshot(topology, targets, snapshot, requestId, signal) {
+    if (typeof this.#commandAdapter?.invokeBatch === "function") {
+      const actions = targets.map((target) => {
+        const state = snapshot.get(target.alias);
+        if (!state) return null;
+        return {
+          targetType: "device",
+          targetId: target.id,
+          set: {
+            power: typeof state.power === "boolean" ? state.power : true,
+            brightness: state.brightness,
+            color: hsvToRgb(state.hue, state.saturation, state.brightness),
+          },
+        };
+      });
+      if (actions.some((action) => !action)) return { ok: false, reason: "runtime_snapshot_invalid" };
+      try {
+        return await this.#commandAdapter.invokeBatch({
+          requestId,
+          intent: "lighting.design.apply",
+          targets: targets.map((target) => ({ id: target.id })),
+          parameters: { actions },
+        }, { signal, confirmEventual: true });
+      } catch {
+        return { ok: false, reason: "runtime_error" };
+      }
+    }
+    for (const target of targets) {
+      if (signal?.aborted) return { ok: false, reason: "runtime_cancelled" };
+      const state = snapshot.get(target.alias);
+      if (!state) return { ok: false, reason: "runtime_snapshot_invalid" };
+      const write = await this.#writeTarget({ ...target, ...state }, requestId, signal);
+      if (!write.ok) return write;
+    }
+    return { ok: true, status: "success" };
+  }
+
   async #freshRead(topology, requestId, signal) {
     if (!this.#commandAdapter) return { ok: false, reason: "runtime_adapter_unavailable" };
     const request = { requestId, intent: "state.query", targets: topology.targets.map((target) => ({ id: target.id })), parameters: { allProperties: true } };
@@ -356,17 +398,10 @@ export class ExperienceExecutor {
       const aliases = [...new Set(requestedAliases.filter((alias) => topology.targets.some((target) => target.alias === alias)))];
       if (!aliases.length || aliases.some((alias) => !record.affectedAliases?.includes(alias))) return redactedExecution({ status: "blocked", mode, userMessage: "Restore is unavailable." });
       if (mode.startsWith("live")) {
-        const currentRead = await this.#freshRead(topology, requestId, restoreSignal);
         if (!restoreStillAvailable()) return redactedExecution({ status: "partial", mode, userMessage: "Restore could not be verified." });
-        const currentState = this.#snapshotForTopology(topology, currentRead);
-        if (!currentRead.ok || !currentState || expectedCurrentDigest && snapshotDigest(topology, currentState) !== expectedCurrentDigest) return redactedExecution({ status: "blocked", mode, userMessage: "The live state changed before recovery. Restore was refused." });
-        for (const target of topology.targets.filter((item) => aliases.includes(item.alias))) {
-          if (!restoreStillAvailable()) return redactedExecution({ status: "partial", mode, userMessage: "Restore could not be verified." });
-          const state = record.snapshot.get(target.alias);
-          if (!state) return redactedExecution({ status: "blocked", mode, userMessage: "Restore is unavailable." });
-          const write = await this.#writeTarget({ ...target, ...state }, requestId, restoreSignal);
-          if (!restoreStillAvailable() || !write.ok) return redactedExecution({ status: "partial", mode, userMessage: "Restore could not be verified." });
-        }
+        const restoreTargets = topology.targets.filter((item) => aliases.includes(item.alias));
+        const write = await this.#writeSnapshot(topology, restoreTargets, record.snapshot, requestId, restoreSignal);
+        if (!restoreStillAvailable() || !write.ok) return redactedExecution({ status: "partial", mode, userMessage: "Restore could not be verified." });
         if (!restoreStillAvailable()) return redactedExecution({ status: "partial", mode, userMessage: "Restore could not be verified." });
         const readback = await this.#freshRead(topology, requestId, restoreSignal);
         if (!restoreStillAvailable()) return redactedExecution({ status: "partial", mode, userMessage: "Restore could not be verified." });
