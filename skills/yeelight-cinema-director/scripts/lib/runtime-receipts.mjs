@@ -47,15 +47,18 @@ export function classifyDesignBatchReceipt(value, expectedByRuntimeId = new Map(
   const expected = expectedByRuntimeId instanceof Map ? expectedByRuntimeId : new Map(Object.entries(expectedByRuntimeId || {}));
   const expectedCount = [...expected.values()].reduce((count, set) => count + Object.keys(set || {}).length, 0);
   if (!expectedCount || result?.capability !== "lighting.design.apply" || result?.persistentWrites !== true || !Array.isArray(result?.createdArtifacts) || result.createdArtifacts.length !== 0 || result?.actionCount !== expectedCount || rows.length !== expectedCount) return "invalid";
+  const acknowledged = value?.status === "success" && result?.verification === "write_acknowledged" && result?.verified === false;
   const seen = new Set();
   for (const row of rows) {
     const entity = row?.entity || {};
     const runtimeId = String(entity.id ?? entity.entityId ?? "");
     const properties = expected.get(runtimeId);
-    if ((entity.entityType !== undefined && entity.entityType !== "device") || !properties || !Object.hasOwn(properties, row?.property) || seen.has(`${runtimeId}\0${row.property}`) || row?.expectedValue !== properties[row.property] || !validBatchValue(row?.property, row?.verifiedValue)) return "invalid";
+    const validValue = acknowledged ? row?.verifiedValue === null : validBatchValue(row?.property, row?.verifiedValue);
+    if ((entity.entityType !== undefined && entity.entityType !== "device") || !properties || !Object.hasOwn(properties, row?.property) || seen.has(`${runtimeId}\0${row.property}`) || row?.expectedValue !== properties[row.property] || !validValue) return "invalid";
     seen.add(`${runtimeId}\0${row.property}`);
   }
   if (seen.size !== expectedCount) return "invalid";
+  if (acknowledged && rows.every((row) => row.verified === false)) return "acknowledged";
   if (value?.status === "success" && result.verified === true && rows.every((row) => row.verified === true && row.verifiedValue === expected.get(String(row.entity?.id ?? row.entity?.entityId))[row.property])) return "verified";
   if (value?.status === "partial" && result.verified === false) return "bound_verification_mismatch";
   return "invalid";

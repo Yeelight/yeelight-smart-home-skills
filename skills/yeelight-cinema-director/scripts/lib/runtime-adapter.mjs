@@ -130,7 +130,9 @@ export class YeelightHomeRuntimeAdapter {
 
   async applyDesign(rows, signal, options = {}) {
     const actions = rows.map((row) => ({ targetType: "device", targetId: row.runtimeId, set: row.set }));
-    return this.invoke("lighting.design.apply", { targets: rows.map((row) => ({ entityType: "device", id: row.runtimeId })), parameters: { actions } }, {
+    const verification = options.verificationMode === "acknowledged" || options.verificationMode === "batch" ? options.verificationMode : undefined;
+    const parameters = verification ? { actions, verification } : { actions };
+    return this.invoke("lighting.design.apply", { targets: rows.map((row) => ({ entityType: "device", id: row.runtimeId })), parameters }, {
       signal,
       retrySafeError: options.retrySafeError,
       timeoutMs: rows.length > 1 ? BATCH_DESIGN_APPLY_TIMEOUT_MS : undefined,

@@ -12,14 +12,14 @@ export async function executeBatchWindow(app, session, generation, rows, signal)
     let result;
     try {
       markBatchDispatchEvidence(app, session.id, rows);
-      result = await app.runtime.applyDesign(rows.map((row) => ({ ...row, runtimeId: targets.find((target) => target.handle === row.handle)?.runtimeId })), signal, { retrySafeError: false });
+      result = await app.runtime.applyDesign(rows.map((row) => ({ ...row, runtimeId: targets.find((target) => target.handle === row.handle)?.runtimeId })), signal, { retrySafeError: false, verificationMode: "acknowledged" });
     } catch (error) {
       if (isBatchRetryableRuntimeFailure(error)) return batchFailureReceipts(rows, batchFailureReason(error), "transport");
       throw error;
     }
     const expected = new Map(rows.map((row) => [String(targets.find((target) => target.handle === row.handle)?.runtimeId || ""), row.set || {}]));
     const status = classifyDesignBatchReceipt(result, expected);
-    if (status === "verified") return rows.map((row) => ({ handle: row.handle, status: "acknowledged" }));
+    if (status === "verified" || status === "acknowledged") return rows.map((row) => ({ handle: row.handle, status: "acknowledged" }));
     if (status === "bound_verification_mismatch") return batchFailureReceipts(rows, "runtime_write_verification_mismatch", "verification");
     return batchFailureReceipts(rows, "runtime_batch_receipt_invalid", "verification");
   }

@@ -335,10 +335,10 @@ async function executeBatchRows(app, targets, rows, signal) {
   const batchRows = rows.map((row) => ({ ...row, runtimeId: byHandle.get(row.handle)?.runtimeId })).filter((row) => row.runtimeId);
   if (batchRows.length !== rows.length || batchRows.length < 2) return null;
   try {
-    const result = await app.runtime.applyDesign(batchRows, signal, { retrySafeError: false });
+    const result = await app.runtime.applyDesign(batchRows, signal, { retrySafeError: false, verificationMode: "acknowledged" });
     const expected = new Map(batchRows.map((row) => [String(row.runtimeId), row.set || {}]));
     const classification = classifyDesignBatchReceipt(result, expected);
-    if (classification === "verified") return rows.map((row) => ({ handle: row.handle, status: "acknowledged" }));
+    if (classification === "verified" || classification === "acknowledged") return rows.map((row) => ({ handle: row.handle, status: "acknowledged" }));
     const reason = classification === "bound_verification_mismatch" ? "runtime_write_verification_mismatch" : "runtime_batch_receipt_invalid";
     return rows.map((row) => ({ handle: row.handle, status: "failed", reason, failureClass: "verification", retryable: true }));
   } catch (error) {
